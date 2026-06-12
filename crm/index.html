@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fit&Go CRM</title>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            🥗 Fit&Go CRM
+        </div>
+        <nav class="sidebar-nav">
+            <a class="nav-item active" data-target="dashboard">
+                <span>📊</span> Dashboard
+            </a>
+            <a class="nav-item" data-target="clients">
+                <span>👥</span> Base de Datos
+            </a>
+            <a class="nav-item" data-target="kanban">
+                <span>📋</span> Pipeline
+            </a>
+            <a class="nav-item" data-target="sales">
+                <span>💰</span> Ventas y Seguimiento
+            </a>
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Header -->
+        <header class="header">
+            <div class="page-title" id="top-title">Dashboard</div>
+            <div class="header-actions">
+                <input type="text" class="global-search" id="global-search" placeholder="🔍 Buscar nombre, tel, IG...">
+                <button class="btn btn-primary" onclick="openClientModal()">+ Nuevo Cliente</button>
+            </div>
+        </header>
+
+        <!-- Content Area -->
+        <div class="content-area">
+
+            <!-- DASHBOARD SECTION -->
+            <section id="dashboard" class="view-section active">
+                <div class="grid grid-cols-4 mb-4" id="dashboard-metrics">
+                    <div class="card metric-card">
+                        <span class="metric-title">Total Prospectos</span>
+                        <span class="metric-value" id="kpi-prospects">0</span>
+                    </div>
+                    <div class="card metric-card">
+                        <span class="metric-title">Clientes Activos</span>
+                        <span class="metric-value text-accent" id="kpi-active" style="color: var(--accent-primary)">0</span>
+                    </div>
+                    <div class="card metric-card">
+                        <span class="metric-title">Recurrentes / VIP</span>
+                        <span class="metric-value" id="kpi-recurrent" style="color: var(--warning)">0</span>
+                    </div>
+                    <div class="card metric-card">
+                        <span class="metric-title">Ventas Estimadas (Mes)</span>
+                        <span class="metric-value" id="kpi-sales">$0</span>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 mb-4" style="grid-template-columns: 2fr 1fr;">
+                    <div class="card">
+                        <h3 class="mb-4">📈 Origen de Prospectos</h3>
+                        <canvas id="sourceChart" height="200"></canvas>
+                    </div>
+                    <div class="card">
+                        <h3 class="mb-4">🔔 Tareas de Hoy</h3>
+                        <div class="task-list" id="today-tasks">
+                            <!-- Tasks will be injected here -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- CLIENTS DATABASE SECTION -->
+            <section id="clients" class="view-section">
+                <div class="card">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3>Base de Datos de Clientes</h3>
+                        <select class="form-control" id="client-filter" style="width: 200px;">
+                            <option value="all">Todos</option>
+                            <option value="prospect">Prospectos</option>
+                            <option value="active">Activos</option>
+                            <option value="inactive">Inactivos / Pausa</option>
+                        </select>
+                    </div>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Cliente</th>
+                                    <th>Contacto</th>
+                                    <th>Estado</th>
+                                    <th>Tipo</th>
+                                    <th>Próx. Seguimiento</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="clients-table-body">
+                                <!-- Client rows injected here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- KANBAN PIPELINE SECTION -->
+            <section id="kanban" class="view-section">
+                <div class="kanban-board" id="kanban-board">
+                    <!-- Columns injected via JS based on states -->
+                </div>
+            </section>
+
+            <!-- SALES & CAMPAIGNS SECTION -->
+            <section id="sales" class="view-section">
+                <div class="card mb-4">
+                    <h3>🎯 Estrategias de Venta Rápida</h3>
+                    <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 16px;">
+                        Genera listas de clientes con un clic para enviarles campañas o seguimientos masivos.
+                    </p>
+                    <div class="flex" style="gap: 10px; flex-wrap: wrap;">
+                        <button class="btn btn-secondary" onclick="generateSegment('no-purchase')">Información pero No Compraron</button>
+                        <button class="btn btn-secondary" onclick="generateSegment('dropped')">Dejaron de Comprar (14d+)</button>
+                        <button class="btn btn-secondary" onclick="generateSegment('returning')">Regresan de viaje esta sem.</button>
+                        <button class="btn btn-secondary" onclick="generateSegment('high-ticket')">Ticket Promedio Alto (VIP)</button>
+                        <button class="btn btn-secondary" onclick="generateSegment('lost')">Más de 60 días sin compra</button>
+                    </div>
+                </div>
+
+                <div class="card" id="segment-results" style="display: none;">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 id="segment-title">Resultados</h3>
+                        <button class="btn btn-secondary" onclick="closeSegment()">Cerrar</button>
+                    </div>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Cliente</th>
+                                    <th>Teléfono</th>
+                                    <th>Última Compra</th>
+                                    <th>Acción rápida</th>
+                                </tr>
+                            </thead>
+                            <tbody id="segment-table-body">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <!-- Add/Edit Client Modal -->
+    <div class="modal-overlay" id="client-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modal-title">Nuevo Cliente</h3>
+                <button class="modal-close" onclick="closeModal('client-modal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="client-form">
+                    <input type="hidden" id="client-id">
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Nombre Completo</label>
+                            <input type="text" id="client-name" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Teléfono (WhatsApp)</label>
+                            <input type="text" id="client-phone" class="form-control">
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Instagram</label>
+                            <input type="text" id="client-ig" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Fuente de adquisición</label>
+                            <select id="client-source" class="form-control">
+                                <option>WhatsApp</option>
+                                <option>Instagram</option>
+                                <option>Facebook</option>
+                                <option>Referido</option>
+                                <option>Orgánico</option>
+                                <option>Otro</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Estado</label>
+                            <select id="client-state" class="form-control">
+                                <optgroup label="PROSPECTOS">
+                                    <option>Nuevo Lead</option>
+                                    <option>Solicitó Información</option>
+                                    <option>Cotización Enviada</option>
+                                    <option>Cotización Personalizada Enviada</option>
+                                    <option>Pendiente de Respuesta</option>
+                                </optgroup>
+                                <optgroup label="CLIENTES">
+                                    <option>Primer Pedido</option>
+                                    <option>Cliente Activo</option>
+                                    <option>Cliente Recurrente</option>
+                                    <option>Personalizado Recurrente</option>
+                                </optgroup>
+                                <optgroup label="INACTIVOS">
+                                    <option>Viaje</option>
+                                    <option>Pausa Temporal</option>
+                                    <option>Perdido</option>
+                                    <option>No Interesado</option>
+                                </optgroup>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Tipo de Cliente</label>
+                            <select id="client-type" class="form-control">
+                                <option>Menú Regular</option>
+                                <option>Personalizado</option>
+                                <option>Plan Nutricional</option>
+                                <option>Cotización Dieta</option>
+                                <option>Empresarial</option>
+                                <option>Solo Información</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Frecuencia de Contacto</label>
+                            <select id="client-freq" class="form-control">
+                                <option value="diario">Diario</option>
+                                <option value="lunes">Lunes</option>
+                                <option value="martes">Martes</option>
+                                <option value="miercoles">Miércoles</option>
+                                <option value="jueves">Jueves</option>
+                                <option value="viernes">Viernes</option>
+                                <option value="lu-mi">Lunes y Miércoles</option>
+                                <option value="ma-ju">Martes y Jueves</option>
+                                <option value="solo-escribe">Solo cuando escriba</option>
+                                <option value="personalizado">Personalizado</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" style="color: var(--danger)">No contactar hasta (Ej. Viaje)</label>
+                            <input type="date" id="client-pause-date" class="form-control">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Etiquetas Personalizadas (separadas por coma)</label>
+                        <input type="text" id="client-tags" class="form-control" placeholder="Ej: Quiere bajar grasa, Efectivo, Pickup">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Notas / Observaciones</label>
+                        <textarea id="client-notes" class="form-control"></textarea>
+                    </div>
+
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('client-modal')">Cancelar</button>
+                <button class="btn btn-primary" onclick="saveClient()">Guardar Cliente</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Sales Modal -->
+    <div class="modal-overlay" id="sale-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Registrar Pedido</h3>
+                <button class="modal-close" onclick="closeModal('sale-modal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="sale-form">
+                    <input type="hidden" id="sale-client-id">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Monto ($)</label>
+                            <input type="number" id="sale-amount" class="form-control" required min="0">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Cantidad de Comidas</label>
+                            <input type="number" id="sale-meals" class="form-control" required min="1">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Fecha del Pedido</label>
+                        <input type="date" id="sale-date" class="form-control" required>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('sale-modal')">Cancelar</button>
+                <button class="btn btn-primary" onclick="saveSale()">Registrar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="script.js"></script>
+</body>
+</html>

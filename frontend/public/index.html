@@ -1,0 +1,2952 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fit&Go — Sistema Operativo</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+    <!-- LOGIN SCREEN -->
+    <div class="login-screen" id="login-screen">
+        <div class="login-box">
+            <div class="login-logo">🥗</div>
+            <div class="login-title">Fit&Go</div>
+            <div class="login-sub">Sistema Operativo · Inicia sesión</div>
+            <div class="login-error" id="login-error">Usuario o contraseña incorrectos</div>
+            <div class="form-group" style="text-align:left">
+                <label class="form-label">Usuario</label>
+                <input class="form-input" id="login-user" placeholder="Ej: admin"
+                    onkeydown="if(event.key==='Enter')doLogin()">
+            </div>
+            <div class="form-group" style="text-align:left">
+                <label class="form-label">Contraseña</label>
+                <input class="form-input" id="login-pass" type="password" placeholder="••••••••"
+                    onkeydown="if(event.key==='Enter')doLogin()">
+            </div>
+            <button class="btn btn-primary w-full" style="margin-top:8px;padding:11px"
+                onclick="doLogin()">Entrar</button>
+            <div style="font-size:11px;color:var(--text3);margin-top:20px">Fit&Go · Mérida · v1.0</div>
+        </div>
+    </div>
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <div class="sidebar-logo">
+            <div class="logo-mark">
+                <div class="logo-icon">🥗</div>
+                <div>
+                    <div class="logo-text">Fit&Go</div>
+                    <div class="logo-sub">SISTEMA OPERATIVO</div>
+                </div>
+            </div>
+        </div>
+        <nav class="sidebar-nav">
+            <div class="nav-section">
+                <div class="nav-label">Principal</div>
+                <a class="nav-item active" onclick="showPage('dashboard')">
+                    <span class="nav-icon">📊</span> Dashboard
+                </a>
+                <a class="nav-item" onclick="showPage('pedidos')">
+                    <span class="nav-icon">🧾</span> Pedidos
+                    <span class="nav-badge" id="badge-pedidos">3</span>
+                </a>
+            </div>
+            <div class="nav-section">
+                <div class="nav-label">Cocina</div>
+                <a class="nav-item" onclick="showPage('menu')">
+                    <span class="nav-icon">🥙</span> Menú
+                </a>
+                <a class="nav-item" onclick="showPage('dietas')">
+                    <span class="nav-icon">📋</span> Dietas personalizadas
+                </a>
+                <a class="nav-item" onclick="showPage('inventario')">
+                    <span class="nav-icon">📦</span> Inventario
+                </a>
+                <a class="nav-item" onclick="showPage('producciones')">
+                    <span class="nav-icon">🧪</span> Producciones
+                </a>
+                <a class="nav-item" onclick="showPage('compras')">
+                    <span class="nav-icon">🛒</span> Compras de insumos
+                </a>
+            </div>
+            <div class="nav-section">
+                <div class="nav-label">Finanzas</div>
+                <a class="nav-item" onclick="showPage('caja')">
+                    <span class="nav-icon">💰</span> Caja del día
+                </a>
+                <a class="nav-item" onclick="showPage('proveedores')">
+                    <span class="nav-icon">🚛</span> Proveedores
+                </a>
+                <a class="nav-item" onclick="showPage('cxp')">
+                    <span class="nav-icon">📤</span> Cuentas por pagar
+                </a>
+                <a class="nav-item" onclick="showPage('cxc')">
+                    <span class="nav-icon">📥</span> Cuentas por cobrar
+                    <span class="nav-badge" id="badge-cxc" style="display:none">0</span>
+                </a>
+            </div>
+            <div class="nav-section">
+                <div class="nav-label">Clientes</div>
+                <a class="nav-item" onclick="showPage('clientes')">
+                    <span class="nav-icon">👤</span> Clientes
+                </a>
+                <a class="nav-item" onclick="showPage('crm-kanban')" id="nav-crm-kanban">
+                    <span class="nav-icon">📋</span> CRM Kanban
+                </a>
+            </div>
+            <div class="nav-section">
+                <div class="nav-label">Inteligencia</div>
+                <a class="nav-item" onclick="showPage('reportes')">
+                    <span class="nav-icon">📈</span> Reportes
+                </a>
+            </div>
+            <div class="nav-section" id="nav-admin-section">
+                <div class="nav-label">Administración</div>
+                <a class="nav-item" onclick="showPage('usuarios')" id="nav-usuarios">
+                    <span class="nav-icon">🔐</span> Usuarios y permisos
+                </a>
+                <a class="nav-item" onclick="showPage('eliminacion')" id="nav-eliminacion">
+                    <span class="nav-icon">🗑</span> Eliminar pedidos
+                </a>
+                <a class="nav-item" onclick="showPage('importar')" id="nav-importar">
+                    <span class="nav-icon">📥</span> Carga masiva
+                </a>
+            </div>
+        </nav>
+        <div class="sidebar-footer">
+            <div class="avatar" id="sidebar-avatar">A</div>
+            <div class="avatar-info">
+                <div class="name" id="sidebar-nombre">Admin</div>
+                <div class="role" id="sidebar-rol">Administrador</div>
+            </div>
+            <button onclick="doLogout()"
+                style="margin-left:auto;background:none;border:none;color:var(--text3);cursor:pointer;font-size:18px"
+                title="Cerrar sesión">⏏</button>
+        </div>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="main">
+
+        <!-- =================== DASHBOARD =================== -->
+        <div id="page-dashboard" class="page active">
+            <div class="topbar">
+                <div class="topbar-title">Dashboard</div>
+                <div class="topbar-actions">
+                    <span style="font-size:12px;color:var(--text3)" id="fecha-hoy"></span>
+                    <button class="btn btn-primary btn-sm" onclick="showPage('pedidos');openNuevoPedido()">+ Nuevo
+                        pedido</button>
+                </div>
+            </div>
+            <div class="content">
+                <!-- KPIs -->
+                <div class="grid mb-16" style="grid-template-columns: repeat(5, 1fr);">
+                    <div class="card card-sm">
+                        <div class="card-title">Ventas hoy</div>
+                        <div class="metric-row"><span class="metric-big" id="kpi-ventas">$0</span></div>
+                        <div class="card-delta up" id="kpi-ventas-delta">↑ +0% vs ayer</div>
+                    </div>
+                    <div class="card card-sm">
+                        <div class="card-title">Pedidos hoy</div>
+                        <div class="metric-row"><span class="metric-big" id="kpi-pedidos-count">0</span></div>
+                        <div class="card-delta" id="kpi-pedidos-delta">0 en proceso</div>
+                    </div>
+                    <div class="card card-sm">
+                        <div class="card-title">Ticket promedio</div>
+                        <div class="metric-row"><span class="metric-big" id="kpi-ticket">$0</span></div>
+                        <div class="card-delta" id="kpi-ticket-delta">por pedido</div>
+                    </div>
+                    <div class="card card-sm" style="cursor:pointer" onclick="showPage('cxc')">
+                        <div class="card-title">Por cobrar</div>
+                        <div class="metric-row"><span class="metric-big" style="color:var(--blue)"
+                                id="kpi-cobrar">$0</span></div>
+                        <div class="card-delta" id="kpi-cobrar-delta" style="color:var(--blue)">cuentas por cobrar →
+                        </div>
+                    </div>
+                    <div class="card card-sm" style="cursor:pointer" onclick="showPage('cxp')">
+                        <div class="card-title">Por pagar</div>
+                        <div class="metric-row"><span class="metric-big highlight-red" id="kpi-pagar">$0</span></div>
+                        <div class="card-delta down" id="kpi-pagar-delta">cuentas por pagar →</div>
+                    </div>
+                </div>
+
+                <div class="grid grid-2 mb-16" style="grid-template-columns: 1.6fr 1fr;">
+                    <!-- Pedidos recientes -->
+                    <div class="card">
+                        <div class="section-header">
+                            <div class="section-title">Pedidos activos</div>
+                            <button class="btn btn-secondary btn-sm" onclick="showPage('pedidos')">Ver todos →</button>
+                        </div>
+                        <div id="dash-pedidos-lista">
+                            <div class="empty">
+                                <div class="empty-icon">🧾</div>
+                                <div class="empty-title">Sin pedidos activos</div>
+                                <div class="empty-text">Los pedidos nuevos aparecerán aquí</div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Alertas inventario -->
+                    <div class="card">
+                        <div class="section-header">
+                            <div class="section-title">Alertas de inventario</div>
+                            <button class="btn btn-secondary btn-sm" onclick="showPage('inventario')">Ver →</button>
+                        </div>
+                        <div id="dash-alertas"></div>
+                    </div>
+                </div>
+
+                <!-- Top platillos + Canal de ventas -->
+                <div class="grid grid-2">
+                    <div class="card">
+                        <div class="section-header">
+                            <div class="section-title">Top platillos hoy</div>
+                        </div>
+                        <div id="dash-top-platillos"></div>
+                    </div>
+                    <div class="card">
+                        <div class="section-header">
+                            <div class="section-title">Ventas por canal</div>
+                        </div>
+                        <div id="dash-canales"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- =================== PEDIDOS =================== -->
+        <div id="page-pedidos" class="page">
+            <div class="topbar">
+                <div class="topbar-title">Gestión de Pedidos</div>
+                <div class="topbar-actions">
+                    <button class="btn btn-secondary btn-sm" id="btn-vista-cal" onclick="toggleVistaCal()">📅
+                        Calendario</button>
+                    <button class="btn btn-secondary btn-sm" onclick="toggleVistaPedidos()">⊞ Vista lista</button>
+                    <button class="btn btn-primary btn-sm" onclick="openNuevoPedido()">+ Nuevo pedido</button>
+                </div>
+            </div>
+            <div class="content">
+
+                <!-- Vista Calendario -->
+                <div id="vista-calendario" style="display:none" class="card mb-16">
+                    <div class="flex items-center justify-between mb-16">
+                        <button class="btn btn-secondary btn-sm" onclick="navCalendario(-1)">← Anterior</button>
+                        <div style="font-size:15px;font-weight:600" id="cal-titulo-mes"></div>
+                        <button class="btn btn-secondary btn-sm" onclick="navCalendario(1)">Siguiente →</button>
+                    </div>
+                    <!-- Cabecera días -->
+                    <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:6px">
+                        ${['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'].map(d=>`<div
+                            style="text-align:center;font-size:11px;font-weight:600;color:var(--text3);padding:4px">${d}
+                        </div>`).join('')}
+                    </div>
+                    <div id="cal-grid" style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px"></div>
+                    <!-- Detalle día seleccionado -->
+                    <div id="cal-detalle-dia" style="margin-top:16px;display:none">
+                        <hr class="divider" style="margin:0 0 14px">
+                        <div class="section-header mb-10">
+                            <div class="section-title" id="cal-detalle-titulo">Pedidos del día</div>
+                            <button class="btn btn-primary btn-sm"
+                                onclick="openNuevoPedidoFecha(calFechaSeleccionada)">+ Agregar pedido en esta
+                                fecha</button>
+                        </div>
+                        <div id="cal-detalle-lista"></div>
+                    </div>
+                </div>
+
+                <!-- Resumen de platillos del día -->
+                <div class="card mb-16" id="card-resumen-platillos">
+                    <div class="section-header" style="margin-bottom:12px">
+                        <div class="section-title">📊 Resumen del día — cantidades por platillo</div>
+                        <div class="flex gap-8 items-center">
+                            <select class="form-input" style="width:160px;font-size:12px" id="resumen-estado-filtro"
+                                onchange="renderResumenPlatillos()">
+                                <option value="">Todos los estados</option>
+                                <option value="activos">Solo activos</option>
+                                <option value="Entregado">Entregados</option>
+                                <option value="Nuevo">Nuevos</option>
+                                <option value="En preparación">En preparación</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div id="resumen-platillos-grid"
+                        style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:8px"></div>
+                </div>
+
+                <div id="vista-kanban" class="kanban" id="kanban-board"></div>
+                <div id="vista-lista" style="display:none">
+                    <div class="card">
+                        <div class="flex items-center gap-12 mb-16">
+                            <div class="search-wrap flex-1">
+                                <span class="search-icon">🔍</span>
+                                <input type="text" class="form-input" placeholder="Buscar por cliente o #pedido..."
+                                    oninput="filtrarPedidos(this.value)">
+                            </div>
+                            <select class="form-input" style="width:160px" onchange="filtrarPorEstado(this.value)">
+                                <option value="">Todos los estados</option>
+                                <option>Nuevo</option>
+                                <option>En preparación</option>
+                                <option>Listo</option>
+                                <option>Entregado</option>
+                            </select>
+                        </div>
+                        <div class="table-wrap">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Cliente</th>
+                                        <th>Canal</th>
+                                        <th>Items</th>
+                                        <th>Total</th>
+                                        <th>Estado</th>
+                                        <th>Hora</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tabla-pedidos"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- =================== MENÚ =================== -->
+        <div id="page-menu" class="page">
+            <div class="topbar">
+                <div class="topbar-title">Menú</div>
+                <div class="topbar-actions">
+                    <button class="btn btn-secondary btn-sm" onclick="openGestionCategorias('menu')">🏷
+                        Categorías</button>
+                    <button class="btn btn-primary btn-sm" onclick="openNuevoPlatillo()">+ Agregar platillo</button>
+                </div>
+            </div>
+            <div class="content">
+                <div class="flex gap-8 mb-16" id="menu-categ-chips">
+                    <span class="chip active" onclick="filtrarCategoria(this, 'todas')">Todas</span>
+                </div>
+                <div class="grid grid-3" id="menu-grid"
+                    style="grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));"></div>
+            </div>
+        </div>
+
+        <!-- =================== DIETAS =================== -->
+        <div id="page-dietas" class="page">
+            <div class="topbar">
+                <div class="topbar-title">Dietas Personalizadas</div>
+                <div class="topbar-actions">
+                    <button class="btn btn-primary btn-sm" onclick="openNuevaDieta()">+ Nueva dieta</button>
+                </div>
+            </div>
+            <div class="content">
+                <div class="card mb-16" style="border-color: rgba(96,165,250,0.2); background: var(--blue-dim);">
+                    <div class="flex items-center gap-12">
+                        <span style="font-size:24px">📋</span>
+                        <div>
+                            <div style="font-size:13px;font-weight:600;color:var(--blue)">Dietas personalizadas</div>
+                            <div style="font-size:12px;color:var(--text2);margin-top:2px">Cada cliente puede tener su
+                                propio plan alimenticio. El equipo de cocina lo recibe con el pedido.</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="grid grid-2" id="dietas-grid"
+                    style="grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));"></div>
+            </div>
+        </div>
+
+        <!-- =================== INVENTARIO =================== -->
+        <div id="page-inventario" class="page">
+            <div class="topbar">
+                <div class="topbar-title">Inventario</div>
+                <div class="topbar-actions" id="inv-btns-ingredientes">
+                    <button class="btn btn-secondary btn-sm" onclick="openGestionCategorias('insumos')">🏷
+                        Categorías</button>
+                    <button class="btn btn-secondary btn-sm" onclick="openAjusteInventario()">Ajuste de stock</button>
+                    <button class="btn btn-primary btn-sm" onclick="openNuevoIngrediente()">+ Ingrediente</button>
+                </div>
+                <div class="topbar-actions" id="inv-btns-presentaciones" style="display:none">
+                    <button class="btn btn-primary btn-sm" onclick="openNuevaPresentacion()">+ Nueva
+                        presentación</button>
+                </div>
+                <div class="topbar-actions" id="inv-btns-alertas" style="display:none">
+                    <button class="btn btn-secondary btn-sm" onclick="openConfigAlertas()">⚙ Configurar alertas</button>
+                </div>
+            </div>
+            <div class="content">
+                <div class="tabs mb-16">
+                    <div class="tab active" onclick="switchInvTab(this,'ingredientes')">📦 Ingredientes</div>
+                    <div class="tab" onclick="switchInvTab(this,'presentaciones')">🏷 Presentaciones</div>
+                    <div class="tab" onclick="switchInvTab(this,'alertas')">🔔 Alertas</div>
+                </div>
+
+                <!-- TAB INGREDIENTES -->
+                <div id="inv-tab-ingredientes">
+                    <div class="grid grid-4 mb-16">
+                        <div class="card card-sm">
+                            <div class="card-title">Total ingredientes</div>
+                            <div class="metric-big" id="inv-total">0</div>
+                        </div>
+                        <div class="card card-sm" style="border-color:rgba(248,113,113,0.2)">
+                            <div class="card-title">Stock bajo</div>
+                            <div class="metric-big highlight-red" id="inv-bajo">0</div>
+                        </div>
+                        <div class="card card-sm" style="border-color:rgba(251,191,36,0.2)">
+                            <div class="card-title">Por agotarse</div>
+                            <div class="metric-big highlight-amber" id="inv-agotando">0</div>
+                        </div>
+                        <div class="card card-sm" style="border-color:rgba(74,222,128,0.2)">
+                            <div class="card-title">En buen nivel</div>
+                            <div class="metric-big highlight-green" id="inv-ok">0</div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="flex items-center gap-12 mb-16">
+                            <div class="search-wrap flex-1">
+                                <span class="search-icon">🔍</span>
+                                <input type="text" class="form-input" placeholder="Buscar ingrediente..."
+                                    oninput="buscarIngrediente(this.value)">
+                            </div>
+                            <select class="form-input" style="width:180px" id="filtro-categ-ing"
+                                onchange="filtrarCategIngrediente(this.value)">
+                                <option value="">Todas las categorías</option>
+                            </select>
+                        </div>
+                        <div class="table-wrap">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Ingrediente</th>
+                                        <th>Categoría</th>
+                                        <th>Stock actual</th>
+                                        <th>Unidad</th>
+                                        <th>Mínimo</th>
+                                        <th>Nivel</th>
+                                        <th>Costo/u</th>
+                                        <th>Presentaciones</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tabla-inventario"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB PRESENTACIONES -->
+                <div id="inv-tab-presentaciones" style="display:none">
+                    <div class="card mb-14" style="border-color:rgba(251,191,36,0.2);background:var(--amber-dim)">
+                        <div class="flex items-center gap-12">
+                            <span style="font-size:22px">💡</span>
+                            <div>
+                                <div style="font-size:13px;font-weight:600;color:var(--amber)">Cómo funciona</div>
+                                <div style="font-size:12px;color:var(--text2);margin-top:2px">
+                                    Define las presentaciones de cada insumo (ej. caja de 12 huevos = $45). El sistema
+                                    calcula el costo por unidad automáticamente y lo aplica en recetas y compras sin que
+                                    tengas que elegirlo cada vez.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="flex items-center gap-12 mb-16">
+                            <div class="search-wrap flex-1">
+                                <span class="search-icon">🔍</span>
+                                <input type="text" class="form-input" placeholder="Buscar insumo o presentación..."
+                                    oninput="buscarPresentacion(this.value)">
+                            </div>
+                        </div>
+                        <div class="table-wrap">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Insumo</th>
+                                        <th>Presentación</th>
+                                        <th>Cantidad</th>
+                                        <th>Unidad base</th>
+                                        <th>Costo presentación</th>
+                                        <th>Costo por unidad</th>
+                                        <th>Predeterminada</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tabla-presentaciones"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB ALERTAS -->
+                <div id="inv-tab-alertas" style="display:none">
+                    <!-- Panel alertas activas -->
+                    <div class="grid grid-2 mb-16">
+                        <div class="card" style="border-color:rgba(248,113,113,0.25)">
+                            <div class="section-header mb-12">
+                                <div class="section-title" style="color:var(--red)">🔴 Agotados</div>
+                                <span class="badge badge-red" id="badge-agotados">0</span>
+                            </div>
+                            <div id="lista-agotados"></div>
+                        </div>
+                        <div class="card" style="border-color:rgba(251,191,36,0.25)">
+                            <div class="section-header mb-12">
+                                <div class="section-title" style="color:var(--amber)">🟡 Stock bajo</div>
+                                <span class="badge badge-amber" id="badge-stock-bajo">0</span>
+                            </div>
+                            <div id="lista-stock-bajo"></div>
+                        </div>
+                    </div>
+
+                    <!-- Configuración de alertas por ingrediente -->
+                    <div class="card">
+                        <div class="section-header mb-12">
+                            <div class="section-title">⚙ Configuración de alertas</div>
+                            <div class="search-wrap" style="width:220px">
+                                <span class="search-icon">🔍</span>
+                                <input class="form-input" placeholder="Buscar ingrediente..."
+                                    oninput="filtrarConfigAlertas(this.value)">
+                            </div>
+                        </div>
+                        <div style="font-size:12px;color:var(--text2);margin-bottom:12px">Define el stock mínimo de cada
+                            ingrediente. El sistema te alertará cuando el stock llegue a ese nivel.</div>
+                        <div class="table-wrap">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Ingrediente</th>
+                                        <th>Categoría</th>
+                                        <th>Stock actual</th>
+                                        <th>Mínimo actual</th>
+                                        <th>Nuevo mínimo</th>
+                                        <th>Notificar en</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tabla-config-alertas"></tbody>
+                            </table>
+                        </div>
+                        <div class="flex justify-end mt-12">
+                            <button class="btn btn-primary" onclick="guardarConfigAlertas()">💾 Guardar
+                                configuración</button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <div id="page-caja" class="page">
+            <div class="topbar">
+                <div class="topbar-title">Caja del Día</div>
+                <div class="topbar-actions">
+                    <button class="btn btn-secondary btn-sm" onclick="exportarCaja()">📤 Exportar corte</button>
+                    <button class="btn btn-primary btn-sm" id="btn-apertura-corte" onclick="accionCaja()">Apertura de
+                        caja</button>
+                </div>
+            </div>
+            <div class="content">
+
+                <!-- Banner caja cerrada -->
+                <div id="banner-caja-cerrada" class="card mb-16"
+                    style="border-color:rgba(251,191,36,0.3);background:var(--amber-dim);display:none">
+                    <div class="flex items-center gap-12">
+                        <span style="font-size:28px">🔒</span>
+                        <div>
+                            <div style="font-weight:600;color:var(--amber)">Caja cerrada</div>
+                            <div style="font-size:12px;color:var(--text2);margin-top:2px">Abre la caja para registrar el
+                                saldo inicial y comenzar operaciones del día.</div>
+                        </div>
+                        <button class="btn btn-primary" style="margin-left:auto" onclick="accionCaja()">Abrir caja
+                            ahora</button>
+                    </div>
+                </div>
+
+                <!-- KPIs -->
+                <div class="grid grid-4 mb-16" id="caja-kpis">
+                    <div class="card card-sm" style="border-color:rgba(74,222,128,0.2)">
+                        <div class="card-title">Ingresos del día</div>
+                        <div class="metric-big highlight-green" id="caja-total">$0</div>
+                    </div>
+                    <div class="card card-sm">
+                        <div class="card-title">Efectivo en caja</div>
+                        <div class="metric-big" id="caja-efectivo-real">$0</div>
+                        <div style="font-size:10px;color:var(--text3);margin-top:2px" id="caja-efectivo-detalle">Inicial
+                            + cobros − envíos</div>
+                    </div>
+                    <div class="card card-sm">
+                        <div class="card-title">Transferencia / Tarjeta</div>
+                        <div class="metric-big" id="caja-digital">$0</div>
+                    </div>
+                    <div class="card card-sm" style="border-color:rgba(248,113,113,0.2)">
+                        <div class="card-title">Gasto de envíos</div>
+                        <div class="metric-big highlight-red" id="caja-envios-total">$0</div>
+                    </div>
+                </div>
+
+                <!-- Fila saldo inicial + estado -->
+                <div class="card mb-14" id="card-saldo-inicial" style="display:none">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-16">
+                            <div>
+                                <div style="font-size:11px;color:var(--text3)">SALDO INICIAL</div>
+                                <div style="font-size:20px;font-weight:700;font-family:'DM Mono',monospace;color:var(--green)"
+                                    id="caja-saldo-inicial-display">$0.00</div>
+                            </div>
+                            <div style="width:1px;height:36px;background:var(--border)"></div>
+                            <div>
+                                <div style="font-size:11px;color:var(--text3)">SALDO FINAL ESPERADO</div>
+                                <div style="font-size:20px;font-weight:700;font-family:'DM Mono',monospace"
+                                    id="caja-saldo-final-display">$0.00</div>
+                            </div>
+                            <div style="width:1px;height:36px;background:var(--border)"></div>
+                            <div>
+                                <div style="font-size:11px;color:var(--text3)">ESTADO</div>
+                                <span class="badge badge-green" id="caja-estado-badge">🟢 Abierta</span>
+                            </div>
+                        </div>
+                        <div style="font-size:11px;color:var(--text3)" id="caja-hora-apertura"></div>
+                    </div>
+                </div>
+
+                <!-- Movimientos -->
+                <div class="card">
+                    <div class="section-header">
+                        <div class="section-title">Movimientos del día</div>
+                    </div>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Hora</th>
+                                    <th>Pedido</th>
+                                    <th>Cliente</th>
+                                    <th>Método</th>
+                                    <th>Concepto</th>
+                                    <th>Monto</th>
+                                    <th>Estado</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabla-caja"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- =================== PROVEEDORES =================== -->
+        <div id="page-proveedores" class="page">
+            <div class="topbar">
+                <div class="topbar-title">Proveedores</div>
+                <div class="topbar-actions">
+                    <button class="btn btn-primary btn-sm" onclick="openNuevoProveedor()">+ Agregar proveedor</button>
+                </div>
+            </div>
+            <div class="content">
+                <div class="grid grid-3" id="proveedores-grid"
+                    style="grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));"></div>
+            </div>
+        </div>
+
+        <!-- =================== CUENTAS POR PAGAR =================== -->
+        <div id="page-cxp" class="page">
+            <div class="topbar">
+                <div class="topbar-title">Cuentas por Pagar</div>
+                <div class="topbar-actions">
+                    <button class="btn btn-primary btn-sm" onclick="openNuevaCuenta()">+ Registrar cuenta</button>
+                </div>
+            </div>
+            <div class="content">
+                <div class="grid grid-4 mb-16">
+                    <div class="card card-sm" style="border-color:rgba(248,113,113,0.2)">
+                        <div class="card-title">Total pendiente</div>
+                        <div class="metric-big highlight-red" id="cxp-total">$0</div>
+                    </div>
+                    <div class="card card-sm" style="border-color:rgba(248,113,113,0.25)">
+                        <div class="card-title">Vencidas</div>
+                        <div class="metric-big highlight-red" id="cxp-vencidas">0</div>
+                    </div>
+                    <div class="card card-sm" style="border-color:rgba(251,191,36,0.2)">
+                        <div class="card-title">Por vencer</div>
+                        <div class="metric-big highlight-amber" id="cxp-porvencer">0</div>
+                    </div>
+                    <div class="card card-sm" style="border-color:rgba(74,222,128,0.2)">
+                        <div class="card-title">Al corriente</div>
+                        <div class="metric-big highlight-green" id="cxp-ok">0</div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="flex items-center gap-12 mb-16">
+                        <div class="flex gap-8">
+                            <span class="chip active" onclick="filtrarCxp(this,'todas')">Todas</span>
+                            <span class="chip" onclick="filtrarCxp(this,'proveedor')">🚛 Proveedores</span>
+                            <span class="chip" onclick="filtrarCxp(this,'servicio')">🏢 Servicios / Renta</span>
+                            <span class="chip" onclick="filtrarCxp(this,'otro')">📋 Otro</span>
+                        </div>
+                        <div style="flex:1"></div>
+                        <select class="form-input" style="width:150px" onchange="filtrarCxpEstado(this.value)">
+                            <option value="">Todos los estados</option>
+                            <option value="pendiente">Pendientes</option>
+                            <option value="vencida">Vencidas</option>
+                            <option value="pagada">Pagadas</option>
+                        </select>
+                    </div>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Tipo</th>
+                                    <th>Acreedor</th>
+                                    <th>Concepto</th>
+                                    <th>Monto</th>
+                                    <th>Vencimiento</th>
+                                    <th>Estado</th>
+                                    <th>Método pago</th>
+                                    <th>Notas</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabla-cxp"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- =================== CUENTAS POR COBRAR =================== -->
+        <div id="page-cxc" class="page">
+            <div class="topbar">
+                <div class="topbar-title">Cuentas por Cobrar</div>
+                <div class="topbar-actions">
+                    <button class="btn btn-primary btn-sm" onclick="openNuevaCxC()">+ Registrar saldo</button>
+                </div>
+            </div>
+            <div class="content">
+                <div class="grid grid-4 mb-16">
+                    <div class="card card-sm" style="border-color:rgba(96,165,250,0.2)">
+                        <div class="card-title">Total por cobrar</div>
+                        <div class="metric-big" style="color:var(--blue)" id="cxc-total">$0</div>
+                    </div>
+                    <div class="card card-sm" style="border-color:rgba(248,113,113,0.2)">
+                        <div class="card-title">Vencidas</div>
+                        <div class="metric-big highlight-red" id="cxc-vencidas">0</div>
+                    </div>
+                    <div class="card card-sm" style="border-color:rgba(251,191,36,0.2)">
+                        <div class="card-title">Por vencer (7 días)</div>
+                        <div class="metric-big highlight-amber" id="cxc-porvencer">0</div>
+                    </div>
+                    <div class="card card-sm" style="border-color:rgba(74,222,128,0.2)">
+                        <div class="card-title">Al corriente</div>
+                        <div class="metric-big highlight-green" id="cxc-ok">0</div>
+                    </div>
+                </div>
+                <!-- Clientes con saldo pendiente (resumen visual) -->
+                <div class="card mb-14">
+                    <div class="section-header">
+                        <div class="section-title">Clientes pendientes de pago</div>
+                    </div>
+                    <div id="cxc-resumen-clientes"></div>
+                </div>
+                <div class="card">
+                    <div class="section-header">
+                        <div class="section-title">Historial de cargos</div>
+                    </div>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Cliente</th>
+                                    <th>Concepto</th>
+                                    <th>Monto</th>
+                                    <th>Fecha</th>
+                                    <th>Vencimiento</th>
+                                    <th>Estado</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabla-cxc"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        
+        <!-- =================== CRM KANBAN =================== -->
+        <div id="page-crm-kanban" class="page">
+            <div class="topbar">
+                <div class="topbar-title">CRM Kanban de Clientes</div>
+                <div class="topbar-actions">
+                    <div class="search-wrap">
+                        <span class="search-icon">🔍</span>
+                        <input type="text" class="form-input" placeholder="Buscar en Kanban..." oninput="filtrarCRM(this.value)">
+                    </div>
+                </div>
+            </div>
+            <div class="content">
+                <div class="kanban" id="crm-kanban-board" style="grid-template-columns: repeat(5, 1fr);">
+                    <!-- Kanban columns will be injected here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- =================== CLIENTES =================== -->
+        <div id="page-clientes" class="page">
+            <div class="topbar">
+                <div class="topbar-title">Clientes</div>
+                <div class="topbar-actions">
+                    <button class="btn btn-primary btn-sm" onclick="openNuevoCliente()">+ Agregar cliente</button>
+                </div>
+            </div>
+            <div class="content">
+                <div class="card mb-16">
+                    <div class="search-wrap">
+                        <span class="search-icon">🔍</span>
+                        <input type="text" class="form-input" placeholder="Buscar cliente..."
+                            oninput="buscarCliente(this.value)">
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Cliente</th>
+                                    <th>Teléfono</th>
+                                    <th>Canal</th>
+                                    <th>Dieta</th>
+                                    <th>Pedidos</th>
+                                    <th>Último pedido</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabla-clientes"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- =================== COMPRAS =================== -->
+        <div id="page-compras" class="page">
+            <div class="topbar">
+                <div class="topbar-title">Compras de Insumos</div>
+                <div class="topbar-actions">
+                    <button class="btn btn-primary btn-sm" onclick="openNuevaCompra()">+ Nueva compra</button>
+                </div>
+            </div>
+            <div class="content">
+                <!-- KPIs compras -->
+                <div class="grid grid-4 mb-16">
+                    <div class="card card-sm">
+                        <div class="card-title">Compras este mes</div>
+                        <div class="metric-big font-mono" id="compras-mes">$0</div>
+                    </div>
+                    <div class="card card-sm">
+                        <div class="card-title">Órdenes este mes</div>
+                        <div class="metric-big" id="compras-ordenes">0</div>
+                    </div>
+                    <div class="card card-sm" style="border-color:rgba(251,191,36,0.2)">
+                        <div class="card-title">Pendientes de recibir</div>
+                        <div class="metric-big highlight-amber" id="compras-pendientes">0</div>
+                    </div>
+                    <div class="card card-sm" style="border-color:rgba(74,222,128,0.2)">
+                        <div class="card-title">Recibidas</div>
+                        <div class="metric-big highlight-green" id="compras-recibidas">0</div>
+                    </div>
+                </div>
+
+                <!-- Sugerencias de recompra -->
+                <div id="compras-sugerencias-wrap" class="card mb-14" style="border-color:rgba(251,191,36,0.2)">
+                    <div class="section-header">
+                        <div class="section-title">⚠ Ingredientes que necesitan reposición</div>
+                        <button class="btn btn-secondary btn-sm" onclick="generarOrdenSugerida()">Generar orden
+                            sugerida</button>
+                    </div>
+                    <div id="compras-sugerencias"></div>
+                </div>
+
+                <!-- Historial de compras -->
+                <div class="card">
+                    <div class="section-header">
+                        <div class="section-title">Historial de órdenes</div>
+                    </div>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Fecha</th>
+                                    <th>Proveedor</th>
+                                    <th>Items</th>
+                                    <th>Total</th>
+                                    <th>Estado</th>
+                                    <th>Notas</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabla-compras"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- =================== REPORTES =================== -->
+        <div id="page-reportes" class="page">
+            <div class="topbar">
+                <div class="topbar-title">Reportes e Inteligencia de Negocio</div>
+                <div class="topbar-actions">
+                    <select class="form-input" style="width:160px;font-size:13px" id="reporte-periodo"
+                        onchange="cambiarPeriodo(this.value)">
+                        <option value="7">Últimos 7 días</option>
+                        <option value="30" selected>Últimos 30 días</option>
+                        <option value="90">Últimos 90 días</option>
+                        <option value="todo">Todo el tiempo</option>
+                        <option value="dia">Día específico</option>
+                        <option value="rango">Rango de fechas</option>
+                    </select>
+                    <!-- Día específico -->
+                    <input type="date" id="reporte-dia" class="form-input"
+                        style="width:150px;font-size:13px;display:none" onchange="renderReportes()">
+                    <!-- Rango -->
+                    <input type="date" id="reporte-desde" class="form-input"
+                        style="width:140px;font-size:13px;display:none" onchange="renderReportes()">
+                    <span id="reporte-rango-sep" style="color:var(--text3);display:none">→</span>
+                    <input type="date" id="reporte-hasta" class="form-input"
+                        style="width:140px;font-size:13px;display:none" onchange="renderReportes()">
+                    <button class="btn btn-secondary btn-sm" onclick="exportarReporteCSV()">📤 Exportar CSV</button>
+                </div>
+            </div>
+            <div class="content">
+
+                <!-- KPIs resumen período -->
+                <div class="grid mb-16" style="grid-template-columns:repeat(5,1fr);gap:14px" id="rep-kpis"></div>
+
+                <!-- Tabs -->
+                <div class="tabs" id="rep-tabs">
+                    <div class="tab active" onclick="switchRepTab(this,'ventas')">📈 Ventas</div>
+                    <div class="tab" onclick="switchRepTab(this,'platillos')">🥙 Platillos</div>
+                    <div class="tab" onclick="switchRepTab(this,'clientes')">👤 Clientes</div>
+                    <div class="tab" onclick="switchRepTab(this,'inventario')">📦 Consumo</div>
+                    <div class="tab" onclick="switchRepTab(this,'finanzas')">💰 Finanzas</div>
+                    <div class="tab" onclick="switchRepTab(this,'estados')">📋 Estados financieros</div>
+                </div>
+
+                <!-- TAB: VENTAS -->
+                <div id="rep-tab-ventas">
+                    <div class="grid grid-2 mb-14" style="grid-template-columns:1.6fr 1fr">
+                        <div class="card">
+                            <div class="section-header">
+                                <div class="section-title">Ventas por día</div>
+                            </div>
+                            <div id="rep-grafica-ventas" style="padding:8px 0"></div>
+                        </div>
+                        <div class="card">
+                            <div class="section-header">
+                                <div class="section-title">Ventas por canal</div>
+                            </div>
+                            <div id="rep-canales"></div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="section-header">
+                            <div class="section-title">Detalle de ventas por día</div>
+                        </div>
+                        <div class="table-wrap">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Fecha</th>
+                                        <th>Pedidos</th>
+                                        <th>Ventas</th>
+                                        <th>Ticket promedio</th>
+                                        <th>Con descuento</th>
+                                        <th>Canal top</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="rep-tabla-ventas"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB: PLATILLOS -->
+                <div id="rep-tab-platillos" style="display:none">
+                    <div class="grid grid-2 mb-14">
+                        <div class="card">
+                            <div class="section-header">
+                                <div class="section-title">🏆 Más vendidos</div>
+                            </div>
+                            <div id="rep-top-platillos"></div>
+                        </div>
+                        <div class="card">
+                            <div class="section-header">
+                                <div class="section-title">💰 Rentabilidad por platillo</div>
+                            </div>
+                            <div id="rep-rentabilidad"></div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="section-header">
+                            <div class="section-title">Análisis completo de menú</div>
+                        </div>
+                        <div class="table-wrap">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Platillo</th>
+                                        <th>Vendidos</th>
+                                        <th>Ingresos</th>
+                                        <th>Costo unit.</th>
+                                        <th>Precio venta</th>
+                                        <th>Margen</th>
+                                        <th>Food cost %</th>
+                                        <th>Semáforo</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="rep-tabla-platillos"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB: CLIENTES -->
+                <div id="rep-tab-clientes" style="display:none">
+                    <div class="grid grid-2 mb-14">
+                        <div class="card">
+                            <div class="section-header">
+                                <div class="section-title">🥇 Top clientes por compras</div>
+                            </div>
+                            <div id="rep-top-clientes"></div>
+                        </div>
+                        <div class="card">
+                            <div class="section-header">
+                                <div class="section-title">Canal preferido</div>
+                            </div>
+                            <div id="rep-clientes-canal"></div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="section-header">
+                            <div class="section-title">Historial de clientes</div>
+                        </div>
+                        <div class="table-wrap">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Cliente</th>
+                                        <th>Pedidos</th>
+                                        <th>Total gastado</th>
+                                        <th>Ticket prom.</th>
+                                        <th>Último pedido</th>
+                                        <th>Canal</th>
+                                        <th>Dieta</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="rep-tabla-clientes"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB: INVENTARIO/CONSUMO -->
+                <div id="rep-tab-inventario" style="display:none">
+                    <div class="grid grid-2 mb-14">
+                        <div class="card">
+                            <div class="section-header">
+                                <div class="section-title">Ingredientes más usados</div>
+                            </div>
+                            <div id="rep-consumo-ingredientes"></div>
+                        </div>
+                        <div class="card">
+                            <div class="section-header">
+                                <div class="section-title">Valor del inventario actual</div>
+                            </div>
+                            <div id="rep-valor-inventario"></div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="section-header">
+                            <div class="section-title">Historial de compras</div>
+                        </div>
+                        <div class="table-wrap">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Fecha</th>
+                                        <th>Proveedor</th>
+                                        <th>Items</th>
+                                        <th>Total</th>
+                                        <th>Estado</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="rep-tabla-compras"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB: FINANZAS -->
+                <div id="rep-tab-finanzas" style="display:none">
+                    <div class="grid grid-2 mb-14">
+                        <div class="card">
+                            <div class="section-header">
+                                <div class="section-title">Resumen financiero del período</div>
+                            </div>
+                            <div id="rep-resumen-financiero"></div>
+                        </div>
+                        <div class="card">
+                            <div class="section-header">
+                                <div class="section-title">CxP pendientes por proveedor</div>
+                            </div>
+                            <div id="rep-cxp-resumen"></div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="section-header">
+                            <div class="section-title">Comparativo períodos</div>
+                        </div>
+                        <div id="rep-comparativo"></div>
+                    </div>
+                </div>
+
+                <!-- TAB: ESTADOS FINANCIEROS -->
+                <div id="rep-tab-estados" style="display:none">
+
+                    <!-- Selector período estados -->
+                    <div class="card mb-14" style="padding:16px">
+                        <div class="flex items-center gap-12" style="flex-wrap:wrap">
+                            <div>
+                                <label class="form-label">Mes / período</label>
+                                <select class="form-input" id="ef-mes" style="width:160px"
+                                    onchange="renderEstadosFinancieros()">
+                                    <option value="actual">Mes actual</option>
+                                    <option value="anterior">Mes anterior</option>
+                                    <option value="personalizado">Personalizado</option>
+                                </select>
+                            </div>
+                            <div id="ef-rango-wrap" style="display:none;gap:8px" class="flex items-center gap-8">
+                                <input type="date" id="ef-desde" class="form-input" style="width:145px"
+                                    onchange="renderEstadosFinancieros()">
+                                <span style="color:var(--text3)">→</span>
+                                <input type="date" id="ef-hasta" class="form-input" style="width:145px"
+                                    onchange="renderEstadosFinancieros()">
+                            </div>
+                            <div style="flex:1"></div>
+                            <button class="btn btn-secondary btn-sm" onclick="openNuevoGasto()">+ Gasto fijo</button>
+                            <button class="btn btn-secondary btn-sm" onclick="exportarEstadosCSV()">📤 Exportar</button>
+                        </div>
+                    </div>
+
+                    <!-- Los 3 estados -->
+                    <div class="grid grid-3 mb-14" style="align-items:start">
+
+                        <!-- Estado de Resultados -->
+                        <div class="card" id="ef-resultados-card">
+                            <div class="section-header mb-12">
+                                <div class="section-title">📊 Estado de Resultados</div>
+                            </div>
+                            <div id="ef-resultados"></div>
+                        </div>
+
+                        <!-- Balance General -->
+                        <div class="card" id="ef-balance-card">
+                            <div class="section-header mb-12">
+                                <div class="section-title">⚖️ Balance General</div>
+                            </div>
+                            <div id="ef-balance"></div>
+                        </div>
+
+                        <!-- Flujo de Efectivo -->
+                        <div class="card" id="ef-flujo-card">
+                            <div class="section-header mb-12">
+                                <div class="section-title">💸 Flujo de Efectivo</div>
+                            </div>
+                            <div id="ef-flujo"></div>
+                        </div>
+
+                    </div>
+
+                    <!-- Gastos fijos registrados -->
+                    <div class="card">
+                        <div class="section-header">
+                            <div class="section-title">Gastos fijos / operativos registrados</div>
+                            <button class="btn btn-primary btn-sm" onclick="openNuevoGasto()">+ Agregar gasto</button>
+                        </div>
+                        <div class="table-wrap">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Concepto</th>
+                                        <th>Categoría</th>
+                                        <th>Monto</th>
+                                        <th>Fecha</th>
+                                        <th>Recurrente</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="ef-tabla-gastos"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- =================== USUARIOS =================== -->
+        <div id="page-usuarios" class="page">
+            <div class="topbar">
+                <div class="topbar-title">Usuarios y Permisos</div>
+            </div>
+            <div class="content">
+                <!-- Usuarios -->
+                <div class="grid grid-2 mb-16" style="grid-template-columns:1fr 1.4fr;gap:16px">
+                    <div class="card">
+                        <div class="section-header mb-12">
+                            <div class="section-title">Cuentas de usuario</div>
+                        </div>
+                        <div id="usuarios-lista"></div>
+                        <button class="btn btn-secondary btn-sm mt-12" onclick="openNuevoUsuario()">+ Agregar
+                            usuario</button>
+                    </div>
+                    <div class="card">
+                        <div class="section-header mb-4">
+                            <div class="section-title">Permisos del perfil <span id="permisos-rol-label"
+                                    style="color:var(--green)">Caja</span></div>
+                        </div>
+                        <div style="font-size:12px;color:var(--text3);margin-bottom:14px">Activa o desactiva qué módulos
+                            puede ver el perfil Caja</div>
+                        <div id="permisos-lista"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- =================== IMPORTAR =================== -->
+        <div id="page-importar" class="page">
+            <div class="topbar">
+                <div class="topbar-title">Carga Masiva de Datos</div>
+                <div class="topbar-actions">
+                    <button class="btn btn-secondary btn-sm" onclick="descargarPlantillas()">📥 Descargar plantillas
+                        Excel</button>
+                </div>
+            </div>
+            <div class="content">
+                <div class="card mb-14" style="border-color:rgba(96,165,250,0.2);background:var(--blue-dim)">
+                    <div class="flex items-center gap-12">
+                        <span style="font-size:24px">📋</span>
+                        <div>
+                            <div style="font-size:13px;font-weight:600;color:var(--blue)">Instrucciones de carga</div>
+                            <div style="font-size:12px;color:var(--text2);margin-top:3px">Descarga la plantilla, llénala
+                                en Excel y súbela aquí. El sistema leerá las columnas automáticamente. Los datos
+                                existentes no se borran, se agregan.</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="grid grid-3" style="gap:16px;grid-template-columns:repeat(auto-fill,minmax(280px,1fr))">
+
+                    <!-- Clientes -->
+                    <div class="card">
+                        <div class="flex items-center gap-10 mb-12">
+                            <span style="font-size:20px">👤</span>
+                            <div>
+                                <div style="font-weight:600">Clientes</div>
+                                <div style="font-size:11px;color:var(--text3)">nombre, teléfono, canal, notas</div>
+                            </div>
+                        </div>
+                        <div class="import-zone" onclick="document.getElementById('imp-clientes').click()">
+                            <input type="file" id="imp-clientes" accept=".xlsx,.csv" style="display:none"
+                                onchange="importarArchivo(this,'clientes')">
+                            <div style="font-size:24px;margin-bottom:8px">📂</div>
+                            <div style="font-size:13px;font-weight:500">Subir archivo Excel</div>
+                            <div style="font-size:11px;color:var(--text3);margin-top:4px">.xlsx o .csv</div>
+                        </div>
+                        <div class="import-result" id="res-clientes"></div>
+                    </div>
+
+                    <!-- Insumos -->
+                    <div class="card">
+                        <div class="flex items-center gap-10 mb-12">
+                            <span style="font-size:20px">📦</span>
+                            <div>
+                                <div style="font-weight:600">Insumos / Inventario</div>
+                                <div style="font-size:11px;color:var(--text3)">nombre, categoría, stock, mínimo, unidad,
+                                    costo</div>
+                            </div>
+                        </div>
+                        <div class="import-zone" onclick="document.getElementById('imp-insumos').click()">
+                            <input type="file" id="imp-insumos" accept=".xlsx,.csv" style="display:none"
+                                onchange="importarArchivo(this,'insumos')">
+                            <div style="font-size:24px;margin-bottom:8px">📂</div>
+                            <div style="font-size:13px;font-weight:500">Subir archivo Excel</div>
+                            <div style="font-size:11px;color:var(--text3);margin-top:4px">.xlsx o .csv</div>
+                        </div>
+                        <div class="import-result" id="res-insumos"></div>
+                    </div>
+
+                    <!-- Proveedores -->
+                    <div class="card">
+                        <div class="flex items-center gap-10 mb-12">
+                            <span style="font-size:20px">🚛</span>
+                            <div>
+                                <div style="font-weight:600">Proveedores</div>
+                                <div style="font-size:11px;color:var(--text3)">nombre, contacto, teléfono, categoría,
+                                    días</div>
+                            </div>
+                        </div>
+                        <div class="import-zone" onclick="document.getElementById('imp-proveedores').click()">
+                            <input type="file" id="imp-proveedores" accept=".xlsx,.csv" style="display:none"
+                                onchange="importarArchivo(this,'proveedores')">
+                            <div style="font-size:24px;margin-bottom:8px">📂</div>
+                            <div style="font-size:13px;font-weight:500">Subir archivo Excel</div>
+                            <div style="font-size:11px;color:var(--text3);margin-top:4px">.xlsx o .csv</div>
+                        </div>
+                        <div class="import-result" id="res-proveedores"></div>
+                    </div>
+
+                    <!-- Recetas -->
+                    <div class="card">
+                        <div class="flex items-center gap-10 mb-12">
+                            <span style="font-size:20px">📋</span>
+                            <div>
+                                <div style="font-weight:600">Recetas / Menú</div>
+                                <div style="font-size:11px;color:var(--text3)">platillo, categoría, precio, calorias,
+                                    descripción</div>
+                            </div>
+                        </div>
+                        <div class="import-zone" onclick="document.getElementById('imp-recetas').click()">
+                            <input type="file" id="imp-recetas" accept=".xlsx,.csv" style="display:none"
+                                onchange="importarArchivo(this,'recetas')">
+                            <div style="font-size:24px;margin-bottom:8px">📂</div>
+                            <div style="font-size:13px;font-weight:500">Subir archivo Excel</div>
+                            <div style="font-size:11px;color:var(--text3);margin-top:4px">.xlsx o .csv</div>
+                        </div>
+                        <div class="import-result" id="res-recetas"></div>
+                    </div>
+
+                    <!-- Ventas -->
+                    <div class="card">
+                        <div class="flex items-center gap-10 mb-12">
+                            <span style="font-size:20px">🧾</span>
+                            <div>
+                                <div style="font-weight:600">Ventas históricas</div>
+                                <div style="font-size:11px;color:var(--text3)">fecha, cliente, platillo, cantidad,
+                                    total, canal, pago</div>
+                            </div>
+                        </div>
+                        <div class="import-zone" onclick="document.getElementById('imp-ventas').click()">
+                            <input type="file" id="imp-ventas" accept=".xlsx,.csv" style="display:none"
+                                onchange="importarArchivo(this,'ventas')">
+                            <div style="font-size:24px;margin-bottom:8px">📂</div>
+                            <div style="font-size:13px;font-weight:500">Subir archivo Excel</div>
+                            <div style="font-size:11px;color:var(--text3);margin-top:4px">.xlsx o .csv</div>
+                        </div>
+                        <div class="import-result" id="res-ventas"></div>
+                    </div>
+
+                    <!-- Recetas con Insumos -->
+                    <div class="card" style="border-color:rgba(74,222,128,0.25)">
+                        <div class="flex items-center gap-10 mb-8">
+                            <span style="font-size:20px">🧑‍🍳</span>
+                            <div>
+                                <div style="font-weight:600;color:var(--green)">Recetas con Insumos</div>
+                                <div style="font-size:11px;color:var(--text3)">platillo, insumo, cantidad, unidad</div>
+                            </div>
+                        </div>
+                        <div
+                            style="background:var(--green-dim2);border:1px solid rgba(74,222,128,0.15);border-radius:var(--radius-sm);padding:10px;margin-bottom:12px;font-size:11.5px;color:var(--text2);line-height:1.6">
+                            💡 Carga los ingredientes de cada platillo. El sistema busca el costo de cada insumo en tu
+                            inventario y calcula el <strong style="color:var(--green)">costo total
+                                automáticamente</strong>. Si el platillo no existe, lo crea; si ya existe, actualiza su
+                            receta y costo.
+                        </div>
+                        <div class="import-zone" onclick="document.getElementById('imp-recetas-insumos').click()">
+                            <input type="file" id="imp-recetas-insumos" accept=".xlsx,.csv" style="display:none"
+                                onchange="importarArchivo(this,'recetas_insumos')">
+                            <div style="font-size:24px;margin-bottom:8px">📂</div>
+                            <div style="font-size:13px;font-weight:500">Subir archivo Excel</div>
+                            <div style="font-size:11px;color:var(--text3);margin-top:4px">.xlsx o .csv</div>
+                        </div>
+                        <div class="import-result" id="res-recetas_insumos"></div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- =================== ELIMINACIÓN DE PEDIDOS =================== -->
+        <div id="page-eliminacion" class="page">
+            <div class="topbar">
+                <div class="topbar-title">Eliminar Pedidos</div>
+            </div>
+            <div class="content">
+
+                <div class="card mb-16" style="border-color:rgba(248,113,113,0.2);background:var(--red-dim)">
+                    <div class="flex items-center gap-12">
+                        <span style="font-size:24px">⚠️</span>
+                        <div>
+                            <div style="font-weight:600;color:var(--red)">Zona de administración — Eliminación de
+                                pedidos</div>
+                            <div style="font-size:12px;color:var(--text2);margin-top:2px">Solo disponible para
+                                administradores. Cada eliminación queda registrada en el historial con motivo y usuario
+                                responsable.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Filtros -->
+                <div class="card mb-14">
+                    <div class="flex gap-12 items-center">
+                        <div class="search-wrap flex-1">
+                            <span class="search-icon">🔍</span>
+                            <input class="form-input" placeholder="Buscar por cliente, #pedido..."
+                                oninput="filtrarPedidosAdmin(this.value)">
+                        </div>
+                        <select class="form-input" style="width:160px" onchange="filtrarEstadoAdmin(this.value)">
+                            <option value="">Todos los estados</option>
+                            <option>Nuevo</option>
+                            <option>En preparación</option>
+                            <option>Listo</option>
+                            <option>Entregado</option>
+                            <option>Cancelado</option>
+                        </select>
+                        <input class="form-input" type="date" style="width:150px"
+                            onchange="filtrarFechaAdmin(this.value)" id="admin-filtro-fecha">
+                    </div>
+                </div>
+
+                <!-- Tabla de pedidos -->
+                <div class="card mb-20">
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Fecha</th>
+                                    <th>Cliente</th>
+                                    <th>Items</th>
+                                    <th>Total</th>
+                                    <th>Estado</th>
+                                    <th>Acción</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabla-admin-pedidos"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Historial de eliminaciones -->
+                <div class="section-header mb-12">
+                    <div class="section-title">📋 Historial de eliminaciones</div>
+                </div>
+                <div class="card">
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Fecha eliminación</th>
+                                    <th>Pedido</th>
+                                    <th>Cliente</th>
+                                    <th>Total</th>
+                                    <th>Motivo</th>
+                                    <th>Eliminado por</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabla-historial-eliminaciones"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- =================== PRODUCCIONES =================== -->
+        <div id="page-producciones" class="page">
+            <div class="topbar">
+                <div class="topbar-title">Producciones</div>
+                <div class="topbar-actions">
+                    <button class="btn btn-primary btn-sm" onclick="openNuevoPreparado()">+ Nueva producción</button>
+                </div>
+            </div>
+            <div class="content">
+
+                <div class="card mb-14" style="border-color:rgba(167,139,250,0.2);background:var(--purple-dim)">
+                    <div class="flex items-center gap-12">
+                        <span style="font-size:24px">🧪</span>
+                        <div>
+                            <div style="font-size:13px;font-weight:600;color:var(--purple)">¿Cómo funcionan las
+                                Producciones?</div>
+                            <div style="font-size:12px;color:var(--text2);margin-top:2px">Define salsas, bases, mezclas
+                                y preparados internos con sus insumos. Al <strong>ejecutar una producción</strong>, el
+                                sistema descuenta los insumos usados del inventario y agrega el preparado resultante
+                                como un nuevo insumo disponible para recetas.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- KPIs -->
+                <div class="grid grid-3 mb-16">
+                    <div class="card card-sm">
+                        <div class="card-title">Preparados registrados</div>
+                        <div class="metric-big" id="prod-total">0</div>
+                    </div>
+                    <div class="card card-sm" style="border-color:rgba(74,222,128,0.2)">
+                        <div class="card-title">Producciones del mes</div>
+                        <div class="metric-big highlight-green" id="prod-mes">0</div>
+                    </div>
+                    <div class="card card-sm" style="border-color:rgba(167,139,250,0.2)">
+                        <div class="card-title">Costo total producido</div>
+                        <div class="metric-big" style="color:var(--purple)" id="prod-costo-total">$0</div>
+                    </div>
+                </div>
+
+                <!-- Grid de preparados -->
+                <div class="section-header mb-12">
+                    <div class="section-title">Recetas de preparados</div>
+                    <div class="search-wrap" style="width:240px">
+                        <span class="search-icon">🔍</span>
+                        <input type="text" class="form-input" placeholder="Buscar preparado..."
+                            oninput="buscarPreparado(this.value)">
+                    </div>
+                </div>
+                <div class="grid" style="grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px"
+                    id="preparados-grid"></div>
+
+                <!-- Historial de ejecuciones -->
+                <div class="section-header mt-20 mb-12">
+                    <div class="section-title">Historial de producciones ejecutadas</div>
+                </div>
+                <div class="card">
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Fecha</th>
+                                    <th>Preparado</th>
+                                    <th>Cantidad producida</th>
+                                    <th>Costo total</th>
+                                    <th>Ejecutado por</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabla-historial-prod"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- =================== MODALES =================== -->
+
+        <!-- Modal Nuevo Pedido -->
+        <div class="modal-overlay" id="modal-pedido">
+            <div class="modal modal-lg">
+                <div class="modal-header">
+                    <div>
+                        <div class="modal-title" id="pedido-modal-title">Nuevo Pedido</div>
+                        <div style="font-size:11px;color:var(--text3);margin-top:2px" id="pedido-modal-sub">Pedido del
+                            día de hoy</div>
+                    </div>
+                    <button class="modal-close" onclick="closeModal('modal-pedido')">×</button>
+                </div>
+                <div class="modal-body">
+
+                    <!-- FECHA DEL PEDIDO -->
+                    <div class="form-group mb-12"
+                        style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px">
+                        <div class="flex items-center gap-12">
+                            <span style="font-size:18px">📅</span>
+                            <div style="flex:1">
+                                <label class="form-label" style="margin-bottom:4px">Fecha del pedido</label>
+                                <input class="form-input" type="date" id="pedido-fecha"
+                                    onchange="onChangeFechaPedido(this.value)">
+                            </div>
+                            <div style="text-align:right">
+                                <div id="pedido-fecha-badge" class="badge badge-green" style="font-size:11px">📅 Hoy
+                                </div>
+                                <div style="font-size:10px;color:var(--text3);margin-top:3px" id="pedido-fecha-hint">
+                                    Registro normal</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- CLIENTE: selector + creación rápida -->
+                    <div class="form-group mb-4">
+                        <label class="form-label">Cliente</label>
+                        <div class="flex gap-8">
+                            <select class="form-input flex-1" id="pedido-cliente"
+                                onchange="autocompletarCliente(this.value)">
+                                <option value="">Seleccionar cliente...</option>
+                            </select>
+                            <button class="btn btn-secondary btn-sm" onclick="toggleNuevoClienteRapido()"
+                                id="btn-nuevo-cli" title="Crear cliente nuevo">+ Nuevo</button>
+                        </div>
+                    </div>
+                    <!-- Formulario cliente rápido (colapsable) -->
+                    <div id="panel-nuevo-cliente"
+                        style="display:none; background:var(--bg3); border:1px solid var(--border); border-radius:var(--radius-sm); padding:14px; margin-bottom:12px;">
+                        <div style="font-size:12px;font-weight:600;color:var(--green);margin-bottom:10px;">✦ Crear
+                            cliente nuevo</div>
+                        <div class="form-row">
+                            <div class="form-group" style="margin-bottom:0">
+                                <label class="form-label">Nombre *</label>
+                                <input class="form-input" id="quick-cli-nombre" placeholder="Nombre completo">
+                            </div>
+                            <div class="form-group" style="margin-bottom:0">
+                                <label class="form-label">Teléfono / WhatsApp</label>
+                                <input class="form-input" id="quick-cli-tel" placeholder="+52 999 000 0000">
+                            </div>
+                        </div>
+                        <div class="flex gap-8 mt-8">
+                            <button class="btn btn-primary btn-sm" onclick="crearClienteRapido()">Guardar y
+                                seleccionar</button>
+                            <button class="btn btn-secondary btn-sm"
+                                onclick="toggleNuevoClienteRapido()">Cancelar</button>
+                        </div>
+                    </div>
+
+                    <div class="form-row mb-12">
+                        <div class="form-group">
+                            <label class="form-label">Canal de entrada</label>
+                            <select class="form-input" id="pedido-canal">
+                                <option>WhatsApp</option>
+                                <option>Presencial</option>
+                                <option>Instagram</option>
+                                <option>Facebook</option>
+                                <option>Teléfono</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">¿Cuándo paga?</label>
+                            <div class="flex gap-8">
+                                <span class="chip active" onclick="setModoPago(this,'inmediato')">💳 Paga ahora</span>
+                                <span class="chip" onclick="setModoPago(this,'credito')">📥 Queda a deber</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Panel pago inmediato -->
+                    <div id="panel-pago-inmediato" class="form-group">
+                        <label class="form-label">Método de pago</label>
+                        <select class="form-input" id="pedido-pago">
+                            <option>Efectivo</option>
+                            <option>Transferencia / SPEI</option>
+                            <option>Tarjeta</option>
+                        </select>
+                    </div>
+
+                    <!-- Panel crédito / CxC -->
+                    <div id="panel-pago-credito"
+                        style="display:none; background:var(--blue-dim); border:1px solid rgba(96,165,250,0.2); border-radius:var(--radius-sm); padding:12px; margin-bottom:12px;">
+                        <div style="font-size:12px;font-weight:600;color:var(--blue);margin-bottom:8px">📥 El pedido
+                            quedará como cuenta por cobrar</div>
+                        <div class="form-row" style="margin-bottom:0">
+                            <div class="form-group" style="margin-bottom:0">
+                                <label class="form-label">Vence el</label>
+                                <input class="form-input" type="date" id="credito-vencimiento">
+                            </div>
+                            <div class="form-group" style="margin-bottom:0">
+                                <label class="form-label">Concepto CxC</label>
+                                <input class="form-input" id="credito-concepto"
+                                    placeholder="Ej: Plan semanal, pedido empresa...">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Tipo de pedido</label>
+                        <div class="flex gap-8">
+                            <span class="chip active" onclick="setTipoPedido(this,'menu')">🥙 Del menú</span>
+                            <span class="chip" onclick="setTipoPedido(this,'dieta')">📋 Dieta personalizada</span>
+                        </div>
+                    </div>
+
+                    <!-- Sección menú -->
+                    <div id="seccion-menu-pedido">
+                        <div class="flex justify-between items-center mb-8 mt-12">
+                            <div class="section-title" style="font-size:13px;">Seleccionar platillos</div>
+                            <span style="font-size:11px;color:var(--text3)" id="menu-conteo-sel">0 seleccionados</span>
+                        </div>
+                        <div class="search-wrap mb-8">
+                            <span class="search-icon">🔍</span>
+                            <input type="text" class="form-input" id="buscador-platillos-modal"
+                                placeholder="Buscar platillo..." oninput="filtrarMenuModal(this.value)"
+                                autocomplete="off">
+                        </div>
+                        <div id="menu-selector"
+                            style="max-height:220px; overflow-y:auto; border:1px solid var(--border); border-radius:var(--radius-sm); padding:8px;">
+                        </div>
+                    </div>
+
+                    <!-- Sección dieta -->
+                    <div id="seccion-dieta-pedido" style="display:none">
+                        <div class="form-group mt-12">
+                            <label class="form-label">Dieta del cliente</label>
+                            <select class="form-input" id="pedido-dieta-sel">
+                                <option value="">Seleccionar dieta guardada...</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Instrucciones especiales</label>
+                            <textarea class="form-input" id="pedido-instrucciones"
+                                placeholder="Ej: sin sal, extra proteína, porción grande..."></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Items seleccionados -->
+                    <div id="pedido-items-sel" style="margin-top:12px;"></div>
+
+                    <hr class="divider">
+
+                    <!-- ENVÍO A DOMICILIO -->
+                    <div class="form-group">
+                        <label class="form-label">¿Incluye envío a domicilio?</label>
+                        <div class="flex gap-8">
+                            <span class="chip" onclick="setModoEnvio(this,'sin_envio')">🏠 Sin envío</span>
+                            <span class="chip" onclick="setModoEnvio(this,'efectivo')">💵 Repartidor cobra en
+                                efectivo</span>
+                            <span class="chip" onclick="setModoEnvio(this,'transferencia')">📲 Cliente transfirió
+                                (comida + envío)</span>
+                            <span class="chip" onclick="setModoEnvio(this,'gratis')">🎁 Envío gratis</span>
+                        </div>
+                    </div>
+
+                    <!-- Panel envío (visible si hay envío) -->
+                    <div id="panel-envio"
+                        style="display:none; background:var(--bg3); border:1px solid rgba(96,165,250,0.2); border-radius:var(--radius-sm); padding:12px; margin-top:8px;">
+                        <div class="form-row" style="margin-bottom:0">
+                            <div class="form-group" style="margin-bottom:0">
+                                <label class="form-label">Costo del envío (MXN)</label>
+                                <input class="form-input" id="envio-costo" type="number" placeholder="0.00"
+                                    oninput="actualizarTotalPedido()">
+                            </div>
+                            <div class="form-group" style="margin-bottom:0">
+                                <label class="form-label">Empresa de envíos</label>
+                                <input class="form-input" id="envio-empresa"
+                                    placeholder="Ej: Mr. Delivery, Rappi, etc.">
+                            </div>
+                        </div>
+                        <div id="envio-info" style="margin-top:10px;font-size:12px;color:var(--text2);line-height:1.6;">
+                        </div>
+                    </div>
+
+                    <div class="form-group mt-12">
+                        <label class="form-label">Notas del pedido</label>
+                        <input class="form-input" id="pedido-notas" placeholder="Notas adicionales...">
+                    </div>
+
+                    <!-- DESCUENTO -->
+                    <div class="form-group">
+                        <label class="form-label">Descuento</label>
+                        <div class="flex gap-8 mb-8" id="descuento-tipo-chips">
+                            <span class="chip active" onclick="setDescuentoTipo(this,'ninguno')">Sin descuento</span>
+                            <span class="chip" onclick="setDescuentoTipo(this,'porcentaje')">% Porcentaje</span>
+                            <span class="chip" onclick="setDescuentoTipo(this,'fijo')">$ Monto fijo</span>
+                        </div>
+                        <div id="panel-descuento" style="display:none">
+                            <div class="form-row" style="margin-bottom:8px">
+                                <div>
+                                    <label class="form-label">Valor del descuento</label>
+                                    <input class="form-input" id="descuento-valor" type="number" placeholder="0"
+                                        oninput="actualizarTotalPedido()">
+                                </div>
+                                <div>
+                                    <label class="form-label">Motivo</label>
+                                    <select class="form-input" id="descuento-motivo">
+                                        <option>Plan semanal</option>
+                                        <option>Plan mensual</option>
+                                        <option>Descuento por volumen</option>
+                                        <option>Cortesía</option>
+                                        <option>Promoción</option>
+                                        <option>Otro</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- RESUMEN DE TOTALES -->
+                    <div class="card card-sm mt-12" style="background:var(--bg3)">
+                        <div class="flex justify-between mb-4">
+                            <span class="text-muted">Subtotal comida</span>
+                            <span class="font-mono" id="pedido-subtotal">$0.00</span>
+                        </div>
+                        <div class="flex justify-between mb-4" id="fila-descuento" style="display:none">
+                            <span style="color:var(--green);font-size:12px"
+                                id="label-descuento-resumen">Descuento</span>
+                            <span class="font-mono" style="color:var(--green)"
+                                id="pedido-descuento-display">-$0.00</span>
+                        </div>
+                        <div class="flex justify-between mb-4" id="fila-envio" style="display:none!important">
+                            <span class="text-muted" id="label-envio-resumen">Envío</span>
+                            <span class="font-mono" id="pedido-envio-display">$0.00</span>
+                        </div>
+                        <div class="flex justify-between mb-4" id="fila-pago-repartidor" style="display:none!important">
+                            <span style="color:var(--amber);font-size:12px">⚠ Pagar al repartidor</span>
+                            <span class="font-mono" style="color:var(--amber)" id="pedido-pago-repartidor">$0.00</span>
+                        </div>
+                        <hr style="border:none;border-top:1px solid var(--border);margin:8px 0">
+                        <div class="flex justify-between">
+                            <span style="font-size:14px;font-weight:600">Total a cobrar al cliente</span>
+                            <span class="font-mono font-semibold highlight-green" id="pedido-total-display">$0.00</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" onclick="closeModal('modal-pedido')">Cancelar</button>
+                    <button class="btn btn-primary" onclick="guardarPedido()">✓ Confirmar pedido</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal Nuevo Platillo -->
+        <div class="modal-overlay" id="modal-platillo">
+            <div class="modal">
+                <div class="modal-header">
+                    <div class="modal-title" id="platillo-modal-title">Nuevo Platillo</div>
+                    <button class="modal-close" onclick="closeModal('modal-platillo')">×</button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label class="form-label">Nombre del platillo</label>
+                        <input class="form-input" id="platillo-nombre" placeholder="Ej: Bowl de pollo con quinoa">
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Categoría</label>
+                            <select class="form-input" id="platillo-categoria"></select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Precio de venta (MXN)</label>
+                            <input class="form-input" id="platillo-precio" type="number" placeholder="0.00">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Costo estimado (MXN) <span
+                                    style="color:var(--text3);font-weight:400">(se calcula solo si hay
+                                    receta)</span></label>
+                            <input class="form-input" id="platillo-costo" type="number" placeholder="0.00" readonly
+                                style="background:var(--bg4);cursor:default" id="platillo-costo">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Calorías (opcional)</label>
+                            <input class="form-input" id="platillo-calorias" type="number" placeholder="kcal">
+                        </div>
+                    </div>
+
+                    <!-- RECETA -->
+                    <div class="form-group">
+                        <div class="flex justify-between items-center mb-8">
+                            <label class="form-label" style="margin-bottom:0">Receta (ingredientes)</label>
+                            <button class="btn btn-secondary btn-sm" onclick="agregarLineaReceta()" type="button">+
+                                Ingrediente</button>
+                        </div>
+                        <div id="receta-lineas"
+                            style="border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden;">
+                            <div
+                                style="display:grid;grid-template-columns:1fr 90px 80px 36px;gap:0;background:var(--bg3);padding:7px 10px;font-size:11px;color:var(--text3);font-weight:500;letter-spacing:0.3px;">
+                                <span>INGREDIENTE</span><span>CANTIDAD</span><span>COSTO EST.</span><span></span>
+                            </div>
+                            <div id="receta-items"></div>
+                        </div>
+                        <div class="flex justify-between mt-8" style="font-size:13px;">
+                            <span style="color:var(--text3)">Costo total de receta:</span>
+                            <span class="font-mono font-semibold" id="receta-costo-total"
+                                style="color:var(--amber)">$0.00</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Descripción</label>
+                        <textarea class="form-input" id="platillo-desc"
+                            placeholder="Ingredientes principales, estilo de preparación..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Etiquetas</label>
+                        <div class="flex gap-8" style="flex-wrap:wrap" id="etiquetas-wrap">
+                            <span class="chip" onclick="toggleEtiqueta(this,'Keto')">🥑 Keto</span>
+                            <span class="chip" onclick="toggleEtiqueta(this,'Vegano')">🌱 Vegano</span>
+                            <span class="chip" onclick="toggleEtiqueta(this,'Sin gluten')">🌾 Sin gluten</span>
+                            <span class="chip" onclick="toggleEtiqueta(this,'Alto en proteína')">💪 Alto proteína</span>
+                            <span class="chip" onclick="toggleEtiqueta(this,'Bajo en carbos')">🍃 Bajo carbos</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Disponible en menú</label>
+                        <select class="form-input" id="platillo-disponible">
+                            <option value="true">Sí, disponible</option>
+                            <option value="false">No disponible</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" onclick="closeModal('modal-platillo')">Cancelar</button>
+                    <button class="btn btn-primary" onclick="guardarPlatillo()">Guardar platillo</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal Nueva Dieta -->
+        <div class="modal-overlay" id="modal-dieta">
+            <div class="modal modal-lg">
+                <div class="modal-header">
+                    <div class="modal-title">Nueva Dieta Personalizada</div>
+                    <button class="modal-close" onclick="closeModal('modal-dieta')">×</button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Cliente</label>
+                            <select class="form-input" id="dieta-cliente">
+                                <option value="">Seleccionar cliente...</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Nombre de la dieta</label>
+                            <input class="form-input" id="dieta-nombre" placeholder="Ej: Plan pérdida de peso Marzo">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Objetivo</label>
+                            <select class="form-input" id="dieta-objetivo">
+                                <option>Pérdida de peso</option>
+                                <option>Ganancia muscular</option>
+                                <option>Mantenimiento</option>
+                                <option>Rendimiento deportivo</option>
+                                <option>Control glucémico</option>
+                                <option>Personalizado</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Calorías diarias objetivo</label>
+                            <input class="form-input" id="dieta-calorias" type="number" placeholder="kcal/día">
+                        </div>
+                    </div>
+                    <div class="form-row-3">
+                        <div class="form-group">
+                            <label class="form-label">Proteínas (g)</label>
+                            <input class="form-input" id="dieta-proteinas" type="number" placeholder="g/día">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Carbohidratos (g)</label>
+                            <input class="form-input" id="dieta-carbos" type="number" placeholder="g/día">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Grasas (g)</label>
+                            <input class="form-input" id="dieta-grasas" type="number" placeholder="g/día">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Restricciones / alergias</label>
+                        <div class="flex gap-8" style="flex-wrap:wrap" id="restricciones-wrap">
+                            <span class="chip" onclick="toggleEtiqueta(this,'Sin lactosa')">🥛 Sin lactosa</span>
+                            <span class="chip" onclick="toggleEtiqueta(this,'Sin gluten')">🌾 Sin gluten</span>
+                            <span class="chip" onclick="toggleEtiqueta(this,'Sin mariscos')">🦐 Sin mariscos</span>
+                            <span class="chip" onclick="toggleEtiqueta(this,'Sin cacahuate')">🥜 Sin cacahuate</span>
+                            <span class="chip" onclick="toggleEtiqueta(this,'Vegetariano')">🥦 Vegetariano</span>
+                            <span class="chip" onclick="toggleEtiqueta(this,'Vegano')">🌱 Vegano</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">PDF del nutriólogo (opcional)</label>
+                        <div style="border:1px dashed var(--border2);border-radius:var(--radius-sm);padding:14px;text-align:center;cursor:pointer;transition:all 0.15s"
+                            onclick="document.getElementById('dieta-pdf-input').click()"
+                            onmouseover="this.style.borderColor='var(--green)'"
+                            onmouseout="this.style.borderColor='var(--border2)'">
+                            <input type="file" id="dieta-pdf-input" accept=".pdf" style="display:none"
+                                onchange="cargarPDFDieta(this)">
+                            <div id="dieta-pdf-label" style="font-size:12px;color:var(--text3)">📄 Haz clic para subir
+                                el PDF del nutriólogo</div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Instrucciones para cocina</label>
+                        <textarea class="form-input" id="dieta-instrucciones"
+                            placeholder="Describe el plan alimenticio, porciones específicas, métodos de cocción preferidos, etc."
+                            style="min-height:100px"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Vigencia</label>
+                        <div class="form-row">
+                            <input class="form-input" type="date" id="dieta-inicio">
+                            <input class="form-input" type="date" id="dieta-fin">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" onclick="closeModal('modal-dieta')">Cancelar</button>
+                    <button class="btn btn-primary" onclick="guardarDieta()">Guardar dieta</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal Ingrediente -->
+        <div class="modal-overlay" id="modal-ingrediente">
+            <div class="modal">
+                <div class="modal-header">
+                    <div class="modal-title" id="ing-modal-title">Nuevo Ingrediente</div>
+                    <button class="modal-close" onclick="closeModal('modal-ingrediente')">×</button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label class="form-label">Nombre del ingrediente</label>
+                        <input class="form-input" id="ing-nombre" placeholder="Ej: Pechuga de pollo">
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Categoría</label>
+                            <select class="form-input" id="ing-categoria"></select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Unidad de medida</label>
+                            <select class="form-input" id="ing-unidad">
+                                <option>kg</option>
+                                <option>g</option>
+                                <option>L</option>
+                                <option>ml</option>
+                                <option>pza</option>
+                                <option>caja</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Stock actual</label>
+                            <input class="form-input" id="ing-stock" type="number" placeholder="0">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Stock mínimo (alerta)</label>
+                            <input class="form-input" id="ing-minimo" type="number" placeholder="0">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Costo por unidad (MXN)</label>
+                            <input class="form-input" id="ing-costo" type="number" placeholder="0.00">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Proveedor principal</label>
+                            <select class="form-input" id="ing-proveedor">
+                                <option value="">Sin asignar</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" onclick="closeModal('modal-ingrediente')">Cancelar</button>
+                    <button class="btn btn-primary" onclick="guardarIngrediente()">Guardar</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal Proveedor -->
+        <div class="modal-overlay" id="modal-proveedor">
+            <div class="modal">
+                <div class="modal-header">
+                    <div class="modal-title">Nuevo Proveedor</div>
+                    <button class="modal-close" onclick="closeModal('modal-proveedor')">×</button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label class="form-label">Nombre / Razón social</label>
+                        <input class="form-input" id="prov-nombre" placeholder="Nombre del proveedor">
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Contacto</label>
+                            <input class="form-input" id="prov-contacto" placeholder="Nombre del representante">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Teléfono / WhatsApp</label>
+                            <input class="form-input" id="prov-tel" placeholder="+52 999 000 0000">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Categoría</label>
+                            <select class="form-input" id="prov-categoria">
+                                <option>Carnes y proteínas</option>
+                                <option>Verduras y frutas</option>
+                                <option>Granos y cereales</option>
+                                <option>Lácteos</option>
+                                <option>Condimentos</option>
+                                <option>Bebidas</option>
+                                <option>Empaques</option>
+                                <option>Otro</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Días de entrega</label>
+                            <input class="form-input" id="prov-dias" placeholder="Ej: Lunes, Miércoles">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Notas</label>
+                        <textarea class="form-input" id="prov-notas"
+                            placeholder="Condiciones de pago, productos que maneja..."></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" onclick="closeModal('modal-proveedor')">Cancelar</button>
+                    <button class="btn btn-primary" onclick="guardarProveedor()">Guardar proveedor</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal CxP -->
+        <div class="modal-overlay" id="modal-cxp">
+            <div class="modal">
+                <div class="modal-header">
+                    <div class="modal-title">Registrar Cuenta por Pagar</div>
+                    <button class="modal-close" onclick="closeModal('modal-cxp')">×</button>
+                </div>
+                <div class="modal-body">
+                    <!-- Tipo de cuenta -->
+                    <div class="form-group">
+                        <label class="form-label">Tipo de cuenta</label>
+                        <div class="flex gap-8" id="cxp-tipo-chips">
+                            <span class="chip active" onclick="setCxpTipo(this,'proveedor')">🚛 Proveedor</span>
+                            <span class="chip" onclick="setCxpTipo(this,'servicio')">🏢 Servicio / Renta</span>
+                            <span class="chip" onclick="setCxpTipo(this,'otro')">📋 Otro</span>
+                        </div>
+                    </div>
+                    <!-- Acreedor: proveedor (cuando tipo=proveedor) -->
+                    <div id="cxp-prov-wrap" class="form-group">
+                        <label class="form-label">Proveedor</label>
+                        <select class="form-input" id="cxp-proveedor">
+                            <option value="">Seleccionar proveedor...</option>
+                        </select>
+                    </div>
+                    <!-- Acreedor libre (cuando tipo=servicio/otro) -->
+                    <div id="cxp-acreedor-wrap" class="form-group" style="display:none">
+                        <label class="form-label">Acreedor / Descripción</label>
+                        <input class="form-input" id="cxp-acreedor"
+                            placeholder="Ej: Arrendadora Centro, CFE, Telcel...">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Concepto</label>
+                        <input class="form-input" id="cxp-concepto"
+                            placeholder="Ej: Renta local agosto, compra insumos...">
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Monto (MXN)</label>
+                            <input class="form-input" id="cxp-monto" type="number" placeholder="0.00">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Fecha de vencimiento</label>
+                            <input class="form-input" id="cxp-vencimiento" type="date">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Método de pago (al liquidar)</label>
+                        <select class="form-input" id="cxp-metodo-pago">
+                            <option value="Efectivo">💵 Efectivo</option>
+                            <option value="Transferencia">📲 Transferencia / SPEI</option>
+                            <option value="Tarjeta">💳 Tarjeta</option>
+                            <option value="Cheque">📄 Cheque</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Notas</label>
+                        <textarea class="form-input" id="cxp-notas"
+                            placeholder="Número de factura, referencia..."></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" onclick="closeModal('modal-cxp')">Cancelar</button>
+                    <button class="btn btn-primary" onclick="guardarCuenta()">Registrar</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal CxC -->
+        <div class="modal-overlay" id="modal-cxc">
+            <div class="modal">
+                <div class="modal-header">
+                    <div class="modal-title">Registrar Saldo por Cobrar</div>
+                    <button class="modal-close" onclick="closeModal('modal-cxc')">×</button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label class="form-label">Cliente</label>
+                        <select class="form-input" id="cxc-cliente">
+                            <option value="">Seleccionar cliente...</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Concepto</label>
+                        <input class="form-input" id="cxc-concepto"
+                            placeholder="Ej: Plan semanal semana 3, pedidos del mes...">
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Monto (MXN)</label>
+                            <input class="form-input" id="cxc-monto" type="number" placeholder="0.00">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Fecha de vencimiento</label>
+                            <input class="form-input" id="cxc-vencimiento" type="date">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Notas</label>
+                        <textarea class="form-input" id="cxc-notas"
+                            placeholder="Referencia, número de pedidos incluidos..."></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" onclick="closeModal('modal-cxc')">Cancelar</button>
+                    <button class="btn btn-primary" onclick="guardarCxC()">Registrar</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal Cliente -->
+        <div class="modal-overlay" id="modal-cliente">
+            <div class="modal">
+                <div class="modal-header">
+                    <div class="modal-title">Nuevo Cliente</div>
+                    <button class="modal-close" onclick="closeModal('modal-cliente')">×</button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Nombre completo</label>
+                            <input class="form-input" id="cli-nombre" placeholder="Nombre del cliente">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Teléfono / WhatsApp</label>
+                            <input class="form-input" id="cli-tel" placeholder="+52 999 000 0000">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Canal preferido</label>
+                            <select class="form-input" id="cli-canal">
+                                <option>WhatsApp</option>
+                                <option>Presencial</option>
+                                <option>Instagram</option>
+                                <option>Facebook</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Tiene dieta personalizada</label>
+                            <select class="form-input" id="cli-dieta">
+                                <option value="false">No</option>
+                                <option value="true">Sí</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Notas</label>
+                        <textarea class="form-input" id="cli-notas"
+                            placeholder="Preferencias, alergias, dirección..."></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" onclick="closeModal('modal-cliente')">Cancelar</button>
+                    <button class="btn btn-primary" onclick="guardarCliente()">Guardar cliente</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal Detalle Pedido -->
+        <div class="modal-overlay" id="modal-detalle-pedido">
+            <div class="modal">
+                <div class="modal-header">
+                    <div class="modal-title" id="detalle-titulo">Pedido #000</div>
+                    <button class="modal-close" onclick="closeModal('modal-detalle-pedido')">×</button>
+                </div>
+                <div class="modal-body" id="detalle-body"></div>
+                <div class="modal-footer" id="detalle-footer"></div>
+            </div>
+        </div>
+
+        <!-- Modal Apertura de Caja -->
+        <div class="modal-overlay" id="modal-apertura-caja">
+            <div class="modal modal-lg">
+                <div class="modal-header">
+                    <div class="modal-title">🟢 Apertura de Caja</div>
+                    <button class="modal-close" onclick="closeModal('modal-apertura-caja')">×</button>
+                </div>
+                <div class="modal-body">
+                    <div style="text-align:center;margin-bottom:20px">
+                        <div style="font-size:13px;color:var(--text3)">${new
+                            Date().toLocaleDateString('es-MX',{weekday:'long',day:'numeric',month:'long',year:'numeric'})}
+                        </div>
+                        <div style="font-size:12px;color:var(--text2);margin-top:4px">Cuenta el efectivo físico de la
+                            caja y regístralo aquí.</div>
+                    </div>
+
+                    <!-- Billetes -->
+                    <div
+                        style="font-size:12px;font-weight:600;color:var(--text3);letter-spacing:0.5px;margin-bottom:10px">
+                        BILLETES</div>
+                    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:18px"
+                        id="grid-billetes">
+                        <!-- generado por JS -->
+                    </div>
+
+                    <!-- Monedas -->
+                    <div
+                        style="font-size:12px;font-weight:600;color:var(--text3);letter-spacing:0.5px;margin-bottom:10px">
+                        MONEDAS</div>
+                    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:20px"
+                        id="grid-monedas">
+                        <!-- generado por JS -->
+                    </div>
+
+                    <!-- Total calculado -->
+                    <div class="card card-sm" style="background:var(--green-dim);border-color:rgba(74,222,128,0.25)">
+                        <div class="flex justify-between items-center">
+                            <span style="font-size:14px;font-weight:600">Total saldo inicial</span>
+                            <span
+                                style="font-size:24px;font-weight:700;font-family:'DM Mono',monospace;color:var(--green)"
+                                id="apertura-total-display">$0.00</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" onclick="closeModal('modal-apertura-caja')">Cancelar</button>
+                    <button class="btn btn-primary" onclick="confirmarApertura()">✓ Abrir caja con este saldo</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal Cierre de Caja -->
+        <div class="modal-overlay" id="modal-cierre-caja">
+            <div class="modal modal-lg">
+                <div class="modal-header">
+                    <div class="modal-title">🔒 Cierre de Turno</div>
+                    <button class="modal-close" onclick="closeModal('modal-cierre-caja')">×</button>
+                </div>
+                <div class="modal-body" id="cierre-caja-body">
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" onclick="closeModal('modal-cierre-caja')">Cancelar</button>
+                    <button class="btn btn-primary" onclick="confirmarCierre()">Confirmar cierre de turno</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal Nueva Compra -->
+        <div class="modal-overlay" id="modal-compra">
+            <div class="modal modal-lg">
+                <div class="modal-header">
+                    <div class="modal-title" id="compra-modal-title">Nueva Compra de Insumos</div>
+                    <button class="modal-close" onclick="closeModal('modal-compra')">×</button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-row mb-4">
+                        <div class="form-group">
+                            <label class="form-label">Proveedor</label>
+                            <select class="form-input" id="compra-proveedor">
+                                <option value="">Sin proveedor / mercado</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Fecha de compra</label>
+                            <input class="form-input" type="date" id="compra-fecha">
+                        </div>
+                    </div>
+                    <!-- Líneas de compra -->
+                    <div class="flex justify-between items-center mb-8">
+                        <label class="form-label" style="margin:0">Ingredientes comprados</label>
+                        <button class="btn btn-secondary btn-sm" onclick="agregarLineaCompra()" type="button">+
+                            Ingrediente</button>
+                    </div>
+                    <div
+                        style="border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden;margin-bottom:12px">
+                        <div
+                            style="display:grid;grid-template-columns:1fr 80px 90px 100px 36px;gap:0;background:var(--bg3);padding:7px 10px;font-size:11px;color:var(--text3);font-weight:500;letter-spacing:0.3px;">
+                            <span>INGREDIENTE</span><span>CANTIDAD</span><span>COSTO/U</span><span>SUBTOTAL</span><span></span>
+                        </div>
+                        <div id="compra-lineas"></div>
+                    </div>
+                    <div class="flex justify-between" style="font-size:13px;padding:0 2px;margin-bottom:16px">
+                        <span style="color:var(--text3)">Total de la compra:</span>
+                        <span class="font-mono font-semibold highlight-green" id="compra-total-display">$0.00</span>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Estado</label>
+                            <select class="form-input" id="compra-estado">
+                                <option value="recibida">✅ Recibida (actualiza inventario ahora)</option>
+                                <option value="pendiente">⏳ Pendiente de recibir</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">¿Genera cuenta por pagar?</label>
+                            <select class="form-input" id="compra-genera-cxp"
+                                onchange="toggleCompraCredito(this.value)">
+                                <option value="no">No, ya se pagó</option>
+                                <option value="si">Sí, registrar en CxP</option>
+                            </select>
+                        </div>
+                    </div>
+                    <!-- Panel CxP de compra -->
+                    <div id="panel-compra-cxp"
+                        style="display:none;background:var(--red-dim);border:1px solid rgba(248,113,113,0.2);border-radius:var(--radius-sm);padding:12px;margin-bottom:12px;">
+                        <div style="font-size:12px;font-weight:600;color:var(--red);margin-bottom:8px">📤 Se registrará
+                            como cuenta por pagar</div>
+                        <input class="form-input" id="compra-cxp-vencimiento" type="date"
+                            placeholder="Fecha de vencimiento">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Notas</label>
+                        <input class="form-input" id="compra-notas"
+                            placeholder="Número de factura, referencia, observaciones...">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" onclick="closeModal('modal-compra')">Cancelar</button>
+                    <button class="btn btn-primary" onclick="guardarCompra()">Guardar compra</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal Detalle Compra -->
+        <div class="modal-overlay" id="modal-detalle-compra">
+            <div class="modal">
+                <div class="modal-header">
+                    <div class="modal-title">Detalle de compra</div>
+                    <button class="modal-close" onclick="closeModal('modal-detalle-compra')">×</button>
+                </div>
+                <div class="modal-body" id="detalle-compra-body"></div>
+                <div class="modal-footer" id="detalle-compra-footer"></div>
+            </div>
+        </div>
+
+        <!-- Modal Cotización Dieta -->
+        <div class="modal-overlay" id="modal-cotizacion">
+            <div class="modal modal-lg">
+                <div class="modal-header">
+                    <div class="modal-title" id="cotizacion-titulo">Cotización de dieta</div>
+                    <button class="modal-close" onclick="closeModal('modal-cotizacion')">×</button>
+                </div>
+                <div class="modal-body">
+
+                    <!-- Platillos de la dieta -->
+                    <div class="flex justify-between items-center mb-8">
+                        <label class="form-label" style="margin:0;font-size:13px;font-weight:600">Platillos del plan
+                            diario</label>
+                        <button class="btn btn-secondary btn-sm" onclick="agregarPlatilloCotizacion()">+
+                            Platillo</button>
+                    </div>
+                    <div
+                        style="border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden;margin-bottom:12px">
+                        <div
+                            style="display:grid;grid-template-columns:1fr 120px 90px 36px;padding:7px 12px;background:var(--bg3);font-size:11px;color:var(--text3);font-weight:500;letter-spacing:0.3px">
+                            <span>PLATILLO / TIEMPO</span><span>TIPO</span><span>COSTO</span><span></span>
+                        </div>
+                        <div id="cotizacion-platillos-lista"></div>
+                    </div>
+
+                    <!-- Margen de ganancia -->
+                    <div class="form-row mb-4">
+                        <div class="form-group">
+                            <label class="form-label">Margen de ganancia (%)</label>
+                            <input class="form-input" id="cotizacion-margen" type="number" value="40" min="0" max="200"
+                                oninput="recalcularCotizacion()">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Costo total diario (calculado)</label>
+                            <input class="form-input" id="cotizacion-costo-dia" readonly
+                                style="background:var(--bg4);cursor:default" value="$0.00">
+                        </div>
+                    </div>
+
+                    <!-- Precios resultantes -->
+                    <div class="grid" style="grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px">
+                        <div style="background:var(--bg3);border-radius:var(--radius);padding:16px;text-align:center">
+                            <div style="font-size:11px;color:var(--text3);margin-bottom:4px">PRECIO DIARIO</div>
+                            <div style="font-size:24px;font-weight:700;color:var(--green);font-family:'DM Mono',monospace"
+                                id="cot-precio-dia">$0</div>
+                            <div style="font-size:10px;color:var(--text3);margin-top:2px" id="cot-margen-dia">0% margen
+                            </div>
+                        </div>
+                        <div
+                            style="background:var(--bg3);border:1px solid rgba(74,222,128,0.2);border-radius:var(--radius);padding:16px;text-align:center">
+                            <div style="font-size:11px;color:var(--green);font-weight:600;margin-bottom:4px">⭐ PRECIO
+                                SEMANAL</div>
+                            <div style="font-size:24px;font-weight:700;color:var(--green);font-family:'DM Mono',monospace"
+                                id="cot-precio-semana">$0</div>
+                            <div style="font-size:10px;color:var(--text3);margin-top:2px">7 días</div>
+                        </div>
+                        <div style="background:var(--bg3);border-radius:var(--radius);padding:16px;text-align:center">
+                            <div style="font-size:11px;color:var(--text3);margin-bottom:4px">PRECIO MENSUAL</div>
+                            <div style="font-size:24px;font-weight:700;color:var(--green);font-family:'DM Mono',monospace"
+                                id="cot-precio-mes">$0</div>
+                            <div style="font-size:10px;color:var(--text3);margin-top:2px">30 días</div>
+                        </div>
+                    </div>
+
+                    <!-- Notas de cotización -->
+                    <div class="form-group">
+                        <label class="form-label">Notas de la cotización</label>
+                        <textarea class="form-input" id="cotizacion-notas"
+                            placeholder="Condiciones, incluye o no incluye, envío, etc."></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" onclick="closeModal('modal-cotizacion')">Cancelar</button>
+                    <button class="btn btn-secondary" onclick="generarImagenCotizacion()"
+                        style="background:var(--purple-dim);color:var(--purple);border-color:rgba(167,139,250,0.3)">📸
+                        Generar imagen</button>
+                    <button class="btn btn-primary" onclick="guardarCotizacion()">💾 Guardar cotización</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal Imagen Cotización -->
+        <div class="modal-overlay" id="modal-imagen-cotizacion">
+            <div class="modal" style="max-width:420px">
+                <div class="modal-header">
+                    <div class="modal-title">Imagen para cliente</div>
+                    <button class="modal-close" onclick="closeModal('modal-imagen-cotizacion')">×</button>
+                </div>
+                <div class="modal-body" style="padding:16px">
+                    <canvas id="canvas-cotizacion" style="width:100%;border-radius:10px;display:block"></canvas>
+                    <div class="flex gap-8 mt-16">
+                        <button class="btn btn-primary w-full" onclick="descargarImagenCotizacion()">⬇ Descargar
+                            PNG</button>
+                    </div>
+                    <div style="font-size:11px;color:var(--text3);text-align:center;margin-top:8px">Lista para enviar
+                        por WhatsApp o Instagram</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal Gasto Fijo -->
+        <div class="modal-overlay" id="modal-gasto">
+            <div class="modal">
+                <div class="modal-header">
+                    <div class="modal-title">Registrar Gasto</div>
+                    <button class="modal-close" onclick="closeModal('modal-gasto')">×</button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label class="form-label">Concepto</label>
+                        <input class="form-input" id="gasto-concepto"
+                            placeholder="Ej: Renta local, Nómina chef, Luz, Gas...">
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Categoría</label>
+                            <select class="form-input" id="gasto-categoria">
+                                <option>Renta</option>
+                                <option>Nómina</option>
+                                <option>Servicios (luz, agua, gas)</option>
+                                <option>Internet / Teléfono</option>
+                                <option>Mantenimiento</option>
+                                <option>Marketing</option>
+                                <option>Empaques</option>
+                                <option>Equipo / Herramientas</option>
+                                <option>Otros</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Monto (MXN)</label>
+                            <input class="form-input" id="gasto-monto" type="number" placeholder="0.00">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Fecha</label>
+                            <input class="form-input" id="gasto-fecha" type="date">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">¿Es gasto recurrente?</label>
+                            <select class="form-input" id="gasto-recurrente">
+                                <option value="no">No, es único</option>
+                                <option value="mensual">Sí, mensual</option>
+                                <option value="semanal">Sí, semanal</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Notas</label>
+                        <input class="form-input" id="gasto-notas" placeholder="Referencia, número de factura...">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" onclick="closeModal('modal-gasto')">Cancelar</button>
+                    <button class="btn btn-primary" onclick="guardarGasto()">Guardar gasto</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal Nuevo Usuario -->
+        <div class="modal-overlay" id="modal-usuario">
+            <div class="modal">
+                <div class="modal-header">
+                    <div class="modal-title" id="usuario-modal-title">Nuevo Usuario</div>
+                    <button class="modal-close" onclick="closeModal('modal-usuario')">×</button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label class="form-label">Nombre completo</label>
+                        <input class="form-input" id="usr-nombre" placeholder="Ej: María García">
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Usuario (para login)</label>
+                            <input class="form-input" id="usr-user" placeholder="Ej: maria" autocomplete="off">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Contraseña</label>
+                            <input class="form-input" id="usr-pass" type="password" placeholder="••••••••"
+                                autocomplete="new-password">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Perfil</label>
+                        <div class="flex gap-8" id="usr-rol-chips">
+                            <span class="chip active" onclick="setUsrRol(this,'admin')">👑 Administrador</span>
+                            <span class="chip" onclick="setUsrRol(this,'caja')">🧾 Caja / Operador</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" onclick="closeModal('modal-usuario')">Cancelar</button>
+                    <button class="btn btn-primary" onclick="guardarUsuario()">Guardar</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal Nueva Presentación -->
+        <div class="modal-overlay" id="modal-presentacion">
+            <div class="modal">
+                <div class="modal-header">
+                    <div class="modal-title" id="pres-modal-title">Nueva Presentación</div>
+                    <button class="modal-close" onclick="closeModal('modal-presentacion')">×</button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label class="form-label">Insumo</label>
+                        <select class="form-input" id="pres-insumo" onchange="actualizarUnidadPres(this.value)">
+                            <option value="">Seleccionar insumo...</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Nombre de la presentación</label>
+                        <input class="form-input" id="pres-nombre"
+                            placeholder="Ej: Caja de 12, Bolsa 1kg, Costal 25kg...">
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Cantidad que contiene</label>
+                            <input class="form-input" id="pres-cantidad" type="number" placeholder="Ej: 12"
+                                oninput="calcularCostoUnitario()">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Unidad base</label>
+                            <select class="form-input" id="pres-unidad">
+                                <option>pza</option>
+                                <option>kg</option>
+                                <option>g</option>
+                                <option>L</option>
+                                <option>ml</option>
+                                <option>caja</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Costo de la presentación completa (MXN)</label>
+                        <input class="form-input" id="pres-costo" type="number" placeholder="Ej: 45.00"
+                            oninput="calcularCostoUnitario()">
+                    </div>
+                    <!-- Costo unitario calculado -->
+                    <div class="card card-sm mt-4"
+                        style="background:var(--green-dim);border-color:rgba(74,222,128,0.2)">
+                        <div class="flex justify-between items-center">
+                            <span style="font-size:13px;color:var(--text2)">Costo por unidad (calculado)</span>
+                            <span class="font-mono font-semibold highlight-green" id="pres-costo-unit">$0.00</span>
+                        </div>
+                        <div style="font-size:11px;color:var(--text3);margin-top:4px" id="pres-costo-formula">—</div>
+                    </div>
+                    <div class="form-group mt-12">
+                        <label class="form-label">¿Usar como presentación predeterminada?</label>
+                        <select class="form-input" id="pres-default">
+                            <option value="true">Sí — actualiza el costo unitario del insumo automáticamente</option>
+                            <option value="false">No — solo registrar como referencia</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" onclick="closeModal('modal-presentacion')">Cancelar</button>
+                    <button class="btn btn-primary" onclick="guardarPresentacion()">Guardar</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal Gestión de Categorías -->
+        <div class="modal-overlay" id="modal-categorias">
+            <div class="modal">
+                <div class="modal-header">
+                    <div class="modal-title" id="categ-modal-title">Gestión de Categorías</div>
+                    <button class="modal-close" onclick="closeModal('modal-categorias')">×</button>
+                </div>
+                <div class="modal-body">
+                    <div class="flex gap-8 mb-12">
+                        <input class="form-input flex-1" id="nueva-categ-input" placeholder="Nueva categoría..."
+                            onkeydown="if(event.key==='Enter')agregarCategoria()">
+                        <button class="btn btn-primary" onclick="agregarCategoria()">+ Agregar</button>
+                    </div>
+                    <div id="lista-categorias" style="max-height:300px;overflow-y:auto"></div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" onclick="closeModal('modal-categorias')">Cerrar</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal Nuevo Preparado -->
+        <div class="modal-overlay" id="modal-preparado">
+            <div class="modal modal-lg">
+                <div class="modal-header">
+                    <div class="modal-title" id="preparado-modal-title">Nueva Producción</div>
+                    <button class="modal-close" onclick="closeModal('modal-preparado')">×</button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Nombre del preparado</label>
+                            <input class="form-input" id="prep-nombre"
+                                placeholder="Ej: Salsa verde, Base de mole, Marinada...">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Categoría</label>
+                            <select class="form-input" id="prep-categoria">
+                                <option>Salsa</option>
+                                <option>Base / Fondo</option>
+                                <option>Marinada</option>
+                                <option>Mezcla seca</option>
+                                <option>Preparado lácteo</option>
+                                <option>Otro</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Rendimiento (cantidad que produce)</label>
+                            <input class="form-input" id="prep-rendimiento" type="number" placeholder="Ej: 2"
+                                oninput="calcularCostoPreparado()">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Unidad del preparado resultante</label>
+                            <select class="form-input" id="prep-unidad">
+                                <option>L</option>
+                                <option>ml</option>
+                                <option>kg</option>
+                                <option>g</option>
+                                <option>pza</option>
+                                <option>porcion</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Descripción / notas de preparación</label>
+                        <textarea class="form-input" id="prep-desc"
+                            placeholder="Pasos, temperatura, tiempo de cocción..."></textarea>
+                    </div>
+
+                    <!-- Insumos de la receta -->
+                    <div class="form-group">
+                        <div class="flex justify-between items-center mb-8">
+                            <label class="form-label" style="margin-bottom:0">Insumos de la receta</label>
+                            <button class="btn btn-secondary btn-sm" onclick="agregarLineaPrep()" type="button">+
+                                Insumo</button>
+                        </div>
+                        <div style="border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden">
+                            <div
+                                style="display:grid;grid-template-columns:1fr 90px 80px 36px;background:var(--bg3);padding:7px 10px;font-size:11px;color:var(--text3);font-weight:500;letter-spacing:0.3px">
+                                <span>INSUMO</span><span>CANTIDAD</span><span>COSTO EST.</span><span></span>
+                            </div>
+                            <div id="prep-lineas-items"></div>
+                        </div>
+                        <div class="flex justify-between mt-8" style="font-size:13px">
+                            <span style="color:var(--text3)">Costo total de producción:</span>
+                            <span class="font-mono font-semibold" id="prep-costo-total"
+                                style="color:var(--purple)">$0.00</span>
+                        </div>
+                        <div class="flex justify-between" style="font-size:12px;margin-top:4px">
+                            <span style="color:var(--text3)">Costo por unidad resultante:</span>
+                            <span class="font-mono" id="prep-costo-unit" style="color:var(--green)">$0.00</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" onclick="closeModal('modal-preparado')">Cancelar</button>
+                    <button class="btn btn-primary" onclick="guardarPreparado()">Guardar preparado</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal Ejecutar Producción -->
+        <div class="modal-overlay" id="modal-ejecutar-prod">
+            <div class="modal">
+                <div class="modal-header">
+                    <div class="modal-title">Ejecutar Producción</div>
+                    <button class="modal-close" onclick="closeModal('modal-ejecutar-prod')">×</button>
+                </div>
+                <div class="modal-body">
+                    <div id="ejecutar-prod-body"></div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" onclick="closeModal('modal-ejecutar-prod')">Cancelar</button>
+                    <button class="btn btn-primary" onclick="confirmarEjecucion()">✓ Ejecutar y descontar
+                        inventario</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal Eliminar Pedido -->
+        <div class="modal-overlay" id="modal-eliminar-pedido">
+            <div class="modal">
+                <div class="modal-header">
+                    <div class="modal-title">🗑 Eliminar pedido</div>
+                    <button class="modal-close" onclick="closeModal('modal-eliminar-pedido')">×</button>
+                </div>
+                <div class="modal-body">
+                    <div id="eliminar-pedido-info"
+                        style="background:var(--bg3);border-radius:var(--radius-sm);padding:12px;margin-bottom:16px;font-size:13px">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Motivo de eliminación</label>
+                        <select class="form-input" id="eliminar-motivo">
+                            <option value="">Seleccionar motivo...</option>
+                            <option>Canceló el cliente</option>
+                            <option>Confusión de pedido</option>
+                            <option>Error al capturar</option>
+                            <option>Pedido duplicado</option>
+                            <option>Producto no disponible</option>
+                            <option>Dirección incorrecta</option>
+                            <option>Falla de pago</option>
+                            <option>Otro</option>
+                        </select>
+                    </div>
+                    <div class="form-group" id="eliminar-otro-wrap" style="display:none">
+                        <label class="form-label">Especifica el motivo</label>
+                        <input class="form-input" id="eliminar-otro-texto" placeholder="Describe el motivo...">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Notas adicionales (opcional)</label>
+                        <input class="form-input" id="eliminar-notas" placeholder="Observaciones, referencia...">
+                    </div>
+                    <div class="card card-sm" style="background:var(--red-dim);border-color:rgba(248,113,113,0.2)">
+                        <div style="font-size:12px;color:var(--red)">⚠ Esta acción no se puede deshacer. El pedido será
+                            eliminado permanentemente y quedará registrado en el historial con tu usuario.</div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" onclick="closeModal('modal-eliminar-pedido')">Cancelar</button>
+                    <button class="btn btn-danger" onclick="confirmarEliminarPedido()">🗑 Eliminar
+                        definitivamente</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal Config Alertas Inventario -->
+        <div class="modal-overlay" id="modal-config-alertas">
+            <div class="modal">
+                <div class="modal-header">
+                    <div class="modal-title">⚙ Configurar alertas globales</div>
+                    <button class="modal-close" onclick="closeModal('modal-config-alertas')">×</button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label class="form-label">Umbral de alerta por defecto (% del mínimo)</label>
+                        <select class="form-input" id="alerta-umbral-global">
+                            <option value="1">Cuando llega al mínimo exacto</option>
+                            <option value="1.5" selected>1.5× el mínimo (recomendado)</option>
+                            <option value="2">2× el mínimo</option>
+                            <option value="3">3× el mínimo</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Mostrar alerta en dashboard cuando hay stock bajo</label>
+                        <select class="form-input" id="alerta-dashboard">
+                            <option value="si" selected>Sí, siempre</option>
+                            <option value="no">No</option>
+                        </select>
+                    </div>
+                    <div style="font-size:12px;color:var(--text2);margin-top:4px">💡 Para ajustar el mínimo de cada
+                        ingrediente individualmente, usa la tabla en la pestaña Alertas.</div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" onclick="closeModal('modal-config-alertas')">Cancelar</button>
+                    <button class="btn btn-primary" onclick="guardarConfigAlertasGlobal()">Guardar</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal Pagar CxP -->
+        <div class="modal-overlay" id="modal-pagar-cxp">
+            <div class="modal">
+                <div class="modal-header">
+                    <div class="modal-title">💳 Registrar Pago de CxP</div>
+                    <button class="modal-close" onclick="closeModal('modal-pagar-cxp')">×</button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="pagar-cxp-id">
+                    <div class="card card-sm mb-14" style="background:var(--bg3)" id="pagar-cxp-info"></div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Método de pago utilizado</label>
+                            <select class="form-input" id="pagar-cxp-metodo"
+                                onchange="document.getElementById('pagar-cxp-banco-aviso').style.display=this.value==='Transferencia'||this.value==='Tarjeta'?'block':'none'">
+                                <option value="Efectivo">💵 Efectivo</option>
+                                <option value="Transferencia">📲 Transferencia / SPEI</option>
+                                <option value="Tarjeta">💳 Tarjeta</option>
+                                <option value="Cheque">📄 Cheque</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Fecha de pago</label>
+                            <input class="form-input" type="date" id="pagar-cxp-fecha">
+                        </div>
+                    </div>
+                    <div id="pagar-cxp-banco-aviso"
+                        style="font-size:12px;color:var(--blue);background:var(--blue-dim);border-radius:6px;padding:9px 12px;margin-top:4px">
+                        📲 Este pago se registrará como salida de <strong>Transferencia</strong> y afectará el saldo de
+                        banco en los reportes.
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" onclick="closeModal('modal-pagar-cxp')">Cancelar</button>
+                    <button class="btn btn-primary" onclick="confirmarPagoCXP()">✓ Confirmar pago</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal WA Masivo -->
+        <div class="modal-overlay" id="modal-wa-masivo">
+            <div class="modal">
+                <div class="modal-header">
+                    <div class="modal-title">Mensaje Masivo: <span id="wa-masivo-col"></span></div>
+                    <button class="modal-close" onclick="closeModal('modal-wa-masivo')">×</button>
+                </div>
+                <div class="modal-body">
+                    <p style="font-size:12px;color:var(--text2);margin-bottom:12px;">Haz clic en cada enlace para enviar el mensaje por WhatsApp. (El navegador bloquea abrir muchos al mismo tiempo).</p>
+                    <div id="wa-masivo-links" style="max-height: 300px; overflow-y: auto;"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Toast container -->
+        <div class="toast-container" id="toast-container"></div>
+
+        <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    <script src="js/app.js"></script>
+</body>
+
+</html>
