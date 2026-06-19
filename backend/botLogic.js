@@ -77,6 +77,46 @@ async function saveLeadToFirebase(phone, name) {
 }
 
 /**
+ * Envía un archivo PDF (u otro tipo de documento) a través de la API de WhatsApp
+ */
+async function sendDocument(toPhone, url, filename, caption) {
+    try {
+        // FIX: Quitar el '1' a los números de México (521...) para que Meta los acepte
+        let fixedPhone = toPhone;
+        if (fixedPhone.startsWith('521') && fixedPhone.length === 13) {
+            fixedPhone = '52' + fixedPhone.substring(3);
+        }
+
+        const endpoint = `https://graph.facebook.com/v19.0/${PHONE_NUMBER_ID}/messages`;
+        
+        const data = {
+            messaging_product: "whatsapp",
+            recipient_type: "individual",
+            to: fixedPhone,
+            type: "document",
+            document: {
+                link: url,
+                filename: filename,
+                caption: caption
+            }
+        };
+
+        const config = {
+            headers: {
+                'Authorization': `Bearer ${WHATSAPP_TOKEN}`,
+                'Content-Type': 'application/json'
+            }
+        };
+
+        await axios.post(endpoint, data, config);
+        console.log(`📤 DOCUMENTO ENVIADO A ${toPhone}: ${filename} (${url})`);
+
+    } catch (error) {
+        console.error(`❌ Error enviando documento a ${toPhone}:`, error.response?.data || error.message);
+    }
+}
+
+/**
  * Procesa el texto recibido y decide qué responder
  */
 async function processMessage(phone, name, text) {
@@ -89,19 +129,126 @@ async function processMessage(phone, name, text) {
     // 2. REGISTRAR COMO LEAD EN LA NUBE (FIREBASE)
     await saveLeadToFirebase(phone, name);
 
+    // Identificación de opciones solicitadas por el usuario
+    const isOption1 = textLower === '1' || textLower.includes('1️⃣') || textLower.includes('menu') || textLower.includes('menú');
+    const isOption2 = textLower === '2' || textLower.includes('2️⃣') || textLower.includes('precio') || textLower.includes('costo') || textLower.includes('precios') || textLower.includes('costos');
+    const isOption3 = textLower === '3' || textLower.includes('3️⃣') || textLower.includes('semanal') || textLower.includes('plan');
+    const isOption4 = textLower === '4' || textLower.includes('4️⃣') || textLower.includes('personalizado') || textLower.includes('dieta');
+    const isOption5 = textLower === '5' || textLower.includes('5️⃣') || textLower.includes('pedido') || textLower.includes('hacer pedido') || textLower.includes('comprar') || textLower.includes('ordenar');
+
     // 3. LÓGICA DE EVALUACIÓN (El "Cerebro")
-    if (textLower.includes('menu') || textLower.includes('menú')) {
-        replyText = `¡Hola ${name}! 🥗 Nuestro menú de esta semana incluye:\n\n1. Pechuga al Grill con ensalada fresca.\n2. Bowl de Salmón teriyaki.\n3. Wrap integral de pollo.\n\n¿Te gustaría ordenar alguno? Responde con "Pedido".`;
+    if (isOption1) {
+        replyText = `🥗 Este es nuestro menú base:
+
+🍳 DESAYUNOS
+• Hotcakes Fit
+• Huevos con Jamón
+• Huevos a la Mexicana
+• Sándwich Fitavo
+• Waffles Fit
+
+🍽️ COMIDAS
+• Yakimeshi de Pollo
+• Ensalada César
+• Carne Molida
+• Chilaquiles
+• Pechuga de Pollo
+• Nachos Fit
+• Spaghetti con Carne Molida
+
+📋 Todos nuestros platillos están disponibles en tamaños:
+🥑 Déficit
+🥗 Normal
+💪 Bulk
+
+Te comparto el menú completo 👇`;
+
+        await sendMessage(phone, replyText);
+        saveToHistory(phone, 'Fit&Go Bot', replyText, 'bot');
+
+        // Enviar el PDF del menú cargado en Render
+        const pdfUrl = process.env.PDF_URL || 'https://fit-go.onrender.com/menu.pdf';
+        await sendDocument(phone, pdfUrl, 'menu_completo.pdf', 'Menú Fit & Go');
+        saveToHistory(phone, 'Fit&Go Bot', `[Documento PDF: ${pdfUrl}]`, 'bot');
+
+        // Enviar el mensaje de seguimiento de objetivos
+        const followUpText = `¿Te gustaría que te recomendara una opción según tu objetivo?
+• Bajar grasa
+• Mantener peso
+• Ganar masa muscular
+
+Pregunta por nuestros platillos de la semana!`;
+
+        await sendMessage(phone, followUpText);
+        saveToHistory(phone, 'Fit&Go Bot', followUpText, 'bot');
+        return;
     } 
-    else if (textLower.includes('precio') || textLower.includes('costo')) {
-        replyText = `💸 En Fit&Go manejamos estos planes:\n\n- Paquete de 5 comidas: $800 MXN\n- Paquete de 10 comidas: $1500 MXN\n- Menú Personalizado: ¡Cotizamos según tus macros!\n\n¿Quieres agendar un plan?`;
+    else if (isOption2) {
+        replyText = `💰 Nuestros precios dependen del tamaño de la porción:
+
+🥑 Déficit
+💲 $100 - $115
+
+🥗 Normal
+💲 $115 - $130
+
+💪 Bulk
+💲 $130 - $145
+
+🎉 A partir de 5 comidas obtienes $10 de descuento por cada platillo.
+
+¿Buscas comidas individuales o un plan semanal?`;
     }
-    else if (textLower.includes('pedido') || textLower.includes('comprar')) {
-        replyText = `¡Perfecto! 🛍️ Por favor envíame tu nombre completo, dirección de entrega y qué plan deseas. Nuestro equipo procesará tu pedido de inmediato.`;
+    else if (isOption3) {
+        replyText = `📅 Contamos con un plan semanal para ti 😊.
+
+Puedes elegir los platillos que prefieras del menú y pedir desde 5 comidas en adelante.
+
+✅ Recibes $10 de descuento por cada platillo.
+✅ Tú eliges los tamaños (Déficit, Normal o Bulk).
+✅ Puedes combinar diferentes comidas.
+
+¿Cuántas comidas te gustaría pedir para la semana?`;
+    }
+    else if (isOption4) {
+        replyText = `🥦 También manejamos servicio personalizado.
+
+Solo envíanos:
+
+📋 Tu dieta o plan alimenticio en foto o PDF
+
+Y te cotizamos las comidas exactamente según los requerimientos de tu nutriólogo. Cabe destacar que nosotros cocinamos lo que el nutriólogo te recete, nosotros no hacemos dietas sin embargo te podemos recomendar a un nutriólogo.
+
+¿Te gustaría enviarnos tu dieta para cotizarla?`;
+    }
+    else if (isOption5) {
+        replyText = `¡Perfecto! 😋
+Para comenzar, ¿me compartes tu nombre y apellido?
+¿Sería para servicio a domicilio o Pick Up? (en caso de ser servicio a domicilio, mandar dirección, ubicación y referencias para entrega).
+¿Cuál sería su pedido?
+¿Para qué hora sería aproximadamente?
+
+💳 Aceptamos transferencia y efectivo.
+Nuestro equipo validará tu pedido y te confirmará lo antes posible.
+
+¡Gracias por elegir Fit&Go! 🥑`;
     }
     else {
         // Mensaje de saludo genérico / Default
-        replyText = `¡Hola ${name}! 👋 Bienvenido a Fit&Go.\nSoy tu asistente virtual. Puedes preguntarme por nuestro "Menú", "Precios" o hacer un "Pedido".`;
+        replyText = `¡Hola ${name}! 👋 Bienvenido a Fit&Go 🥑
+
+Preparamos comida saludable en Mérida, Yucatán.
+
+🔥 Puedes elegir una opción:
+
+1️⃣ Ver Menú
+2️⃣ Ver Precios
+3️⃣ Plan Semanal
+4️⃣ Servicio Personalizado
+5️⃣ Hacer Pedido
+
+🕛Horario de servicio: Lunes a Viernes
+⏰ Cierre de pedidos: 1:30 pm`;
     }
 
     // 4. ENVIAR RESPUESTA A LA API DE WHATSAPP
@@ -116,12 +263,18 @@ async function processMessage(phone, name, text) {
  */
 async function sendMessage(toPhone, text) {
     try {
+        // FIX: Quitar el '1' a los números de México (521...) para que Meta los acepte
+        let fixedPhone = toPhone;
+        if (fixedPhone.startsWith('521') && fixedPhone.length === 13) {
+            fixedPhone = '52' + fixedPhone.substring(3);
+        }
+
         const url = `https://graph.facebook.com/v19.0/${PHONE_NUMBER_ID}/messages`;
         
         const data = {
             messaging_product: "whatsapp",
             recipient_type: "individual",
-            to: toPhone,
+            to: fixedPhone,
             type: "text",
             text: {
                 preview_url: false,
