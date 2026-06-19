@@ -138,30 +138,13 @@ async function processMessage(phone, name, text) {
 
     // 3. LÓGICA DE EVALUACIÓN (El "Cerebro")
     if (isOption1) {
-        replyText = `🥗 Este es nuestro menú base:
+        replyText = `🥑 Contamos con desayunos y comidas saludables disponibles en tamaños:
 
-🍳 DESAYUNOS
-• Hotcakes Fit
-• Huevos con Jamón
-• Huevos a la Mexicana
-• Sándwich Fitavo
-• Waffles Fit
-
-🍽️ COMIDAS
-• Yakimeshi de Pollo
-• Ensalada César
-• Carne Molida
-• Chilaquiles
-• Pechuga de Pollo
-• Nachos Fit
-• Spaghetti con Carne Molida
-
-📋 Todos nuestros platillos están disponibles en tamaños:
 🥑 Déficit
 🥗 Normal
 💪 Bulk
 
-Te comparto el menú completo 👇`;
+Te compartimos nuestro menú base 👇`;
 
         await sendMessage(phone, replyText);
         saveToHistory(phone, 'Fit&Go Bot', replyText, 'bot');
@@ -172,16 +155,15 @@ Te comparto el menú completo 👇`;
         await sendDocument(phone, pdfUrl, 'menu_completo.pdf', 'Menú Fit & Go');
         saveToHistory(phone, 'Fit&Go Bot', `[Documento PDF: ${pdfUrl}]`, 'bot');
 
-        // Enviar el mensaje de seguimiento de objetivos
-        const followUpText = `¿Te gustaría que te recomendara una opción según tu objetivo?
-• Bajar grasa
-• Mantener peso
-• Ganar masa muscular
+        // Mensaje 3: Opciones semanales
+        const text3 = `🔥 También contamos con opciones especiales que cambian cada semana. Pregúntanos cuáles son.`;
+        await sendMessage(phone, text3);
+        saveToHistory(phone, 'Fit&Go Bot', text3, 'bot');
 
-Pregunta por nuestros platillos de la semana!`;
-
-        await sendMessage(phone, followUpText);
-        saveToHistory(phone, 'Fit&Go Bot', followUpText, 'bot');
+        // Mensaje 4: Pregunta interactiva
+        const text4 = `😋 ¿Qué platillo te llamó más la atención?`;
+        await sendMessage(phone, text4);
+        saveToHistory(phone, 'Fit&Go Bot', text4, 'bot');
         return;
     } 
     else if (isOption2) {
