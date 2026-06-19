@@ -167,7 +167,8 @@ Te comparto el menú completo 👇`;
         saveToHistory(phone, 'Fit&Go Bot', replyText, 'bot');
 
         // Enviar el PDF del menú cargado en Render
-        const pdfUrl = process.env.PDF_URL || 'https://fit-go.onrender.com/menu.pdf';
+        const basePdfUrl = process.env.PDF_URL || 'https://fit-go.onrender.com/menu.pdf';
+        const pdfUrl = `${basePdfUrl}?v=${Date.now()}`;
         await sendDocument(phone, pdfUrl, 'menu_completo.pdf', 'Menú Fit & Go');
         saveToHistory(phone, 'Fit&Go Bot', `[Documento PDF: ${pdfUrl}]`, 'bot');
 

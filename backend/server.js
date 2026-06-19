@@ -60,7 +60,15 @@ app.post('/webhook', async (req, res) => {
                 
                 const senderName = contact?.profile?.name || 'Cliente';
                 const senderPhone = message.from; // Número con código de país
-                const textMsg = message.text?.body || '';
+                
+                // Extraer el texto ya sea de un mensaje normal o de un botón interactivo
+                let textMsg = '';
+                if (message.type === 'text') {
+                    textMsg = message.text?.body || '';
+                } else if (message.type === 'interactive' && message.interactive?.type === 'button_reply') {
+                    // Si tocan un botón, usamos el ID oculto que le asignaremos
+                    textMsg = message.interactive.button_reply.id || '';
+                }
 
                 console.log(`📩 MENSAJE RECIBIDO de ${senderName} (${senderPhone}): ${textMsg}`);
 
