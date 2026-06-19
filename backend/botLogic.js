@@ -8,6 +8,8 @@ const { WHATSAPP_TOKEN, PHONE_NUMBER_ID, FIREBASE_DATABASE_URL } = process.env;
 
 // Archivo local donde guardaremos el historial de chat (además del sync con la nube)
 const HISTORY_FILE = path.join(__dirname, 'chat_history.json');
+// Archivo local donde guardaremos los números pausados temporalmente
+const PAUSED_FILE = path.join(__dirname, 'paused_clients.json');
 
 /**
  * Normaliza un número telefónico para quedarse con los últimos 10 dígitos (estilo México)
@@ -125,6 +127,29 @@ async function processMessage(phone, name, text) {
 
     // 1. GUARDAR EN EL HISTORIAL LOCAL
     saveToHistory(phone, name, text, 'user');
+
+    // A. DETECCIÓN DE COMANDOS DE PAUSA/ACTIVACIÓN
+    if (textLower === '##pausa' || textLower === '/pausa') {
+        pauseBot(phone, 24);
+        replyText = `🔇 Bot de Fit&Go pausado por 24 horas para este número. Ya no responderé automáticamente en este chat.`;
+        await sendMessage(phone, replyText);
+        saveToHistory(phone, 'Fit&Go Bot', replyText, 'bot');
+        return;
+    }
+    
+    if (textLower === '##activar' || textLower === '/activar') {
+        resumeBot(phone);
+        replyText = `🔊 Bot de Fit&Go reactivado. Responderé automáticamente a partir de ahora en este chat.`;
+        await sendMessage(phone, replyText);
+        saveToHistory(phone, 'Fit&Go Bot', replyText, 'bot');
+        return;
+    }
+
+    // B. VALIDAR SI EL BOT ESTÁ EN SILENCIO (PAUSADO) PARA ESTE CLIENTE
+    if (isBotPaused(phone)) {
+        console.log(`ℹ️ El bot está pausado para el teléfono ${phone}. No se enviará respuesta automática.`);
+        return;
+    }
 
     // 2. REGISTRAR COMO LEAD EN LA NUBE (FIREBASE)
     await saveLeadToFirebase(phone, name);
@@ -419,6 +444,69 @@ function isWithinBusinessHours() {
     } catch (error) {
         console.error('Error calculando horario comercial:', error.message);
         return true; // Fallback seguro
+    }
+}
+
+/**
+ * Verifica si el bot está pausado para un número telefónico específico
+ */
+function isBotPaused(phone) {
+    if (!fs.existsSync(PAUSED_FILE)) return false;
+    try {
+        const pausedData = JSON.parse(fs.readFileSync(PAUSED_FILE, 'utf8'));
+        const client = pausedData[phone];
+        if (!client) return false;
+        
+        const now = Date.now();
+        if (now > client.expiresAt) {
+            delete pausedData[phone];
+            fs.writeFileSync(PAUSED_FILE, JSON.stringify(pausedData, null, 2));
+            return false;
+        }
+        return true;
+    } catch (e) {
+        console.error('❌ Error leyendo estado de pausa:', e.message);
+        return false;
+    }
+}
+
+/**
+ * Pausa las respuestas automáticas para un número telefónico por un tiempo determinado (en horas)
+ */
+function pauseBot(phone, hours = 24) {
+    let pausedData = {};
+    if (fs.existsSync(PAUSED_FILE)) {
+        try {
+            pausedData = JSON.parse(fs.readFileSync(PAUSED_FILE, 'utf8'));
+        } catch (e) {
+            pausedData = {};
+        }
+    }
+    
+    const expiresAt = Date.now() + (hours * 60 * 60 * 1000);
+    pausedData[phone] = {
+        pausedAt: new Date().toISOString(),
+        expiresAt: expiresAt
+    };
+    
+    fs.writeFileSync(PAUSED_FILE, JSON.stringify(pausedData, null, 2));
+    console.log(`🔇 Bot de Fit&Go pausado para ${phone} hasta ${new Date(expiresAt).toISOString()}`);
+}
+
+/**
+ * Reanuda las respuestas automáticas del bot para un número telefónico específico
+ */
+function resumeBot(phone) {
+    if (!fs.existsSync(PAUSED_FILE)) return;
+    try {
+        const pausedData = JSON.parse(fs.readFileSync(PAUSED_FILE, 'utf8'));
+        if (pausedData[phone]) {
+            delete pausedData[phone];
+            fs.writeFileSync(PAUSED_FILE, JSON.stringify(pausedData, null, 2));
+            console.log(`🔊 Bot de Fit&Go reactivado para ${phone}`);
+        }
+    } catch (e) {
+        console.error('❌ Error al reanudar bot:', e.message);
     }
 }
 
