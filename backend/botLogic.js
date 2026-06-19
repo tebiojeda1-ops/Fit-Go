@@ -135,6 +135,9 @@ async function processMessage(phone, name, text) {
     const isOption3 = textLower === '3' || textLower.includes('3️⃣') || textLower.includes('semanal') || textLower.includes('plan');
     const isOption4 = textLower === '4' || textLower.includes('4️⃣') || textLower.includes('personalizado') || textLower.includes('dieta');
     const isOption5 = textLower === '5' || textLower.includes('5️⃣') || textLower.includes('pedido') || textLower.includes('hacer pedido') || textLower.includes('comprar') || textLower.includes('ordenar');
+    
+    // Identificación de saludos comunes para reiniciar o mostrar el menú principal
+    const isGreeting = textLower === 'hola' || textLower === 'buenos dias' || textLower === 'buenos días' || textLower === 'buenas tardes' || textLower === 'buenas noches' || textLower === 'empezar' || textLower === 'start';
 
     // 3. LÓGICA DE EVALUACIÓN (El "Cerebro")
     if (isOption1) {
@@ -224,8 +227,8 @@ Para continuar con tu pedido, por favor compártenos:
 
 Nuestro equipo revisará tu pedido y te confirmará lo antes posible. 🥑`;
     }
-    else {
-        // Mensaje de saludo genérico / Default
+    else if (isGreeting) {
+        // Enviar saludo inicial / Menú Principal
         replyText = `¡Hola ${name}! 👋 Bienvenido a Fit&Go 🥑
 
 Preparamos comida saludable en Mérida, Yucatán.
@@ -238,8 +241,48 @@ Preparamos comida saludable en Mérida, Yucatán.
 4️⃣ Servicio Personalizado
 5️⃣ Hacer Pedido
 
+💡 O si prefieres, escribe el número de la opción que desees.
+
+Horario de atención del bot:
 🕛 Horario de servicio: Lunes a Viernes
 ⏰ Cierre de pedidos: 1:30 pm`;
+    }
+    else {
+        // Respuestas de seguimiento basadas en el contexto del último mensaje del bot
+        const lastBotText = getLastBotResponse(phone) || '';
+
+        if (lastBotText.includes('¿Qué platillo te llamó más la atención?')) {
+            replyText = `Excelente elección 🔥
+
+Los manejamos en tamaño Déficit, Normal y Bulk.
+
+¿Cuál sería el que mejor se adapta a tu objetivo? si tienes el pedido listo escribe "5"`;
+        }
+        else if (lastBotText.includes('¿Cuál de estos objetivos se parece más al tuyo?')) {
+            replyText = `Si gustas realizar un pedido escribe "5", si te gustaría ver el menú escribe "1"`;
+        }
+        else if (lastBotText.includes('¿Buscas comidas para toda la semana o solo para algunos días?')) {
+            replyText = `En unos momentos uno de nuestros asesores continuará atendiéndote para ayudarte con tu pedido o resolver cualquier duda. 🥑`;
+        }
+        else if (lastBotText.includes('Puedes enviarla por aquí cuando gustes.')) {
+            replyText = `En unos momentos uno de nuestros asesores continuará atendiéndote para ayudarte con tu pedido o resolver cualquier duda. 🥑`;
+        }
+        else {
+            // Lógica por defecto basada en horario comercial (GMT-6 Mérida)
+            if (isWithinBusinessHours()) {
+                replyText = `En unos momentos uno de nuestros asesores continuará atendiéndote para ayudarte con tu pedido o resolver cualquier duda. 🥑`;
+            } else {
+                replyText = `🌙 Hemos recibido tu mensaje.
+
+En este momento nuestros asesores se encuentran fuera de horario de atención.
+
+🕐 Nuestro horario es de lunes a viernes de 7:00 am a 1:30 pm.
+
+Tu solicitud ya quedó registrada y será atendida en cuanto nuestro equipo esté disponible. 🥑
+
+¡Gracias por comunicarte con Fit&Go!`;
+            }
+        }
     }
 
     // 4. ENVIAR RESPUESTA A LA API DE WHATSAPP
@@ -310,6 +353,73 @@ function saveToHistory(phone, name, text, senderType) {
     });
 
     fs.writeFileSync(HISTORY_FILE, JSON.stringify(history, null, 2));
+}
+
+/**
+ * Obtiene el último mensaje que el bot le envió a este número de teléfono
+ */
+function getLastBotResponse(phone) {
+    if (!fs.existsSync(HISTORY_FILE)) return null;
+    try {
+        const history = JSON.parse(fs.readFileSync(HISTORY_FILE, 'utf8'));
+        const botMessages = history.filter(h => h.phone === phone && h.senderType === 'bot');
+        if (botMessages.length === 0) return null;
+        return botMessages[botMessages.length - 1].text;
+    } catch (e) {
+        console.error('❌ Error leyendo historial para contexto:', e.message);
+        return null;
+    }
+}
+
+/**
+ * Obtiene el día de la semana y hora actual en la zona de Mérida (GMT-6)
+ */
+function getMerdiaDateTime() {
+    const options = {
+        timeZone: 'America/Merida',
+        year: 'numeric', month: 'numeric', day: 'numeric',
+        hour: 'numeric', minute: 'numeric', second: 'numeric',
+        hour12: false
+    };
+    const formatter = new Intl.DateTimeFormat('es-MX', options);
+    const parts = formatter.formatToParts(new Date());
+    
+    const dateMap = {};
+    parts.forEach(p => { dateMap[p.type] = p.value; });
+    
+    const year = parseInt(dateMap.year);
+    const month = parseInt(dateMap.month) - 1;
+    const day = parseInt(dateMap.day);
+    const hour = parseInt(dateMap.hour);
+    const minute = parseInt(dateMap.minute);
+    
+    const tzDate = new Date(Date.UTC(year, month, day, hour, minute));
+    const dayOfWeek = tzDate.getUTCDay();
+    
+    return { dayOfWeek, hour, minute };
+}
+
+/**
+ * Determina si la hora de Mérida está dentro del horario comercial (Lun-Vie de 7:00 am a 1:30 pm)
+ */
+function isWithinBusinessHours() {
+    try {
+        const { dayOfWeek, hour, minute } = getMerdiaDateTime();
+        
+        // Lunes a Viernes
+        if (dayOfWeek < 1 || dayOfWeek > 5) {
+            return false;
+        }
+        
+        const timeInMinutes = hour * 60 + minute;
+        const startLimit = 7 * 60; // 07:00
+        const endLimit = 13 * 60 + 30; // 13:30
+        
+        return timeInMinutes >= startLimit && timeInMinutes <= endLimit;
+    } catch (error) {
+        console.error('Error calculando horario comercial:', error.message);
+        return true; // Fallback seguro
+    }
 }
 
 module.exports = {
