@@ -155,6 +155,9 @@ Te compartimos nuestro menú base 👇`;
         await sendDocument(phone, pdfUrl, 'menu_completo.pdf', 'Menú Fit & Go');
         saveToHistory(phone, 'Fit&Go Bot', `[Documento PDF: ${pdfUrl}]`, 'bot');
 
+        // Delay de 5 segundos antes de enviar el mensaje 3 y 4
+        await new Promise(resolve => setTimeout(resolve, 5000));
+
         // Mensaje 3: Opciones semanales
         const text3 = `🔥 También contamos con opciones especiales que cambian cada semana. Pregúntanos cuáles son.`;
         await sendMessage(phone, text3);
@@ -169,52 +172,57 @@ Te compartimos nuestro menú base 👇`;
     else if (isOption2) {
         replyText = `💰 Nuestros precios dependen del tamaño de la porción:
 
-🥑 Déficit
-💲 $100 - $115
+🥑 Déficit ($100 - $115)
+Ideal para quienes buscan bajar grasa.
+🍗 120 g de proteína pesado en crudo
 
-🥗 Normal
-💲 $115 - $130
+🥗 Normal ($115 - $130)
+Ideal para mantenimiento.
+🍗 150 g de proteína pesado en crudo
 
-💪 Bulk
-💲 $130 - $145
+💪 Bulk ($130 - $145)
+Ideal para ganar masa muscular.
+🍗 180 g de proteína pesado en crudo
 
-🎉 A partir de 5 comidas obtienes $10 de descuento por cada platillo.
-
-¿Buscas comidas individuales o un plan semanal?`;
+😋 ¿Cuál de estos objetivos se parece más al tuyo?`;
     }
     else if (isOption3) {
-        replyText = `📅 Contamos con un plan semanal para ti 😊.
+        replyText = `📅 Contamos con plan semanal 😊
 
-Puedes elegir los platillos que prefieras del menú y pedir desde 5 comidas en adelante.
+Puedes elegir tus platillos favoritos del menú y pedir desde 5 comidas en adelante.
 
-✅ Recibes $10 de descuento por cada platillo.
-✅ Tú eliges los tamaños (Déficit, Normal o Bulk).
-✅ Puedes combinar diferentes comidas.
+✅ $10 de descuento por cada platillo
+✅ Elige tamaños Déficit, Normal o Bulk
+✅ Combina diferentes opciones según tus gustos y objetivos
 
-¿Cuántas comidas te gustaría pedir para la semana?`;
+🥑 Ideal para quienes buscan ahorrar tiempo y mantener una alimentación saludable durante la semana.
+
+¿Buscas comidas para toda la semana o solo para algunos días? 😊`;
     }
     else if (isOption4) {
-        replyText = `🥦 También manejamos servicio personalizado.
+        replyText = `🥦 También contamos con servicio personalizado.
 
 Solo envíanos:
 
 📋 Tu dieta o plan alimenticio en foto o PDF
 
-Y te cotizamos las comidas exactamente según los requerimientos de tu nutriólogo. Cabe destacar que nosotros cocinamos lo que el nutriólogo te recete, nosotros no hacemos dietas sin embargo te podemos recomendar a un nutriólogo.
+Y te cotizamos las comidas exactamente según los requerimientos de tu nutriólogo. 💪
 
-¿Te gustaría enviarnos tu dieta para cotizarla?`;
+Puedes enviarla por aquí cuando gustes.`;
     }
     else if (isOption5) {
         replyText = `¡Perfecto! 😋
-Para comenzar, ¿me compartes tu nombre y apellido?
-¿Sería para servicio a domicilio o Pick Up? (en caso de ser servicio a domicilio, mandar dirección, ubicación y referencias para entrega).
-¿Cuál sería su pedido?
-¿Para qué hora sería aproximadamente?
+
+Para continuar con tu pedido, por favor compártenos:
+
+👤 Nombre y apellido
+🚚 ¿Servicio a domicilio o Pick Up?
+🍽️ ¿Cuál sería tu pedido?
+⏰ ¿Para qué hora aproximadamente lo necesitas?
 
 💳 Aceptamos transferencia y efectivo.
-Nuestro equipo validará tu pedido y te confirmará lo antes posible.
 
-¡Gracias por elegir Fit&Go! 🥑`;
+Nuestro equipo revisará tu pedido y te confirmará lo antes posible. 🥑`;
     }
     else {
         // Mensaje de saludo genérico / Default
@@ -230,7 +238,7 @@ Preparamos comida saludable en Mérida, Yucatán.
 4️⃣ Servicio Personalizado
 5️⃣ Hacer Pedido
 
-🕛Horario de servicio: Lunes a Viernes
+🕛 Horario de servicio: Lunes a Viernes
 ⏰ Cierre de pedidos: 1:30 pm`;
     }
 
