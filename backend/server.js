@@ -82,6 +82,73 @@ app.post('/webhook', async (req, res) => {
         res.sendStatus(404);
     }
 });
+// ==========================================
+// 3. ENDPOINT POST: ENVÍO MASIVO DE WHATSAPP
+// ==========================================
+app.post('/api/send-masivo', async (req, res) => {
+    const { phones, message } = req.body;
+
+    if (!phones || !Array.isArray(phones) || phones.length === 0 || !message) {
+        return res.status(400).json({ error: 'Se requiere un array de teléfonos y un mensaje.' });
+    }
+
+    const WHATSAPP_TOKEN = process.env.WHATSAPP_TOKEN;
+    const PHONE_NUMBER_ID = process.env.PHONE_NUMBER_ID;
+
+    if (!WHATSAPP_TOKEN || !PHONE_NUMBER_ID) {
+        return res.status(500).json({ error: 'Faltan variables de entorno WHATSAPP_TOKEN o PHONE_NUMBER_ID.' });
+    }
+
+    const results = [];
+    
+    for (let i = 0; i < phones.length; i++) {
+        let phone = phones[i].replace(/\D/g, '');
+        
+        // Agregar prefijo 52 si no lo tiene
+        if (phone.length === 10) {
+            phone = '52' + phone;
+        }
+        // Fix México: quitar el '1' extra (521 -> 52)
+        if (phone.startsWith('521') && phone.length === 13) {
+            phone = '52' + phone.substring(3);
+        }
+
+        try {
+            const axios = require('axios');
+            await axios.post(
+                `https://graph.facebook.com/v19.0/${PHONE_NUMBER_ID}/messages`,
+                {
+                    messaging_product: "whatsapp",
+                    recipient_type: "individual",
+                    to: phone,
+                    type: "text",
+                    text: { preview_url: false, body: message }
+                },
+                {
+                    headers: {
+                        'Authorization': `Bearer ${WHATSAPP_TOKEN}`,
+                        'Content-Type': 'application/json'
+                    }
+                }
+            );
+            results.push({ phone, status: 'ok' });
+            console.log(`📤 MASIVO enviado a ${phone}`);
+        } catch (error) {
+            const errMsg = error.response?.data?.error?.message || error.message;
+            results.push({ phone, status: 'error', error: errMsg });
+            console.error(`❌ MASIVO error a ${phone}: ${errMsg}`);
+        }
+
+        // Delay de 2 segundos entre mensajes para no saturar la API de Meta
+        if (i < phones.length - 1) {
+            await new Promise(resolve => setTimeout(resolve, 2000));
+        }
+    }
+
+    const sent = results.filter(r => r.status === 'ok').length;
+    const failed = results.filter(r => r.status === 'error').length;
+    res.json({ sent, failed, total: phones.length, results });
+});
 
 // Fallback a index.html para soportar rutas dinámicas en el frontend estático
 app.get('*', (req, res) => {

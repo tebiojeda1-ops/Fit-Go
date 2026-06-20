@@ -4573,21 +4573,73 @@
                 });
             }
 
+            window.clientesMasivoActual = [];
+
             window.enviarWAMasivo = function(colName) {
                 const colClients = clientes.filter(c => (c.crm_estado || 'Nuevo Lead') === colName && c.tel);
                 if (colClients.length === 0) return toast('No hay clientes con teléfono en esta columna');
                 
+                window.clientesMasivoActual = colClients;
                 document.getElementById('wa-masivo-col').textContent = colName;
-                const linksContainer = document.getElementById('wa-masivo-links');
+                document.getElementById('wa-masivo-count').textContent = colClients.length;
                 
-                linksContainer.innerHTML = colClients.map(c => {
-                    const textoPredefinido = encodeURIComponent('Hola ' + c.nombre + ', somos de Fit&Go. ¿Cómo podemos ayudarte hoy?');
-                    const tel = '52' + c.tel.replace(/\D/g, '');
-                    return `<div style="margin-bottom: 8px;">
-                                <a href="https://wa.me/${tel}?text=${textoPredefinido}" target="_blank" class="btn btn-secondary btn-sm" style="display: block; text-align: left; text-decoration: none;">💬 Enviar a: <span style="font-weight: 600;">${c.nombre}</span></a>
-                            </div>`;
-                }).join('');
+                const destinatariosContainer = document.getElementById('wa-masivo-destinatarios');
+                destinatariosContainer.innerHTML = colClients.map(c => `• ${c.nombre} (${c.tel})`).join('<br>');
+                
+                const statusDiv = document.getElementById('wa-masivo-status');
+                statusDiv.style.display = 'none';
+                statusDiv.textContent = '';
+                
+                const btn = document.getElementById('btn-enviar-masivo');
+                btn.disabled = false;
+                btn.textContent = '🚀 Enviar a todos';
                 
                 openModal('modal-wa-masivo');
+            }
+
+            window.ejecutarEnvioMasivo = async function() {
+                const mensaje = document.getElementById('wa-masivo-mensaje').value.trim();
+                if (!mensaje) return toast('Por favor escribe un mensaje');
+                
+                const phones = window.clientesMasivoActual.map(c => c.tel);
+                if (phones.length === 0) return toast('No hay destinatarios');
+
+                const btn = document.getElementById('btn-enviar-masivo');
+                const statusDiv = document.getElementById('wa-masivo-status');
+                
+                btn.disabled = true;
+                btn.textContent = 'Enviando... (por favor espera)';
+                statusDiv.style.display = 'block';
+                statusDiv.style.color = 'var(--text2)';
+                statusDiv.textContent = 'Iniciando envío... esto puede tomar unos segundos.';
+
+                try {
+                    const response = await fetch('/api/send-masivo', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ phones, message: mensaje })
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (response.ok) {
+                        statusDiv.style.color = 'var(--green)';
+                        statusDiv.textContent = `✅ ¡Listo! Se enviaron ${data.sent} mensajes. (${data.failed} fallaron).`;
+                        toast(`Envío masivo completado: ${data.sent} exitosos`);
+                    } else {
+                        statusDiv.style.color = 'var(--red)';
+                        statusDiv.textContent = `❌ Error: ${data.error || 'No se pudo enviar el mensaje masivo'}`;
+                        btn.disabled = false;
+                        btn.textContent = '🚀 Reintentar';
+                    }
+                } catch (error) {
+                    console.error("Error en envío masivo:", error);
+                    statusDiv.style.color = 'var(--red)';
+                    statusDiv.textContent = '❌ Error de conexión al servidor.';
+                    btn.disabled = false;
+                    btn.textContent = '🚀 Reintentar';
+                }
             }
         }
