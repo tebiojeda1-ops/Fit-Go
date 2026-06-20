@@ -2954,6 +2954,24 @@ Si aún no tienes resuelta tu comida, nosotros nos encargamos de prepararla por 
             </div>
         </div>
 
+        <!-- Modal Pausa CRM -->
+        <div class="modal-overlay" id="modal-pausa-crm">
+            <div class="modal">
+                <div class="modal-header">
+                    <div class="modal-title">⏸️ Motivo de Pausa / Inactividad</div>
+                    <button class="modal-close" onclick="closeModal('modal-pausa-crm')">×</button>
+                </div>
+                <div class="modal-body">
+                    <label style="font-size:12px; color:var(--text2); margin-bottom:4px; display:block;">Nota o justificación:</label>
+                    <textarea id="pausa-motivo" rows="4" style="width:100%;padding:10px;border-radius:8px;border:1px solid var(--bg4);background:var(--bg3);color:var(--text1);font-size:13px;resize:vertical;font-family:inherit;" placeholder="Ej: Se fue de vacaciones, no le gustó la comida, etc..."></textarea>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" onclick="closeModal('modal-pausa-crm')">Cancelar</button>
+                    <button class="btn btn-primary" onclick="guardarPausaCRM()">Guardar</button>
+                </div>
+            </div>
+        </div>
+
         <!-- Toast container -->
         <div class="toast-container" id="toast-container"></div>
 

@@ -4505,7 +4505,7 @@
             document.getElementById('fecha-hoy').textContent = new Date().toLocaleDateString('es-MX', { weekday: 'long', day: 'numeric', month: 'long' });
 
             // ========== CRM KANBAN ==========
-            const crmColumns = ['Nuevo Lead', 'Contactado', 'Cotización Enviada', 'Cliente Activo', 'Inactivo / Pausado'];
+            const crmColumns = ['Nuevo Lead', 'Interesado', 'Cotización Enviada', 'Cliente Activo', 'Inactivo / Pausado'];
 
             function renderCRMKanban() {
                 const board = document.getElementById('crm-kanban-board');
@@ -4524,7 +4524,7 @@
                     colDiv.innerHTML = `
                         <div class="kanban-header">
                             <div class="kanban-title">${col}</div>
-                            ${col === 'Contactado' ? `<button class="btn btn-secondary btn-sm" style="font-size: 9px; padding: 2px 5px;" onclick="enviarWAMasivo('${col}')">💬 Masivo</button>` : ''}
+                            ${col === 'Interesado' ? `<button class="btn btn-secondary btn-sm" style="font-size: 9px; padding: 2px 5px;" onclick="enviarWAMasivo('${col}')">💬 Masivo</button>` : ''}
                             <span class="kanban-count">${colClients.length}</span>
                         </div>
                         <div class="kanban-cards" ondragover="allowDropCRM(event)" ondrop="dropCRM(event, '${col}')" style="min-height: 200px;">
@@ -4533,6 +4533,8 @@
                                     <div class="pedido-cliente" style="font-weight: 500;">${c.nombre}</div>
                                     <div class="pedido-items" style="font-size: 11px; color: var(--text3);">📱 ${c.tel || 'Sin Tel'}</div>
                                     ${c.pedidos > 0 ? `<div class="pedido-items" style="font-size: 11px; color:var(--green)">Pedidos: ${c.pedidos}</div>` : ''}
+                                    ${c.ultimoPedido ? `<div class="pedido-items" style="font-size: 10px; color:var(--text3)">Último pedido: ${fmtFecha(c.ultimoPedido)}</div>` : ''}
+                                    ${c.crm_nota_pausa && col === 'Inactivo / Pausado' ? `<div class="pedido-items" style="font-size: 10px; color:var(--red); font-style: italic; margin-top: 4px;">Nota: ${c.crm_nota_pausa}</div>` : ''}
                                     <div class="pedido-footer" style="margin-top: 6px; display: flex; align-items: center; justify-content: space-between;">
                                         <span class="canal-badge badge-gray" style="font-size: 10px; background: var(--bg4); padding: 2px 6px; border-radius: 4px;">${c.canal || 'N/A'}</span>
                                         ${c.tel ? `<a href="https://wa.me/52${c.tel.replace(/\D/g, '')}?text=${encodeURIComponent('Hola ' + c.nombre + ', somos de Fit&Go. ¿En qué podemos ayudarte?')}" target="_blank" class="btn btn-primary btn-sm" style="padding: 2px 6px; font-size: 10px; text-decoration: none;" onclick="event.stopPropagation();">💬 WA</a>` : ''}
@@ -4553,15 +4555,35 @@
                 ev.dataTransfer.setData("text", id);
             }
 
+            window.clienteEnPausa = null;
+
             window.dropCRM = function(ev, colName) {
                 ev.preventDefault();
                 const id = ev.dataTransfer.getData("text");
                 const c = clientes.find(x => x.id === id);
                 if (c && (c.crm_estado || 'Nuevo Lead') !== colName) {
+                    if (colName === 'Inactivo / Pausado') {
+                        window.clienteEnPausa = c;
+                        document.getElementById('pausa-motivo').value = c.crm_nota_pausa || '';
+                        openModal('modal-pausa-crm');
+                        return; // Esperamos a que guarde en el modal
+                    }
+
                     c.crm_estado = colName;
                     save();
                     renderCRMKanban();
                 }
+            }
+
+            window.guardarPausaCRM = function() {
+                const motivo = document.getElementById('pausa-motivo').value.trim();
+                if (window.clienteEnPausa) {
+                    window.clienteEnPausa.crm_estado = 'Inactivo / Pausado';
+                    window.clienteEnPausa.crm_nota_pausa = motivo;
+                    save();
+                    renderCRMKanban();
+                }
+                closeModal('modal-pausa-crm');
             }
 
             window.filtrarCRM = function(q) {
