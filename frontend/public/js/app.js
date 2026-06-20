@@ -4647,9 +4647,19 @@
                     const data = await response.json();
                     
                     if (response.ok) {
-                        statusDiv.style.color = 'var(--green)';
-                        statusDiv.textContent = `✅ ¡Listo! Se enviaron ${data.sent} mensajes. (${data.failed} fallaron).`;
-                        toast(`Envío masivo completado: ${data.sent} exitosos`);
+                        statusDiv.style.color = data.failed > 0 ? 'var(--red)' : 'var(--green)';
+                        let msg = `✅ ¡Listo! Se enviaron ${data.sent} mensajes. (${data.failed} fallaron).`;
+                        
+                        if (data.failed > 0) {
+                            const errores = data.results.filter(r => r.status === 'error').map(r => `• ${r.phone}: ${r.error}`).join('<br>');
+                            msg += `<br><br><b>Detalle de errores:</b><br>${errores}`;
+                        }
+                        
+                        statusDiv.innerHTML = msg;
+                        
+                        if (data.sent > 0) toast(`Envío masivo completado: ${data.sent} exitosos`);
+                        btn.disabled = false;
+                        btn.textContent = '🚀 Reintentar los que fallaron';
                     } else {
                         statusDiv.style.color = 'var(--red)';
                         statusDiv.textContent = `❌ Error: ${data.error || 'No se pudo enviar el mensaje masivo'}`;
