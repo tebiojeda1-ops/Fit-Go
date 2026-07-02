@@ -103,7 +103,15 @@ app.post('/api/notificar-clientes', async (req, res) => {
     
     for (let i = 0; i < destinatarios.length; i++) {
         let phone = destinatarios[i].phone.replace(/\D/g, '');
-        let name = destinatarios[i].name || 'Cliente';
+        let rawName = destinatarios[i].name || 'Cliente';
+        
+        // Extraer nombre de pila inteligente
+        let nameParts = rawName.replace(/^~/, '').trim().split(/\s+/);
+        let name = nameParts[0]; // 1 o 2 palabras: agarra la primera
+        
+        if (nameParts.length >= 3) {
+            name = nameParts[0] + ' ' + nameParts[1]; // 3 o más palabras: agarra las dos primeras
+        }
         
         let customMsg = '';
         if (!useTemplate && message) {
