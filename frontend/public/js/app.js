@@ -4524,7 +4524,7 @@
                     colDiv.innerHTML = `
                         <div class="kanban-header">
                             <div class="kanban-title">${col}</div>
-                            ${col === 'Interesado' ? `<button class="btn btn-secondary btn-sm" style="font-size: 9px; padding: 2px 5px;" onclick="enviarWAMasivo('${col}')">💬 Masivo</button>` : ''}
+                            ${col === 'Interesado' || col === 'Cliente Activo' ? `<button class="btn btn-secondary btn-sm" style="font-size: 9px; padding: 2px 5px;" onclick="enviarWAMasivo('${col}')">💬 Masivo</button>` : ''}
                             <span class="kanban-count">${colClients.length}</span>
                         </div>
                         <div class="kanban-cards" ondragover="allowDropCRM(event)" ondrop="dropCRM(event, '${col}')" style="min-height: 200px;">
@@ -4596,6 +4596,7 @@
             }
 
             window.clientesMasivoActual = [];
+            window.masivoUsaPlantilla = true;
 
             window.enviarWAMasivo = function(colName) {
                 const colClients = clientes.filter(c => (c.crm_estado || 'Nuevo Lead') === colName && c.tel);
@@ -4607,6 +4608,23 @@
                 
                 const destinatariosContainer = document.getElementById('wa-masivo-destinatarios');
                 destinatariosContainer.innerHTML = colClients.map(c => `• ${c.nombre} (${c.tel})`).join('<br>');
+                
+                const label = document.getElementById('wa-masivo-label');
+                const textarea = document.getElementById('wa-masivo-mensaje');
+                
+                if (colName === 'Cliente Activo') {
+                    label.textContent = 'Mensaje personalizado a enviar (puedes editarlo):';
+                    textarea.readOnly = false;
+                    textarea.style.background = 'var(--bg3)';
+                    textarea.value = "Hola {{nombre}} 👋\\n\\n🥑 Esperamos que estés disfrutando tus comidas.\\n\\n¿Te gustaría programar tu próximo pedido o tienes alguna duda? Quedamos a tus órdenes. 💚";
+                    window.masivoUsaPlantilla = false;
+                } else {
+                    label.textContent = 'Plantilla oficial a enviar (diario):';
+                    textarea.readOnly = true;
+                    textarea.style.background = 'var(--bg2)';
+                    textarea.value = "Hola {{nombre}} 👋\\n\\n🥑 Seguimos recibiendo pedidos para hoy.\\n\\nSi aún no sabes qué vas a comer, nosotros nos encargamos de prepararlo por ti. 🍴💚\\n\\n¿Te gustaría realizar un pedido?";
+                    window.masivoUsaPlantilla = true;
+                }
                 
                 const statusDiv = document.getElementById('wa-masivo-status');
                 statusDiv.style.display = 'none';
@@ -4630,7 +4648,12 @@
                 btn.textContent = 'Enviando... (por favor espera)';
                 statusDiv.style.display = 'block';
                 statusDiv.style.color = 'var(--text2)';
-                statusDiv.textContent = 'Iniciando envío con plantilla... esto puede tomar unos segundos.';
+                statusDiv.textContent = window.masivoUsaPlantilla ? 'Iniciando envío con plantilla... esto puede tomar unos segundos.' : 'Iniciando envío de mensajes...';
+
+                const bodyData = { destinatarios, useTemplate: window.masivoUsaPlantilla };
+                if (!window.masivoUsaPlantilla) {
+                    bodyData.message = document.getElementById('wa-masivo-mensaje').value.trim();
+                }
 
                 try {
                     const response = await fetch('/api/notificar-clientes', {
@@ -4638,7 +4661,7 @@
                         headers: {
                             'Content-Type': 'application/json'
                         },
-                        body: JSON.stringify({ destinatarios })
+                        body: JSON.stringify(bodyData)
                     });
                     
                     const data = await response.json();

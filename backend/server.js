@@ -83,10 +83,10 @@ app.post('/webhook', async (req, res) => {
     }
 });
 // ==========================================
-// 3. ENDPOINT POST: ENVÍO MASIVO DE WHATSAPP (PLANTILLAS)
+// 3. ENDPOINT POST: ENVÍO MASIVO DE WHATSAPP (PLANTILLAS Y TEXTO LIBRE)
 // ==========================================
 app.post('/api/notificar-clientes', async (req, res) => {
-    const { destinatarios } = req.body;
+    const { destinatarios, message, useTemplate } = req.body;
 
     if (!destinatarios || !Array.isArray(destinatarios) || destinatarios.length === 0) {
         return res.status(400).json({ error: 'Se requiere un array de destinatarios.' });
@@ -105,6 +105,11 @@ app.post('/api/notificar-clientes', async (req, res) => {
         let phone = destinatarios[i].phone.replace(/\D/g, '');
         let name = destinatarios[i].name || 'Cliente';
         
+        let customMsg = '';
+        if (!useTemplate && message) {
+            customMsg = message.replace(/\{\{nombre\}\}/g, name);
+        }
+
         // Agregar prefijo 52 si no lo tiene
         if (phone.length === 10) {
             phone = '52' + phone;
@@ -116,29 +121,29 @@ app.post('/api/notificar-clientes', async (req, res) => {
 
         try {
             const axios = require('axios');
+            let payload = {
+                messaging_product: "whatsapp",
+                recipient_type: "individual",
+                to: phone
+            };
+
+            if (useTemplate) {
+                payload.type = "template";
+                payload.template = {
+                    name: "diario",
+                    language: { code: "es_MX" },
+                    components: [
+                        { type: "body", parameters: [{ type: "text", text: name }] }
+                    ]
+                };
+            } else {
+                payload.type = "text";
+                payload.text = { preview_url: false, body: customMsg };
+            }
+
             await axios.post(
                 `https://graph.facebook.com/v19.0/${PHONE_NUMBER_ID}/messages`,
-                {
-                    messaging_product: "whatsapp",
-                    recipient_type: "individual",
-                    to: phone,
-                    type: "template",
-                    template: {
-                        name: "diario",
-                        language: { code: "es_MX" },
-                        components: [
-                            {
-                                type: "body",
-                                parameters: [
-                                    {
-                                        type: "text",
-                                        text: name
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                },
+                payload,
                 {
                     headers: {
                         'Authorization': `Bearer ${WHATSAPP_TOKEN}`,
@@ -147,11 +152,11 @@ app.post('/api/notificar-clientes', async (req, res) => {
                 }
             );
             results.push({ phone, status: 'ok' });
-            console.log(`📤 Plantilla MASIVA enviada a ${phone} (${name})`);
+            console.log(`📤 Mensaje MASIVO (${useTemplate ? 'Plantilla' : 'Libre'}) enviado a ${phone} (${name})`);
         } catch (error) {
             const errMsg = error.response?.data?.error?.message || error.message;
             results.push({ phone, status: 'error', error: errMsg });
-            console.error(`❌ Plantilla MASIVA error a ${phone}: ${errMsg}`);
+            console.error(`❌ Error MASIVO a ${phone}: ${errMsg}`);
         }
 
         // Delay de 2 segundos entre mensajes para no saturar la API de Meta
