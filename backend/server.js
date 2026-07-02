@@ -85,7 +85,7 @@ app.post('/webhook', async (req, res) => {
 // ==========================================
 // 3. ENDPOINT POST: ENVÍO MASIVO DE WHATSAPP (PLANTILLAS)
 // ==========================================
-app.post('/api/send-masivo', async (req, res) => {
+app.post('/api/notificar-clientes', async (req, res) => {
     const { destinatarios } = req.body;
 
     if (!destinatarios || !Array.isArray(destinatarios) || destinatarios.length === 0) {

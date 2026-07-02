@@ -4633,7 +4633,7 @@
                 statusDiv.textContent = 'Iniciando envío con plantilla... esto puede tomar unos segundos.';
 
                 try {
-                    const response = await fetch('/api/send-masivo', {
+                    const response = await fetch('/api/notificar-clientes', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
