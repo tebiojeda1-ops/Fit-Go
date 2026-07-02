@@ -452,7 +452,8 @@
       <div class="kanban-col">
         <div class="kanban-header">
           <span class="kanban-title" style="color:${colColors[estado]}">${estado.toUpperCase()}</span>
-          <span class="kanban-count">${cols.length}</span>
+          ${estado === 'Entregado' ? `<button class="btn btn-secondary btn-sm" style="font-size: 9px; padding: 2px 5px; margin-left: 8px;" onclick="enviarWAMasivoPedidos('${estado}')">💬 Masivo</button>` : ''}
+          <span class="kanban-count" style="margin-left: auto;">${cols.length}</span>
         </div>
         ${cols.length === 0 ? '<div style="text-align:center;padding:20px;color:var(--text3);font-size:12px">Sin pedidos</div>' :
                             cols.map(p => pedidoCard(p)).join('')}
@@ -4625,6 +4626,49 @@
                     textarea.value = "Hola {{nombre}} 👋\\n\\n🥑 Seguimos recibiendo pedidos para hoy.\\n\\nSi aún no sabes qué vas a comer, nosotros nos encargamos de prepararlo por ti. 🍴💚\\n\\n¿Te gustaría realizar un pedido?";
                     window.masivoUsaPlantilla = true;
                 }
+                
+                const statusDiv = document.getElementById('wa-masivo-status');
+                statusDiv.style.display = 'none';
+                statusDiv.textContent = '';
+                
+                const btn = document.getElementById('btn-enviar-masivo');
+                btn.disabled = false;
+                btn.textContent = '🚀 Enviar a todos';
+                
+                openModal('modal-wa-masivo');
+            }
+
+            window.enviarWAMasivoPedidos = function(estado) {
+                const pedidosEstado = pedidos.filter(p => p.estado === estado);
+                
+                const colClients = [];
+                const clientIdsAdded = new Set();
+                
+                pedidosEstado.forEach(p => {
+                    const c = clientes.find(x => x.id === p.clienteId);
+                    if (c && c.tel && !clientIdsAdded.has(c.id)) {
+                        colClients.push(c);
+                        clientIdsAdded.add(c.id);
+                    }
+                });
+
+                if (colClients.length === 0) return toast('No hay clientes con teléfono registrados en estos pedidos');
+                
+                window.clientesMasivoActual = colClients;
+                document.getElementById('wa-masivo-col').textContent = 'Pedidos: ' + estado;
+                document.getElementById('wa-masivo-count').textContent = colClients.length;
+                
+                const destinatariosContainer = document.getElementById('wa-masivo-destinatarios');
+                destinatariosContainer.innerHTML = colClients.map(c => `• ${c.nombre} (${c.tel})`).join('<br>');
+                
+                const label = document.getElementById('wa-masivo-label');
+                const textarea = document.getElementById('wa-masivo-mensaje');
+                
+                label.textContent = 'Mensaje de seguimiento (puedes editarlo):';
+                textarea.readOnly = false;
+                textarea.style.background = 'var(--bg3)';
+                textarea.value = "¡Hola {{nombre}}! 🥑💚\\n\\nEsperamos que hayas disfrutado tu comida de hoy. 😋\\n\\n¿Todo estuvo bien? Tu opinión nos ayuda a seguir mejorando para ofrecerte la mejor experiencia. 🙌";
+                window.masivoUsaPlantilla = false;
                 
                 const statusDiv = document.getElementById('wa-masivo-status');
                 statusDiv.style.display = 'none';
