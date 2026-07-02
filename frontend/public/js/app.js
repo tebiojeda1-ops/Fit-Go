@@ -4620,11 +4620,8 @@
             }
 
             window.ejecutarEnvioMasivo = async function() {
-                const mensaje = document.getElementById('wa-masivo-mensaje').value.trim();
-                if (!mensaje) return toast('Por favor escribe un mensaje');
-                
-                const phones = window.clientesMasivoActual.map(c => c.tel);
-                if (phones.length === 0) return toast('No hay destinatarios');
+                const destinatarios = window.clientesMasivoActual.map(c => ({ phone: c.tel, name: c.nombre }));
+                if (destinatarios.length === 0) return toast('No hay destinatarios con teléfono');
 
                 const btn = document.getElementById('btn-enviar-masivo');
                 const statusDiv = document.getElementById('wa-masivo-status');
@@ -4633,7 +4630,7 @@
                 btn.textContent = 'Enviando... (por favor espera)';
                 statusDiv.style.display = 'block';
                 statusDiv.style.color = 'var(--text2)';
-                statusDiv.textContent = 'Iniciando envío... esto puede tomar unos segundos.';
+                statusDiv.textContent = 'Iniciando envío con plantilla... esto puede tomar unos segundos.';
 
                 try {
                     const response = await fetch('/api/send-masivo', {
@@ -4641,7 +4638,7 @@
                         headers: {
                             'Content-Type': 'application/json'
                         },
-                        body: JSON.stringify({ phones, message: mensaje })
+                        body: JSON.stringify({ destinatarios })
                     });
                     
                     const data = await response.json();

@@ -2935,16 +2935,16 @@
                     <button class="modal-close" onclick="closeModal('modal-wa-masivo')">×</button>
                 </div>
                 <div class="modal-body">
-                    <p style="font-size:12px;color:var(--text2);margin-bottom:8px;">Se enviará este mensaje a <strong id="wa-masivo-count">0</strong> clientes con teléfono registrado.</p>
+                    <p style="font-size:12px;color:var(--text2);margin-bottom:8px;">Se enviará la plantilla oficial a <strong id="wa-masivo-count">0</strong> clientes con teléfono registrado.</p>
                     <div id="wa-masivo-destinatarios" style="max-height: 100px; overflow-y: auto; margin-bottom: 12px; padding: 8px; background: var(--bg3); border-radius: 6px; font-size: 11px; color: var(--text3);"></div>
-                    <label style="font-size:12px; color:var(--text2); margin-bottom:4px; display:block;">Mensaje a enviar:</label>
-                    <textarea id="wa-masivo-mensaje" rows="10" style="width:100%;padding:10px;border-radius:8px;border:1px solid var(--bg4);background:var(--bg3);color:var(--text1);font-size:13px;resize:vertical;font-family:inherit;">🥑 ¡Buen día!
+                    <label style="font-size:12px; color:var(--text2); margin-bottom:4px; display:block;">Plantilla a enviar (diario):</label>
+                    <textarea id="wa-masivo-mensaje" rows="6" readonly style="width:100%;padding:10px;border-radius:8px;border:1px solid var(--bg4);background:var(--bg2);color:var(--text2);font-size:13px;resize:none;font-family:inherit;">Hola {{nombre}} 👋
 
-Seguimos recibiendo pedidos para hoy. 🍴
+🥑 Seguimos recibiendo pedidos para hoy.
 
-Si aún no tienes resuelta tu comida, nosotros nos encargamos de prepararla por ti. 💚
+Si aún no sabes qué vas a comer, nosotros nos encargamos de prepararlo por ti. 🍴💚
 
-¿Te gustaría ordenar algo?</textarea>
+¿Te gustaría realizar un pedido?</textarea>
                     <div id="wa-masivo-status" style="margin-top:10px;font-size:12px;color:var(--green);display:none;"></div>
                 </div>
                 <div class="modal-footer">

@@ -83,13 +83,13 @@ app.post('/webhook', async (req, res) => {
     }
 });
 // ==========================================
-// 3. ENDPOINT POST: ENVÍO MASIVO DE WHATSAPP
+// 3. ENDPOINT POST: ENVÍO MASIVO DE WHATSAPP (PLANTILLAS)
 // ==========================================
 app.post('/api/send-masivo', async (req, res) => {
-    const { phones, message } = req.body;
+    const { destinatarios } = req.body;
 
-    if (!phones || !Array.isArray(phones) || phones.length === 0 || !message) {
-        return res.status(400).json({ error: 'Se requiere un array de teléfonos y un mensaje.' });
+    if (!destinatarios || !Array.isArray(destinatarios) || destinatarios.length === 0) {
+        return res.status(400).json({ error: 'Se requiere un array de destinatarios.' });
     }
 
     const WHATSAPP_TOKEN = process.env.WHATSAPP_TOKEN;
@@ -101,8 +101,9 @@ app.post('/api/send-masivo', async (req, res) => {
 
     const results = [];
     
-    for (let i = 0; i < phones.length; i++) {
-        let phone = phones[i].replace(/\D/g, '');
+    for (let i = 0; i < destinatarios.length; i++) {
+        let phone = destinatarios[i].phone.replace(/\D/g, '');
+        let name = destinatarios[i].name || 'Cliente';
         
         // Agregar prefijo 52 si no lo tiene
         if (phone.length === 10) {
@@ -121,8 +122,22 @@ app.post('/api/send-masivo', async (req, res) => {
                     messaging_product: "whatsapp",
                     recipient_type: "individual",
                     to: phone,
-                    type: "text",
-                    text: { preview_url: false, body: message }
+                    type: "template",
+                    template: {
+                        name: "diario",
+                        language: { code: "es_MX" },
+                        components: [
+                            {
+                                type: "body",
+                                parameters: [
+                                    {
+                                        type: "text",
+                                        text: name
+                                    }
+                                ]
+                            }
+                        ]
+                    }
                 },
                 {
                     headers: {
@@ -132,22 +147,22 @@ app.post('/api/send-masivo', async (req, res) => {
                 }
             );
             results.push({ phone, status: 'ok' });
-            console.log(`📤 MASIVO enviado a ${phone}`);
+            console.log(`📤 Plantilla MASIVA enviada a ${phone} (${name})`);
         } catch (error) {
             const errMsg = error.response?.data?.error?.message || error.message;
             results.push({ phone, status: 'error', error: errMsg });
-            console.error(`❌ MASIVO error a ${phone}: ${errMsg}`);
+            console.error(`❌ Plantilla MASIVA error a ${phone}: ${errMsg}`);
         }
 
         // Delay de 2 segundos entre mensajes para no saturar la API de Meta
-        if (i < phones.length - 1) {
+        if (i < destinatarios.length - 1) {
             await new Promise(resolve => setTimeout(resolve, 2000));
         }
     }
 
     const sent = results.filter(r => r.status === 'ok').length;
     const failed = results.filter(r => r.status === 'error').length;
-    res.json({ sent, failed, total: phones.length, results });
+    res.json({ sent, failed, total: destinatarios.length, results });
 });
 
 // Fallback a index.html para soportar rutas dinámicas en el frontend estático
