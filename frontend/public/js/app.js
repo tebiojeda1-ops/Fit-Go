@@ -4666,7 +4666,7 @@
                 } catch (error) {
                     console.error("Error en envío masivo:", error);
                     statusDiv.style.color = 'var(--red)';
-                    statusDiv.textContent = '❌ Error de conexión al servidor.';
+                    statusDiv.innerHTML = `❌ Fallo en la conexión:<br><small>${error.message || error.toString()}</small>`;
                     btn.disabled = false;
                     btn.textContent = '🚀 Reintentar';
                 }
