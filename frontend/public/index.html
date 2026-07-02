@@ -2936,9 +2936,19 @@
                 </div>
                 <div class="modal-body">
                     <p style="font-size:12px;color:var(--text2);margin-bottom:8px;">Se enviará este mensaje a <strong id="wa-masivo-count">0</strong> clientes con teléfono registrado.</p>
-                    <div id="wa-masivo-destinatarios" style="max-height: 100px; overflow-y: auto; margin-bottom: 12px; padding: 8px; background: var(--bg3); border-radius: 6px; font-size: 11px; color: var(--text3);"></div>
+                    <div id="wa-masivo-destinatarios" style="max-height: 90px; overflow-y: auto; margin-bottom: 12px; padding: 8px; background: var(--bg3); border-radius: 6px; font-size: 11px; color: var(--text3);"></div>
                     <label id="wa-masivo-label" style="font-size:12px; color:var(--text2); margin-bottom:4px; display:block;">Plantilla a enviar:</label>
                     <textarea id="wa-masivo-mensaje" rows="6" readonly style="width:100%;padding:10px;border-radius:8px;border:1px solid var(--bg4);background:var(--bg2);color:var(--text1);font-size:13px;resize:vertical;font-family:inherit;">Hola {{nombre}} 👋</textarea>
+                    <div style="margin-top:10px;">
+                        <label style="font-size:12px; color:var(--text2); margin-bottom:4px; display:block;">⏰ ¿Cuándo enviar?</label>
+                        <select id="wa-masivo-delay" style="width:100%;padding:8px 10px;border-radius:8px;border:1px solid var(--bg4);background:var(--bg3);color:var(--text1);font-size:13px;">
+                            <option value="0">🚀 Ahora mismo</option>
+                            <option value="60">⏳ En 1 hora</option>
+                            <option value="120" selected>⏳ En 2 horas</option>
+                            <option value="180">⏳ En 3 horas</option>
+                            <option value="360">⏳ En 6 horas</option>
+                        </select>
+                    </div>
                     <div id="wa-masivo-status" style="margin-top:10px;font-size:12px;color:var(--green);display:none;"></div>
                 </div>
                 <div class="modal-footer">

@@ -183,6 +183,155 @@ app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, '../frontend/public/index.html'));
 });
 
+// ==========================================
+// FUNCIÓN COMPARTIDA: ENVIAR MENSAJES WA
+// ==========================================
+async function enviarMensajesWA(destinatarios, message, useTemplate) {
+    const axios = require('axios');
+    const WHATSAPP_TOKEN = process.env.WHATSAPP_TOKEN;
+    const PHONE_NUMBER_ID = process.env.PHONE_NUMBER_ID;
+    const results = [];
+
+    for (let i = 0; i < destinatarios.length; i++) {
+        let phone = destinatarios[i].phone.replace(/\D/g, '');
+        let rawName = destinatarios[i].name || 'Cliente';
+
+        // Extraer nombre de pila inteligente
+        let nameParts = rawName.replace(/^~/, '').trim().split(/\s+/);
+        let name = nameParts[0];
+        if (nameParts.length >= 3) name = nameParts[0] + ' ' + nameParts[1];
+
+        let customMsg = '';
+        if (!useTemplate && message) {
+            customMsg = message.replace(/\{\{nombre\}\}/g, name);
+        }
+
+        if (phone.length === 10) phone = '52' + phone;
+        if (phone.startsWith('521') && phone.length === 13) phone = '52' + phone.substring(3);
+
+        try {
+            let payload = { messaging_product: "whatsapp", recipient_type: "individual", to: phone };
+            if (useTemplate) {
+                payload.type = "template";
+                payload.template = {
+                    name: "diario",
+                    language: { code: "es_MX" },
+                    components: [{ type: "body", parameters: [{ type: "text", text: name }] }]
+                };
+            } else {
+                payload.type = "text";
+                payload.text = { preview_url: false, body: customMsg };
+            }
+            await axios.post(`https://graph.facebook.com/v19.0/${PHONE_NUMBER_ID}/messages`, payload, {
+                headers: { 'Authorization': `Bearer ${WHATSAPP_TOKEN}`, 'Content-Type': 'application/json' }
+            });
+            results.push({ phone, status: 'ok' });
+            console.log(`📤 WA enviado a ${phone} (${name})`);
+        } catch (error) {
+            const errMsg = error.response?.data?.error?.message || error.message;
+            results.push({ phone, status: 'error', error: errMsg });
+            console.error(`❌ Error WA a ${phone}: ${errMsg}`);
+        }
+
+        if (i < destinatarios.length - 1) {
+            await new Promise(resolve => setTimeout(resolve, 2000));
+        }
+    }
+    return results;
+}
+
+// ==========================================
+// 4. ENDPOINT POST: PROGRAMAR ENVÍO DIFERIDO
+// ==========================================
+app.post('/api/programar-envio', async (req, res) => {
+    const { destinatarios, message, useTemplate, delayMinutes, label } = req.body;
+
+    if (!destinatarios || !Array.isArray(destinatarios) || destinatarios.length === 0) {
+        return res.status(400).json({ error: 'Se requiere un array de destinatarios.' });
+    }
+
+    const FIREBASE_URL = process.env.FIREBASE_DATABASE_URL || 'https://fitngo-erp-default-rtdb.firebaseio.com';
+    const axios = require('axios');
+    const jobId = 'job_' + Date.now().toString(36);
+    const scheduledAt = Date.now() + ((delayMinutes || 120) * 60 * 1000);
+
+    const job = {
+        id: jobId,
+        label: label || 'Envío programado',
+        status: 'pending',
+        createdAt: Date.now(),
+        scheduledAt,
+        scheduledAtStr: new Date(scheduledAt).toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit' }),
+        useTemplate: useTemplate || false,
+        message: message || '',
+        destinatarios
+    };
+
+    try {
+        await axios.put(`${FIREBASE_URL}/fitgo_erp/scheduled_jobs/${jobId}.json`, job);
+        console.log(`📅 Job programado: ${jobId} para las ${job.scheduledAtStr} (en ${delayMinutes || 120} minutos)`);
+        res.json({ ok: true, jobId, scheduledAtStr: job.scheduledAtStr, total: destinatarios.length });
+    } catch (error) {
+        console.error('❌ Error guardando job en Firebase:', error.message);
+        res.status(500).json({ error: 'No se pudo guardar el job en Firebase.' });
+    }
+});
+
+// ==========================================
+// 5. ENDPOINT GET: REVISAR Y EJECUTAR JOBS (cron-job.org llama aquí cada 5 min)
+// ==========================================
+app.get('/api/check-jobs', async (req, res) => {
+    const FIREBASE_URL = process.env.FIREBASE_DATABASE_URL || 'https://fitngo-erp-default-rtdb.firebaseio.com';
+    const axios = require('axios');
+
+    try {
+        const response = await axios.get(`${FIREBASE_URL}/fitgo_erp/scheduled_jobs.json`);
+        const jobs = response.data;
+
+        if (!jobs || typeof jobs !== 'object') {
+            return res.json({ checked: 0, executed: 0 });
+        }
+
+        const ahora = Date.now();
+        const pendingJobs = Object.values(jobs).filter(j => j.status === 'pending' && j.scheduledAt <= ahora);
+
+        console.log(`🔍 Check-jobs: ${pendingJobs.length} jobs listos para ejecutar`);
+
+        let executed = 0;
+        for (const job of pendingJobs) {
+            try {
+                // Marcar como "running" para evitar ejecuciones dobles
+                await axios.patch(`${FIREBASE_URL}/fitgo_erp/scheduled_jobs/${job.id}.json`, { status: 'running' });
+
+                const results = await enviarMensajesWA(job.destinatarios, job.message, job.useTemplate);
+                const sent = results.filter(r => r.status === 'ok').length;
+                const failed = results.filter(r => r.status === 'error').length;
+
+                // Marcar como completado
+                await axios.patch(`${FIREBASE_URL}/fitgo_erp/scheduled_jobs/${job.id}.json`, {
+                    status: 'done',
+                    executedAt: Date.now(),
+                    sent,
+                    failed
+                });
+                console.log(`✅ Job ${job.id} ejecutado: ${sent} enviados, ${failed} fallaron`);
+                executed++;
+            } catch (err) {
+                await axios.patch(`${FIREBASE_URL}/fitgo_erp/scheduled_jobs/${job.id}.json`, {
+                    status: 'error',
+                    errorMsg: err.message
+                });
+                console.error(`❌ Error ejecutando job ${job.id}:`, err.message);
+            }
+        }
+
+        res.json({ checked: pendingJobs.length, executed });
+    } catch (error) {
+        console.error('❌ Error en check-jobs:', error.message);
+        res.status(500).json({ error: error.message });
+    }
+});
+
 app.listen(port, () => {
     console.log(`🚀 Servidor Fit&Go consolidado corriendo en http://localhost:${port}`);
     console.log(`📡 URL del Webhook para Meta: http://localhost:${port}/webhook`);

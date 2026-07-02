@@ -4685,53 +4685,81 @@
                 const destinatarios = window.clientesMasivoActual.map(c => ({ phone: c.tel, name: c.nombre }));
                 if (destinatarios.length === 0) return toast('No hay destinatarios con teléfono');
 
+                const delayMinutes = parseInt(document.getElementById('wa-masivo-delay').value) || 0;
                 const btn = document.getElementById('btn-enviar-masivo');
                 const statusDiv = document.getElementById('wa-masivo-status');
-                
+
                 btn.disabled = true;
-                btn.textContent = 'Enviando... (por favor espera)';
                 statusDiv.style.display = 'block';
                 statusDiv.style.color = 'var(--text2)';
-                statusDiv.textContent = window.masivoUsaPlantilla ? 'Iniciando envío con plantilla... esto puede tomar unos segundos.' : 'Iniciando envío de mensajes...';
 
                 const bodyData = { destinatarios, useTemplate: window.masivoUsaPlantilla };
                 if (!window.masivoUsaPlantilla) {
                     bodyData.message = document.getElementById('wa-masivo-mensaje').value.trim();
                 }
 
+                // ── PROGRAMADO ──────────────────────────────────────────
+                if (delayMinutes > 0) {
+                    btn.textContent = 'Programando...';
+                    statusDiv.textContent = 'Guardando envío programado...';
+                    bodyData.delayMinutes = delayMinutes;
+                    bodyData.label = `Masivo: ${document.getElementById('wa-masivo-col').textContent}`;
+
+                    try {
+                        const response = await fetch('/api/programar-envio', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(bodyData)
+                        });
+                        const data = await response.json();
+                        if (response.ok) {
+                            const hrs = delayMinutes >= 60 ? `${delayMinutes / 60}h` : `${delayMinutes}min`;
+                            statusDiv.style.color = 'var(--green)';
+                            statusDiv.innerHTML = `✅ ¡Programado! Se enviará a <b>${data.total}</b> clientes a las <b>${data.scheduledAtStr}</b> (en ${hrs}).<br><small style="color:var(--text3)">Puedes cerrar esta ventana tranquilamente.</small>`;
+                            btn.textContent = '✅ Programado';
+                            toast(`Envío programado para las ${data.scheduledAtStr}`);
+                        } else {
+                            throw new Error(data.error);
+                        }
+                    } catch (error) {
+                        statusDiv.style.color = 'var(--red)';
+                        statusDiv.innerHTML = `❌ Error al programar: <small>${error.message}</small>`;
+                        btn.disabled = false;
+                        btn.textContent = '🚀 Reintentar';
+                    }
+                    return;
+                }
+
+                // ── INMEDIATO ───────────────────────────────────────────
+                btn.textContent = 'Enviando... (por favor espera)';
+                statusDiv.textContent = window.masivoUsaPlantilla ? 'Iniciando envío con plantilla...' : 'Iniciando envío de mensajes...';
+
                 try {
                     const response = await fetch('/api/notificar-clientes', {
                         method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
+                        headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(bodyData)
                     });
-                    
                     const data = await response.json();
-                    
+
                     if (response.ok) {
                         statusDiv.style.color = data.failed > 0 ? 'var(--red)' : 'var(--green)';
                         let msg = `✅ ¡Listo! Se enviaron ${data.sent} mensajes. (${data.failed} fallaron).`;
-                        
                         if (data.failed > 0) {
                             const errores = data.results.filter(r => r.status === 'error').map(r => `• ${r.phone}: ${r.error}`).join('<br>');
                             msg += `<br><br><b>Detalle de errores:</b><br>${errores}`;
                         }
-                        
                         statusDiv.innerHTML = msg;
-                        
                         if (data.sent > 0) toast(`Envío masivo completado: ${data.sent} exitosos`);
                         btn.disabled = false;
                         btn.textContent = '🚀 Reintentar los que fallaron';
                     } else {
                         statusDiv.style.color = 'var(--red)';
-                        statusDiv.textContent = `❌ Error: ${data.error || 'No se pudo enviar el mensaje masivo'}`;
+                        statusDiv.textContent = `❌ Error: ${data.error || 'No se pudo enviar'}`;
                         btn.disabled = false;
                         btn.textContent = '🚀 Reintentar';
                     }
                 } catch (error) {
-                    console.error("Error en envío masivo:", error);
                     statusDiv.style.color = 'var(--red)';
                     statusDiv.innerHTML = `❌ Fallo en la conexión:<br><small>${error.message || error.toString()}</small>`;
                     btn.disabled = false;
