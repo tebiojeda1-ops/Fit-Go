@@ -3,11 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Fit&Go â€” Sistema Operativo</title>
+<title>Fit&Go — Sistema Operativo</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
   :root {
-    /* Paleta Fit&Go: #2ECC71 Â· #27AE60 Â· #1C1C1E Â· #FFFFFF Â· #F2F2F7 Â· #FF7A00 */
+    /* Paleta Fit&Go: #2ECC71 · #27AE60 · #1C1C1E · #FFFFFF · #F2F2F7 · #FF7A00 */
     --bg: #F2F2F7;
     --bg2: #FFFFFF;
     --bg3: #F2F2F7;
@@ -335,20 +335,20 @@
 <!-- LOGIN SCREEN -->
 <div class="login-screen" id="login-screen">
   <div class="login-box">
-    <div class="login-logo">ðŸ¥—</div>
+    <div class="login-logo">🥗</div>
     <div class="login-title">Fit&Go</div>
-    <div class="login-sub">Sistema Operativo Â· Inicia sesiÃ³n</div>
-    <div class="login-error" id="login-error">Usuario o contraseÃ±a incorrectos</div>
+    <div class="login-sub">Sistema Operativo · Inicia sesión</div>
+    <div class="login-error" id="login-error">Usuario o contraseña incorrectos</div>
     <div class="form-group" style="text-align:left">
       <label class="form-label">Usuario</label>
       <input class="form-input" id="login-user" placeholder="Ej: admin" onkeydown="if(event.key==='Enter')doLogin()">
     </div>
     <div class="form-group" style="text-align:left">
-      <label class="form-label">ContraseÃ±a</label>
-      <input class="form-input" id="login-pass" type="password" placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢" onkeydown="if(event.key==='Enter')doLogin()">
+      <label class="form-label">Contraseña</label>
+      <input class="form-input" id="login-pass" type="password" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()">
     </div>
     <button class="btn btn-primary w-full" style="margin-top:8px;padding:11px" onclick="doLogin()">Entrar</button>
-    <div style="font-size:11px;color:var(--text3);margin-top:20px">Fit&Go Â· MÃ©rida Â· v1.0</div>
+    <div style="font-size:11px;color:var(--text3);margin-top:20px">Fit&Go · Mérida · v1.0</div>
   </div>
 </div>
 
@@ -356,7 +356,7 @@
 <aside class="sidebar">
   <div class="sidebar-logo">
     <div class="logo-mark">
-      <div class="logo-icon">ðŸ¥—</div>
+      <div class="logo-icon">🥗</div>
       <div>
         <div class="logo-text">Fit&Go</div>
         <div class="logo-sub">SISTEMA OPERATIVO</div>
@@ -367,54 +367,54 @@
     <div class="nav-section">
       <div class="nav-label">Principal</div>
       <a class="nav-item active" onclick="showPage('dashboard')">
-        <span class="nav-icon">ðŸ“Š</span> Dashboard
+        <span class="nav-icon">📊</span> Dashboard
       </a>
       <a class="nav-item" onclick="showPage('pedidos')">
-        <span class="nav-icon">ðŸ§¾</span> Pedidos
+        <span class="nav-icon">🧾</span> Pedidos
         <span class="nav-badge" id="badge-pedidos">3</span>
       </a>
     </div>
     <div class="nav-section">
       <div class="nav-label">Cocina</div>
       <a class="nav-item" onclick="showPage('menu')">
-        <span class="nav-icon">ðŸ¥™</span> MenÃº
+        <span class="nav-icon">🥙</span> Menú
       </a>
       <a class="nav-item" onclick="showPage('dietas')">
-        <span class="nav-icon">ðŸ“‹</span> Dietas personalizadas
+        <span class="nav-icon">📋</span> Dietas personalizadas
       </a>
       <a class="nav-item" onclick="showPage('inventario')">
-        <span class="nav-icon">ðŸ“¦</span> Inventario
+        <span class="nav-icon">📦</span> Inventario
       </a>
       <a class="nav-item" onclick="showPage('producciones')">
-        <span class="nav-icon">ðŸ§ª</span> Producciones
+        <span class="nav-icon">🧪</span> Producciones
       </a>
       <a class="nav-item" onclick="showPage('compras')">
-        <span class="nav-icon">ðŸ›’</span> Compras de insumos
+        <span class="nav-icon">🛒</span> Compras de insumos
       </a>
     </div>
     <div class="nav-section">
       <div class="nav-label">Finanzas</div>
       <a class="nav-item" onclick="showPage('caja')">
-        <span class="nav-icon">ðŸ’°</span> Caja del dÃ­a
+        <span class="nav-icon">💰</span> Caja del día
       </a>
       <a class="nav-item" onclick="showPage('proveedores')">
-        <span class="nav-icon">ðŸš›</span> Proveedores
+        <span class="nav-icon">🚛</span> Proveedores
       </a>
       <a class="nav-item" onclick="showPage('cxp')">
-        <span class="nav-icon">ðŸ“¤</span> Cuentas por pagar
+        <span class="nav-icon">📤</span> Cuentas por pagar
       </a>
       <a class="nav-item" onclick="showPage('cxc')">
-        <span class="nav-icon">ðŸ“¥</span> Cuentas por cobrar
+        <span class="nav-icon">📥</span> Cuentas por cobrar
         <span class="nav-badge" id="badge-cxc" style="display:none">0</span>
       </a>
       <a class="nav-item" onclick="showPage('bancos')" id="nav-bancos">
-        <span class="nav-icon">ðŸ ¦</span> Saldo de bancos
+        <span class="nav-icon">🏦</span> Saldo de bancos
       </a>
     </div>
     <div class="nav-section">
       <div class="nav-label">Clientes</div>
       <a class="nav-item" onclick="showPage('clientes')">
-        <span class="nav-icon">ðŸ‘¤</span> Clientes
+        <span class="nav-icon">👤</span> Clientes
       </a>
       <a class="nav-item" onclick="showPage('crm-kanban')" id="nav-crm-kanban">
         <span class="nav-icon">📋</span> CRM Kanban
@@ -423,19 +423,19 @@
     <div class="nav-section">
       <div class="nav-label">Inteligencia</div>
       <a class="nav-item" onclick="showPage('reportes')">
-        <span class="nav-icon">ðŸ“ˆ</span> Reportes
+        <span class="nav-icon">📈</span> Reportes
       </a>
     </div>
     <div class="nav-section" id="nav-admin-section">
-      <div class="nav-label">AdministraciÃ³n</div>
+      <div class="nav-label">Administración</div>
       <a class="nav-item" onclick="showPage('usuarios')" id="nav-usuarios">
-        <span class="nav-icon">ðŸ”</span> Usuarios y permisos
+        <span class="nav-icon">🔐</span> Usuarios y permisos
       </a>
       <a class="nav-item" onclick="showPage('eliminacion')" id="nav-eliminacion">
-        <span class="nav-icon">ðŸ—‘</span> Eliminar pedidos
+        <span class="nav-icon">🗑</span> Eliminar pedidos
       </a>
       <a class="nav-item" onclick="showPage('importar')" id="nav-importar">
-        <span class="nav-icon">ðŸ“¥</span> Carga masiva
+        <span class="nav-icon">📥</span> Carga masiva
       </a>
     </div>
   </nav>
@@ -445,7 +445,7 @@
       <div class="name" id="sidebar-nombre">Admin</div>
       <div class="role" id="sidebar-rol">Administrador</div>
     </div>
-    <button onclick="doLogout()" style="margin-left:auto;background:none;border:none;color:var(--text3);cursor:pointer;font-size:18px" title="Cerrar sesiÃ³n">â</button>
+    <button onclick="doLogout()" style="margin-left:auto;background:none;border:none;color:var(--text3);cursor:pointer;font-size:18px" title="Cerrar sesión">⏏</button>
   </div>
 </aside>
 
@@ -467,7 +467,7 @@
         <div class="card card-sm">
           <div class="card-title">Ventas hoy</div>
           <div class="metric-row"><span class="metric-big" id="kpi-ventas">$0</span></div>
-          <div class="card-delta up" id="kpi-ventas-delta">â†‘ +0% vs ayer</div>
+          <div class="card-delta up" id="kpi-ventas-delta">↑ +0% vs ayer</div>
         </div>
         <div class="card card-sm">
           <div class="card-title">Platillos hoy</div>
@@ -482,12 +482,12 @@
         <div class="card card-sm" style="cursor:pointer" onclick="showPage('cxc')">
           <div class="card-title">Por cobrar</div>
           <div class="metric-row"><span class="metric-big" style="color:var(--blue)" id="kpi-cobrar">$0</span></div>
-          <div class="card-delta" id="kpi-cobrar-delta" style="color:var(--blue)">cuentas por cobrar â†’</div>
+          <div class="card-delta" id="kpi-cobrar-delta" style="color:var(--blue)">cuentas por cobrar →</div>
         </div>
         <div class="card card-sm" style="cursor:pointer" onclick="showPage('cxp')">
           <div class="card-title">Por pagar</div>
           <div class="metric-row"><span class="metric-big highlight-red" id="kpi-pagar">$0</span></div>
-          <div class="card-delta down" id="kpi-pagar-delta">cuentas por pagar â†’</div>
+          <div class="card-delta down" id="kpi-pagar-delta">cuentas por pagar →</div>
         </div>
       </div>
 
@@ -496,17 +496,17 @@
         <div class="card">
           <div class="section-header">
             <div class="section-title">Pedidos activos</div>
-            <button class="btn btn-secondary btn-sm" onclick="showPage('pedidos')">Ver todos â†’</button>
+            <button class="btn btn-secondary btn-sm" onclick="showPage('pedidos')">Ver todos →</button>
           </div>
           <div id="dash-pedidos-lista">
-            <div class="empty"><div class="empty-icon">ðŸ§¾</div><div class="empty-title">Sin pedidos activos</div><div class="empty-text">Los pedidos nuevos aparecerÃ¡n aquÃ­</div></div>
+            <div class="empty"><div class="empty-icon">🧾</div><div class="empty-title">Sin pedidos activos</div><div class="empty-text">Los pedidos nuevos aparecerán aquí</div></div>
           </div>
         </div>
         <!-- Alertas inventario -->
         <div class="card">
           <div class="section-header">
             <div class="section-title">Alertas de inventario</div>
-            <button class="btn btn-secondary btn-sm" onclick="showPage('inventario')">Ver â†’</button>
+            <button class="btn btn-secondary btn-sm" onclick="showPage('inventario')">Ver →</button>
           </div>
           <div id="dash-alertas"></div>
         </div>
@@ -529,16 +529,16 @@
   <!-- =================== PEDIDOS =================== -->
   <div id="page-pedidos" class="page">
     <div class="topbar">
-      <div class="topbar-title">GestiÃ³n de Pedidos</div>
+      <div class="topbar-title">Gestión de Pedidos</div>
       <div class="topbar-actions">
         <div style="display:flex;align-items:center;gap:6px;padding:4px 10px;background:var(--bg3);border-radius:var(--radius-sm);border:1px solid var(--border)">
-          <span style="font-size:11px;color:var(--text3)">ðŸ“… DÃ­a:</span>
+          <span style="font-size:11px;color:var(--text3)">📅 Día:</span>
           <input type="date" class="form-input" id="dia-trabajo" style="width:135px;padding:3px 6px;font-size:12px;border:none;background:transparent" onchange="cambiarDiaTrabajo(this.value)">
           <button class="btn btn-secondary btn-sm" style="padding:2px 6px;font-size:10px" onclick="resetDiaTrabajo()" title="Volver a hoy">Hoy</button>
         </div>
-        <button class="btn btn-secondary btn-sm" id="btn-vista-cal" onclick="toggleVistaCal()">ðŸ“… Calendario</button>
-        <button class="btn btn-secondary btn-sm" onclick="toggleVistaPedidos()">âŠž Vista lista</button>
-        <button class="btn btn-secondary btn-sm" onclick="openAgendarSemana()">ðŸ—“ Agendar semana</button>
+        <button class="btn btn-secondary btn-sm" id="btn-vista-cal" onclick="toggleVistaCal()">📅 Calendario</button>
+        <button class="btn btn-secondary btn-sm" onclick="toggleVistaPedidos()">⊞ Vista lista</button>
+        <button class="btn btn-secondary btn-sm" onclick="openAgendarSemana()">🗓 Agendar semana</button>
         <button class="btn btn-primary btn-sm" onclick="openNuevoPedido()">+ Nuevo pedido</button>
       </div>
     </div>
@@ -547,61 +547,61 @@
       <!-- Vista Calendario -->
       <div id="vista-calendario" style="display:none" class="card mb-16">
         <div class="flex items-center justify-between mb-16">
-          <button class="btn btn-secondary btn-sm" onclick="navCalendario(-1)">â† Anterior</button>
+          <button class="btn btn-secondary btn-sm" onclick="navCalendario(-1)">← Anterior</button>
           <div style="font-size:15px;font-weight:600" id="cal-titulo-mes"></div>
-          <button class="btn btn-secondary btn-sm" onclick="navCalendario(1)">Siguiente â†’</button>
+          <button class="btn btn-secondary btn-sm" onclick="navCalendario(1)">Siguiente →</button>
         </div>
-        <!-- Cabecera dÃ­as -->
+        <!-- Cabecera días -->
         <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:6px">
-          ${['Dom','Lun','Mar','MiÃ©','Jue','Vie','SÃ¡b'].map(d=>`<div style="text-align:center;font-size:11px;font-weight:600;color:var(--text3);padding:4px">${d}</div>`).join('')}
+          ${['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'].map(d=>`<div style="text-align:center;font-size:11px;font-weight:600;color:var(--text3);padding:4px">${d}</div>`).join('')}
         </div>
         <div id="cal-grid" style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px"></div>
-        <!-- Detalle dÃ­a seleccionado -->
+        <!-- Detalle día seleccionado -->
         <div id="cal-detalle-dia" style="margin-top:16px;display:none">
           <hr class="divider" style="margin:0 0 14px">
           <div class="section-header mb-10">
-            <div class="section-title" id="cal-detalle-titulo">Pedidos del dÃ­a</div>
+            <div class="section-title" id="cal-detalle-titulo">Pedidos del día</div>
             <button class="btn btn-primary btn-sm" onclick="openNuevoPedidoFecha(calFechaSeleccionada)">+ Agregar pedido en esta fecha</button>
           </div>
           <div id="cal-detalle-lista"></div>
         </div>
       </div>
 
-      <!-- KPIs del dÃ­a seleccionado -->
+      <!-- KPIs del día seleccionado -->
       <div class="grid mb-14" style="grid-template-columns:repeat(4,1fr);gap:12px">
         <div class="card card-sm" style="border-color:rgba(46,204,113,0.3)">
-          <div class="card-title" style="color:var(--green)">ðŸ¥™ Platillos del dÃ­a</div>
+          <div class="card-title" style="color:var(--green)">🥙 Platillos del día</div>
           <div class="metric-big highlight-green" id="ped-kpi-platillos">0</div>
-          <div style="font-size:11px;color:var(--text3)" id="ped-kpi-platillos-det">vendidos + cortesÃ­as</div>
+          <div style="font-size:11px;color:var(--text3)" id="ped-kpi-platillos-det">vendidos + cortesías</div>
         </div>
         <div class="card card-sm">
-          <div class="card-title">ðŸ§¾ Pedidos del dÃ­a</div>
+          <div class="card-title">🧾 Pedidos del día</div>
           <div class="metric-big" id="ped-kpi-pedidos">0</div>
           <div style="font-size:11px;color:var(--text3)" id="ped-kpi-pedidos-det">0 entregados</div>
         </div>
         <div class="card card-sm" style="border-color:rgba(155,89,182,0.3)">
-          <div class="card-title" style="color:var(--purple)">ðŸŽ CortesÃ­as</div>
+          <div class="card-title" style="color:var(--purple)">🎁 Cortesías</div>
           <div class="metric-big" style="color:var(--purple)" id="ped-kpi-cortesias">0</div>
           <div style="font-size:11px;color:var(--text3)" id="ped-kpi-cortesias-det">0 platillos</div>
         </div>
         <div class="card card-sm">
-          <div class="card-title">ðŸ’° Venta del dÃ­a</div>
+          <div class="card-title">💰 Venta del día</div>
           <div class="metric-big" id="ped-kpi-venta">$0</div>
           <div style="font-size:11px;color:var(--text3)" id="ped-kpi-venta-det">solo entregados</div>
         </div>
       </div>
 
-      <!-- Resumen de platillos del dÃ­a -->
+      <!-- Resumen de platillos del día -->
       <div class="card mb-16" id="card-resumen-platillos">
         <div class="section-header" style="margin-bottom:12px">
-          <div class="section-title">ðŸ“Š Resumen del dÃ­a â€” cantidades por platillo <span id="resumen-total-platillos" style="font-size:13px;color:var(--green);font-weight:700;margin-left:6px"></span></div>
+          <div class="section-title">📊 Resumen del día — cantidades por platillo <span id="resumen-total-platillos" style="font-size:13px;color:var(--green);font-weight:700;margin-left:6px"></span></div>
           <div class="flex gap-8 items-center">
             <select class="form-input" style="width:160px;font-size:12px" id="resumen-estado-filtro" onchange="renderResumenPlatillos()">
               <option value="">Todos los estados</option>
               <option value="activos">Solo activos</option>
               <option value="Entregado">Entregados</option>
               <option value="Nuevo">Nuevos</option>
-              <option value="En preparaciÃ³n">En preparaciÃ³n</option>
+              <option value="En preparación">En preparación</option>
             </select>
           </div>
         </div>
@@ -613,13 +613,13 @@
         <div class="card">
           <div class="flex items-center gap-12 mb-16">
             <div class="search-wrap flex-1">
-              <span class="search-icon">ðŸ”</span>
+              <span class="search-icon">🔍</span>
               <input type="text" class="form-input" placeholder="Buscar por cliente o #pedido..." oninput="filtrarPedidos(this.value)">
             </div>
             <select class="form-input" style="width:160px" onchange="filtrarPorEstado(this.value)">
               <option value="">Todos los estados</option>
               <option>Nuevo</option>
-              <option>En preparaciÃ³n</option>
+              <option>En preparación</option>
               <option>Listo</option>
               <option>Entregado</option>
             </select>
@@ -635,12 +635,12 @@
     </div>
   </div>
 
-  <!-- =================== MENÃš =================== -->
+  <!-- =================== MENÚ =================== -->
   <div id="page-menu" class="page">
     <div class="topbar">
-      <div class="topbar-title">MenÃº</div>
+      <div class="topbar-title">Menú</div>
       <div class="topbar-actions">
-        <button class="btn btn-secondary btn-sm" onclick="openGestionCategorias('menu')">ðŸ· CategorÃ­as</button>
+        <button class="btn btn-secondary btn-sm" onclick="openGestionCategorias('menu')">🏷 Categorías</button>
         <button class="btn btn-primary btn-sm" onclick="openNuevoPlatillo()">+ Agregar platillo</button>
       </div>
     </div>
@@ -657,12 +657,12 @@
     <div class="topbar">
       <div class="topbar-title">Dietas Personalizadas</div>
       <div class="topbar-actions">
-        <button class="btn btn-secondary btn-sm" onclick="openRemarketing()">ðŸ“² Remarketing</button>
-        <button class="btn btn-primary btn-sm" onclick="openNuevaDieta()">+ Nueva cotizaciÃ³n</button>
+        <button class="btn btn-secondary btn-sm" onclick="openRemarketing()">📲 Remarketing</button>
+        <button class="btn btn-primary btn-sm" onclick="openNuevaDieta()">+ Nueva cotización</button>
       </div>
     </div>
     <div class="content">
-      <!-- KPIs de conversiÃ³n -->
+      <!-- KPIs de conversión -->
       <div class="grid mb-16" style="grid-template-columns:repeat(4,1fr);gap:12px">
         <div class="card card-sm">
           <div class="card-title">Enviadas (mes)</div>
@@ -671,7 +671,7 @@
         <div class="card card-sm" style="border-color:rgba(46,204,113,0.3)">
           <div class="card-title" style="color:var(--green)">Confirmadas</div>
           <div class="metric-big highlight-green" id="diet-kpi-confirmadas">0</div>
-          <div style="font-size:11px;color:var(--text3)" id="diet-kpi-conversion">0% conversiÃ³n</div>
+          <div style="font-size:11px;color:var(--text3)" id="diet-kpi-conversion">0% conversión</div>
         </div>
         <div class="card card-sm" style="border-color:rgba(231,76,60,0.3)">
           <div class="card-title" style="color:var(--red)">Rechazadas</div>
@@ -689,7 +689,7 @@
       </div>
 
       <!-- Dietas vigentes -->
-      <div class="section-header mt-16 mb-8"><div class="section-title">ðŸ½ Dietas vigentes (clientes activos)</div></div>
+      <div class="section-header mt-16 mb-8"><div class="section-title">🍽 Dietas vigentes (clientes activos)</div></div>
       <div class="grid grid-2" id="dietas-vigentes-grid" style="grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));"></div>
     </div>
   </div>
@@ -699,24 +699,24 @@
     <div class="topbar">
       <div class="topbar-title">Inventario</div>
       <div class="topbar-actions" id="inv-btns-ingredientes">
-        <button class="btn btn-secondary btn-sm" onclick="openGestionCategorias('insumos')">ðŸ· CategorÃ­as</button>
-        <button class="btn btn-secondary btn-sm" onclick="openMermaModal()">ðŸ—‘ Salida por merma</button>
-        <button class="btn btn-secondary btn-sm" onclick="openContrasteInventario()">ðŸ” Contraste fÃ­sico</button>
-        <button class="btn btn-secondary btn-sm" onclick="openRequisicion()">ðŸ“‹ RequisiciÃ³n</button>
+        <button class="btn btn-secondary btn-sm" onclick="openGestionCategorias('insumos')">🏷 Categorías</button>
+        <button class="btn btn-secondary btn-sm" onclick="openMermaModal()">🗑 Salida por merma</button>
+        <button class="btn btn-secondary btn-sm" onclick="openContrasteInventario()">🔍 Contraste físico</button>
+        <button class="btn btn-secondary btn-sm" onclick="openRequisicion()">📋 Requisición</button>
         <button class="btn btn-primary btn-sm" onclick="openNuevoIngrediente()">+ Ingrediente</button>
       </div>
       <div class="topbar-actions" id="inv-btns-presentaciones" style="display:none">
-        <button class="btn btn-primary btn-sm" onclick="openNuevaPresentacion()">+ Nueva presentaciÃ³n</button>
+        <button class="btn btn-primary btn-sm" onclick="openNuevaPresentacion()">+ Nueva presentación</button>
       </div>
       <div class="topbar-actions" id="inv-btns-alertas" style="display:none">
-        <button class="btn btn-secondary btn-sm" onclick="openConfigAlertas()">âš™ Configurar alertas</button>
+        <button class="btn btn-secondary btn-sm" onclick="openConfigAlertas()">⚙ Configurar alertas</button>
       </div>
     </div>
     <div class="content">
       <div class="tabs mb-16">
-        <div class="tab active" onclick="switchInvTab(this,'ingredientes')">ðŸ“¦ Ingredientes</div>
-        <div class="tab" onclick="switchInvTab(this,'presentaciones')">ðŸ· Presentaciones</div>
-        <div class="tab" onclick="switchInvTab(this,'alertas')">ðŸ”” Alertas</div>
+        <div class="tab active" onclick="switchInvTab(this,'ingredientes')">📦 Ingredientes</div>
+        <div class="tab" onclick="switchInvTab(this,'presentaciones')">🏷 Presentaciones</div>
+        <div class="tab" onclick="switchInvTab(this,'alertas')">🔔 Alertas</div>
       </div>
 
       <!-- TAB INGREDIENTES -->
@@ -742,16 +742,16 @@
         <div class="card">
           <div class="flex items-center gap-12 mb-16">
             <div class="search-wrap flex-1">
-              <span class="search-icon">ðŸ”</span>
+              <span class="search-icon">🔍</span>
               <input type="text" class="form-input" placeholder="Buscar ingrediente..." oninput="buscarIngrediente(this.value)">
             </div>
             <select class="form-input" style="width:180px" id="filtro-categ-ing" onchange="filtrarCategIngrediente(this.value)">
-              <option value="">Todas las categorÃ­as</option>
+              <option value="">Todas las categorías</option>
             </select>
           </div>
           <div class="table-wrap">
             <table>
-              <thead><tr><th>Ingrediente</th><th>CategorÃ­a</th><th>Stock actual</th><th>Unidad</th><th>MÃ­nimo</th><th>Nivel</th><th>Costo/u</th><th>Presentaciones</th><th></th></tr></thead>
+              <thead><tr><th>Ingrediente</th><th>Categoría</th><th>Stock actual</th><th>Unidad</th><th>Mínimo</th><th>Nivel</th><th>Costo/u</th><th>Presentaciones</th><th></th></tr></thead>
               <tbody id="tabla-inventario"></tbody>
             </table>
           </div>
@@ -762,11 +762,11 @@
       <div id="inv-tab-presentaciones" style="display:none">
         <div class="card mb-14" style="border-color:rgba(255,122,0,0.2);background:var(--amber-dim)">
           <div class="flex items-center gap-12">
-            <span style="font-size:22px">ðŸ’¡</span>
+            <span style="font-size:22px">💡</span>
             <div>
-              <div style="font-size:13px;font-weight:600;color:var(--amber)">CÃ³mo funciona</div>
+              <div style="font-size:13px;font-weight:600;color:var(--amber)">Cómo funciona</div>
               <div style="font-size:12px;color:var(--text2);margin-top:2px">
-                Define las presentaciones de cada insumo (ej. caja de 12 huevos = $45). El sistema calcula el costo por unidad automÃ¡ticamente y lo aplica en recetas y compras sin que tengas que elegirlo cada vez.
+                Define las presentaciones de cada insumo (ej. caja de 12 huevos = $45). El sistema calcula el costo por unidad automáticamente y lo aplica en recetas y compras sin que tengas que elegirlo cada vez.
               </div>
             </div>
           </div>
@@ -774,13 +774,13 @@
         <div class="card">
           <div class="flex items-center gap-12 mb-16">
             <div class="search-wrap flex-1">
-              <span class="search-icon">ðŸ”</span>
-              <input type="text" class="form-input" placeholder="Buscar insumo o presentaciÃ³n..." oninput="buscarPresentacion(this.value)">
+              <span class="search-icon">🔍</span>
+              <input type="text" class="form-input" placeholder="Buscar insumo o presentación..." oninput="buscarPresentacion(this.value)">
             </div>
           </div>
           <div class="table-wrap">
             <table>
-              <thead><tr><th>Insumo</th><th>PresentaciÃ³n</th><th>Cantidad</th><th>Unidad base</th><th>Costo presentaciÃ³n</th><th>Costo por unidad</th><th>Predeterminada</th><th></th></tr></thead>
+              <thead><tr><th>Insumo</th><th>Presentación</th><th>Cantidad</th><th>Unidad base</th><th>Costo presentación</th><th>Costo por unidad</th><th>Predeterminada</th><th></th></tr></thead>
               <tbody id="tabla-presentaciones"></tbody>
             </table>
           </div>
@@ -793,38 +793,38 @@
         <div class="grid grid-2 mb-16">
           <div class="card" style="border-color:rgba(231,76,60,0.25)">
             <div class="section-header mb-12">
-              <div class="section-title" style="color:var(--red)">ðŸ”´ Agotados</div>
+              <div class="section-title" style="color:var(--red)">🔴 Agotados</div>
               <span class="badge badge-red" id="badge-agotados">0</span>
             </div>
             <div id="lista-agotados"></div>
           </div>
           <div class="card" style="border-color:rgba(255,122,0,0.25)">
             <div class="section-header mb-12">
-              <div class="section-title" style="color:var(--amber)">ðŸŸ¡ Stock bajo</div>
+              <div class="section-title" style="color:var(--amber)">🟡 Stock bajo</div>
               <span class="badge badge-amber" id="badge-stock-bajo">0</span>
             </div>
             <div id="lista-stock-bajo"></div>
           </div>
         </div>
 
-        <!-- ConfiguraciÃ³n de alertas por ingrediente -->
+        <!-- Configuración de alertas por ingrediente -->
         <div class="card">
           <div class="section-header mb-12">
-            <div class="section-title">âš™ ConfiguraciÃ³n de alertas</div>
+            <div class="section-title">⚙ Configuración de alertas</div>
             <div class="search-wrap" style="width:220px">
-              <span class="search-icon">ðŸ”</span>
+              <span class="search-icon">🔍</span>
               <input class="form-input" placeholder="Buscar ingrediente..." oninput="filtrarConfigAlertas(this.value)">
             </div>
           </div>
-          <div style="font-size:12px;color:var(--text2);margin-bottom:12px">Define el stock mÃ­nimo de cada ingrediente. El sistema te alertarÃ¡ cuando el stock llegue a ese nivel.</div>
+          <div style="font-size:12px;color:var(--text2);margin-bottom:12px">Define el stock mínimo de cada ingrediente. El sistema te alertará cuando el stock llegue a ese nivel.</div>
           <div class="table-wrap">
             <table>
-              <thead><tr><th>Ingrediente</th><th>CategorÃ­a</th><th>Stock actual</th><th>MÃ­nimo actual</th><th>Nuevo mÃ­nimo</th><th>Notificar en</th><th></th></tr></thead>
+              <thead><tr><th>Ingrediente</th><th>Categoría</th><th>Stock actual</th><th>Mínimo actual</th><th>Nuevo mínimo</th><th>Notificar en</th><th></th></tr></thead>
               <tbody id="tabla-config-alertas"></tbody>
             </table>
           </div>
           <div class="flex justify-end mt-12">
-            <button class="btn btn-primary" onclick="guardarConfigAlertas()">ðŸ’¾ Guardar configuraciÃ³n</button>
+            <button class="btn btn-primary" onclick="guardarConfigAlertas()">💾 Guardar configuración</button>
           </div>
         </div>
       </div>
@@ -833,15 +833,15 @@
   </div>
   <div id="page-caja" class="page">
     <div class="topbar">
-      <div class="topbar-title">Caja del DÃ­a</div>
+      <div class="topbar-title">Caja del Día</div>
       <div class="topbar-actions">
         <div style="display:flex;align-items:center;gap:6px;padding:4px 10px;background:var(--bg3);border-radius:var(--radius-sm);border:1px solid var(--border)">
-          <span style="font-size:11px;color:var(--text3)">ðŸ“…</span>
+          <span style="font-size:11px;color:var(--text3)">📅</span>
           <input type="date" class="form-input" id="caja-fecha-sel" style="width:135px;padding:3px 6px;font-size:12px;border:none;background:transparent" onchange="cambiarFechaCaja(this.value)">
           <button class="btn btn-secondary btn-sm" style="padding:2px 6px;font-size:10px" onclick="cambiarFechaCaja('')" title="Volver a hoy">Hoy</button>
         </div>
-        <button class="btn btn-secondary btn-sm" onclick="openMovimientoExtra()">âž• Movimiento extra</button>
-        <button class="btn btn-secondary btn-sm" onclick="exportarCaja()">ðŸ“¤ Exportar corte</button>
+        <button class="btn btn-secondary btn-sm" onclick="openMovimientoExtra()">➕ Movimiento extra</button>
+        <button class="btn btn-secondary btn-sm" onclick="exportarCaja()">📤 Exportar corte</button>
         <button class="btn btn-primary btn-sm" id="btn-apertura-corte" onclick="accionCaja()">Apertura de caja</button>
       </div>
     </div>
@@ -850,10 +850,10 @@
       <!-- Banner caja cerrada -->
       <div id="banner-caja-cerrada" class="card mb-16" style="border-color:rgba(255,122,0,0.3);background:var(--amber-dim);display:none">
         <div class="flex items-center gap-12">
-          <span style="font-size:28px">ðŸ”’</span>
+          <span style="font-size:28px">🔒</span>
           <div>
             <div style="font-weight:600;color:var(--amber)">Caja cerrada</div>
-            <div style="font-size:12px;color:var(--text2);margin-top:2px">Abre la caja para registrar el saldo inicial y comenzar operaciones del dÃ­a.</div>
+            <div style="font-size:12px;color:var(--text2);margin-top:2px">Abre la caja para registrar el saldo inicial y comenzar operaciones del día.</div>
           </div>
           <button class="btn btn-primary" style="margin-left:auto" onclick="accionCaja()">Abrir caja ahora</button>
         </div>
@@ -862,20 +862,20 @@
       <!-- KPIs -->
       <div class="grid grid-4 mb-16" id="caja-kpis">
         <div class="card card-sm" style="border-color:rgba(46,204,113,0.2)">
-          <div class="card-title">Ingresos del dÃ­a</div>
+          <div class="card-title">Ingresos del día</div>
           <div class="metric-big highlight-green" id="caja-total">$0</div>
         </div>
         <div class="card card-sm">
           <div class="card-title">Efectivo en caja</div>
           <div class="metric-big" id="caja-efectivo-real">$0</div>
-          <div style="font-size:10px;color:var(--text3);margin-top:2px" id="caja-efectivo-detalle">Inicial + cobros âˆ’ envÃ­os</div>
+          <div style="font-size:10px;color:var(--text3);margin-top:2px" id="caja-efectivo-detalle">Inicial + cobros − envíos</div>
         </div>
         <div class="card card-sm">
           <div class="card-title">Transferencia / Tarjeta</div>
           <div class="metric-big" id="caja-digital">$0</div>
         </div>
         <div class="card card-sm" style="border-color:rgba(231,76,60,0.2)">
-          <div class="card-title">Gasto de envÃ­os</div>
+          <div class="card-title">Gasto de envíos</div>
           <div class="metric-big highlight-red" id="caja-envios-total">$0</div>
         </div>
       </div>
@@ -896,7 +896,7 @@
             <div style="width:1px;height:36px;background:var(--border)"></div>
             <div>
               <div style="font-size:11px;color:var(--text3)">ESTADO</div>
-              <span class="badge badge-green" id="caja-estado-badge">ðŸŸ¢ Abierta</span>
+              <span class="badge badge-green" id="caja-estado-badge">🟢 Abierta</span>
             </div>
           </div>
           <div style="font-size:11px;color:var(--text3)" id="caja-hora-apertura"></div>
@@ -906,11 +906,11 @@
       <!-- Movimientos -->
       <div class="card">
         <div class="section-header">
-          <div class="section-title">Movimientos del dÃ­a</div>
+          <div class="section-title">Movimientos del día</div>
         </div>
         <div class="table-wrap">
           <table>
-            <thead><tr><th>Hora</th><th>Pedido</th><th>Cliente</th><th>MÃ©todo</th><th>Concepto</th><th>Monto</th><th>Estado</th></tr></thead>
+            <thead><tr><th>Hora</th><th>Pedido</th><th>Cliente</th><th>Método</th><th>Concepto</th><th>Monto</th><th>Estado</th></tr></thead>
             <tbody id="tabla-caja"></tbody>
           </table>
         </div>
@@ -962,9 +962,9 @@
         <div class="flex items-center gap-12 mb-16">
           <div class="flex gap-8">
             <span class="chip active" onclick="filtrarCxp(this,'todas')">Todas</span>
-            <span class="chip" onclick="filtrarCxp(this,'proveedor')">ðŸš› Proveedores</span>
-            <span class="chip" onclick="filtrarCxp(this,'servicio')">ðŸ¢ Servicios / Renta</span>
-            <span class="chip" onclick="filtrarCxp(this,'otro')">ðŸ“‹ Otro</span>
+            <span class="chip" onclick="filtrarCxp(this,'proveedor')">🚛 Proveedores</span>
+            <span class="chip" onclick="filtrarCxp(this,'servicio')">🏢 Servicios / Renta</span>
+            <span class="chip" onclick="filtrarCxp(this,'otro')">📋 Otro</span>
           </div>
           <div style="flex:1"></div>
           <select class="form-input" style="width:150px" onchange="filtrarCxpEstado(this.value)">
@@ -976,7 +976,7 @@
         </div>
         <div class="table-wrap">
           <table>
-            <thead><tr><th>Tipo</th><th>Acreedor</th><th>Concepto</th><th>Monto</th><th>Vencimiento</th><th>Estado</th><th>MÃ©todo pago</th><th>Notas</th><th></th></tr></thead>
+            <thead><tr><th>Tipo</th><th>Acreedor</th><th>Concepto</th><th>Monto</th><th>Vencimiento</th><th>Estado</th><th>Método pago</th><th>Notas</th><th></th></tr></thead>
             <tbody id="tabla-cxp"></tbody>
           </table>
         </div>
@@ -1003,7 +1003,7 @@
           <div class="metric-big highlight-red" id="cxc-vencidas">0</div>
         </div>
         <div class="card card-sm" style="border-color:rgba(255,122,0,0.2)">
-          <div class="card-title">Por vencer (7 dÃ­as)</div>
+          <div class="card-title">Por vencer (7 días)</div>
           <div class="metric-big highlight-amber" id="cxc-porvencer">0</div>
         </div>
         <div class="card card-sm" style="border-color:rgba(46,204,113,0.2)">
@@ -1059,14 +1059,14 @@
     <div class="content">
       <div class="card mb-16">
         <div class="search-wrap">
-          <span class="search-icon">ðŸ”</span>
+          <span class="search-icon">🔍</span>
           <input type="text" class="form-input" placeholder="Buscar cliente..." oninput="buscarCliente(this.value)">
         </div>
       </div>
       <div class="card">
         <div class="table-wrap">
           <table>
-            <thead><tr><th>Cliente</th><th>TelÃ©fono</th><th>Canal</th><th>Dieta</th><th>Pedidos</th><th>Ãšltimo pedido</th><th></th></tr></thead>
+            <thead><tr><th>Cliente</th><th>Teléfono</th><th>Canal</th><th>Dieta</th><th>Pedidos</th><th>Último pedido</th><th></th></tr></thead>
             <tbody id="tabla-clientes"></tbody>
           </table>
         </div>
@@ -1090,7 +1090,7 @@
           <div class="metric-big font-mono" id="compras-mes">$0</div>
         </div>
         <div class="card card-sm">
-          <div class="card-title">Ã“rdenes este mes</div>
+          <div class="card-title">Órdenes este mes</div>
           <div class="metric-big" id="compras-ordenes">0</div>
         </div>
         <div class="card card-sm" style="border-color:rgba(255,122,0,0.2)">
@@ -1106,7 +1106,7 @@
       <!-- Sugerencias de recompra -->
       <div id="compras-sugerencias-wrap" class="card mb-14" style="border-color:rgba(255,122,0,0.2)">
         <div class="section-header">
-          <div class="section-title">âš  Ingredientes que necesitan reposiciÃ³n</div>
+          <div class="section-title">⚠ Ingredientes que necesitan reposición</div>
           <button class="btn btn-secondary btn-sm" onclick="generarOrdenSugerida()">Generar orden sugerida</button>
         </div>
         <div id="compras-sugerencias"></div>
@@ -1114,7 +1114,7 @@
 
       <!-- Historial de compras -->
       <div class="card">
-        <div class="section-header"><div class="section-title">Historial de Ã³rdenes</div></div>
+        <div class="section-header"><div class="section-title">Historial de órdenes</div></div>
         <div class="table-wrap">
           <table>
             <thead><tr><th>Fecha</th><th>Proveedor</th><th>Items</th><th>Total</th><th>Estado</th><th>Notas</th><th></th></tr></thead>
@@ -1131,42 +1131,42 @@
       <div class="topbar-title">Reportes e Inteligencia de Negocio</div>
       <div class="topbar-actions">
         <select class="form-input" style="width:160px;font-size:13px" id="reporte-periodo" onchange="cambiarPeriodo(this.value)">
-          <option value="7">Ãšltimos 7 dÃ­as</option>
-          <option value="30" selected>Ãšltimos 30 dÃ­as</option>
-          <option value="90">Ãšltimos 90 dÃ­as</option>
+          <option value="7">Últimos 7 días</option>
+          <option value="30" selected>Últimos 30 días</option>
+          <option value="90">Últimos 90 días</option>
           <option value="todo">Todo el tiempo</option>
-          <option value="dia">DÃ­a especÃ­fico</option>
+          <option value="dia">Día específico</option>
           <option value="rango">Rango de fechas</option>
         </select>
-        <!-- DÃ­a especÃ­fico -->
+        <!-- Día específico -->
         <input type="date" id="reporte-dia" class="form-input" style="width:150px;font-size:13px;display:none" onchange="renderReportes()">
         <!-- Rango -->
         <input type="date" id="reporte-desde" class="form-input" style="width:140px;font-size:13px;display:none" onchange="renderReportes()">
-        <span id="reporte-rango-sep" style="color:var(--text3);display:none">â†’</span>
+        <span id="reporte-rango-sep" style="color:var(--text3);display:none">→</span>
         <input type="date" id="reporte-hasta" class="form-input" style="width:140px;font-size:13px;display:none" onchange="renderReportes()">
-        <button class="btn btn-secondary btn-sm" onclick="exportarReporteCSV()">ðŸ“¤ Exportar CSV</button>
+        <button class="btn btn-secondary btn-sm" onclick="exportarReporteCSV()">📤 Exportar CSV</button>
       </div>
     </div>
     <div class="content">
 
-      <!-- KPIs resumen perÃ­odo -->
+      <!-- KPIs resumen período -->
       <div class="grid mb-16" style="grid-template-columns:repeat(5,1fr);gap:14px" id="rep-kpis"></div>
 
       <!-- Tabs -->
       <div class="tabs" id="rep-tabs">
-        <div class="tab active" onclick="switchRepTab(this,'ventas')">ðŸ“ˆ Ventas</div>
-        <div class="tab" onclick="switchRepTab(this,'platillos')">ðŸ¥™ Platillos</div>
-        <div class="tab" onclick="switchRepTab(this,'clientes')">ðŸ‘¤ Clientes</div>
-        <div class="tab" onclick="switchRepTab(this,'inventario')">ðŸ“¦ Consumo</div>
-        <div class="tab" onclick="switchRepTab(this,'finanzas')">ðŸ’° Finanzas</div>
-        <div class="tab" onclick="switchRepTab(this,'estados')">ðŸ“‹ Estados financieros</div>
+        <div class="tab active" onclick="switchRepTab(this,'ventas')">📈 Ventas</div>
+        <div class="tab" onclick="switchRepTab(this,'platillos')">🥙 Platillos</div>
+        <div class="tab" onclick="switchRepTab(this,'clientes')">👤 Clientes</div>
+        <div class="tab" onclick="switchRepTab(this,'inventario')">📦 Consumo</div>
+        <div class="tab" onclick="switchRepTab(this,'finanzas')">💰 Finanzas</div>
+        <div class="tab" onclick="switchRepTab(this,'estados')">📋 Estados financieros</div>
       </div>
 
       <!-- TAB: VENTAS -->
       <div id="rep-tab-ventas">
         <div class="grid grid-2 mb-14" style="grid-template-columns:1.6fr 1fr">
           <div class="card">
-            <div class="section-header"><div class="section-title">Ventas por dÃ­a</div></div>
+            <div class="section-header"><div class="section-title">Ventas por día</div></div>
             <div id="rep-grafica-ventas" style="padding:8px 0"></div>
           </div>
           <div class="card">
@@ -1175,7 +1175,7 @@
           </div>
         </div>
         <div class="card">
-          <div class="section-header"><div class="section-title">Detalle de ventas por dÃ­a</div></div>
+          <div class="section-header"><div class="section-title">Detalle de ventas por día</div></div>
           <div class="table-wrap">
             <table>
               <thead><tr><th>Fecha</th><th>Pedidos</th><th>Ventas</th><th>Ticket promedio</th><th>Con descuento</th><th>Canal top</th></tr></thead>
@@ -1187,7 +1187,7 @@
 
       <!-- TAB: PLATILLOS -->
       <div id="rep-tab-platillos" style="display:none">
-        <!-- Resumen de platillos del perÃ­odo (vendidos vs cortesÃ­a) -->
+        <!-- Resumen de platillos del período (vendidos vs cortesía) -->
         <div class="grid mb-14" style="grid-template-columns:repeat(3,1fr);gap:12px">
           <div class="card card-sm">
             <div class="card-title">Platillos totales</div>
@@ -1200,26 +1200,26 @@
             <div style="font-size:11px;color:var(--text3)" id="rep-plat-vendidos-det">$0 en ingresos</div>
           </div>
           <div class="card card-sm" style="border-color:rgba(155,89,182,0.3)">
-            <div class="card-title" style="color:var(--purple)">ðŸŽ CortesÃ­as</div>
+            <div class="card-title" style="color:var(--purple)">🎁 Cortesías</div>
             <div class="metric-big" style="color:var(--purple)" id="rep-plat-cortesia">0</div>
             <div style="font-size:11px;color:var(--text3)" id="rep-plat-cortesia-det">$0 de costo</div>
           </div>
         </div>
         <div class="grid grid-2 mb-14">
           <div class="card">
-            <div class="section-header"><div class="section-title">ðŸ† MÃ¡s vendidos</div></div>
+            <div class="section-header"><div class="section-title">🏆 Más vendidos</div></div>
             <div id="rep-top-platillos"></div>
           </div>
           <div class="card">
-            <div class="section-header"><div class="section-title">ðŸ’° Rentabilidad por platillo</div></div>
+            <div class="section-header"><div class="section-title">💰 Rentabilidad por platillo</div></div>
             <div id="rep-rentabilidad"></div>
           </div>
         </div>
         <div class="card">
-          <div class="section-header"><div class="section-title">AnÃ¡lisis completo de menÃº</div></div>
+          <div class="section-header"><div class="section-title">Análisis completo de menú</div></div>
           <div class="table-wrap">
             <table>
-              <thead><tr><th>Platillo</th><th>Vendidos</th><th>Ingresos</th><th>Costo unit.</th><th>Precio venta</th><th>Margen</th><th>Food cost %</th><th>SemÃ¡foro</th></tr></thead>
+              <thead><tr><th>Platillo</th><th>Vendidos</th><th>Ingresos</th><th>Costo unit.</th><th>Precio venta</th><th>Margen</th><th>Food cost %</th><th>Semáforo</th></tr></thead>
               <tbody id="rep-tabla-platillos"></tbody>
             </table>
           </div>
@@ -1230,7 +1230,7 @@
       <div id="rep-tab-clientes" style="display:none">
         <div class="grid grid-2 mb-14">
           <div class="card">
-            <div class="section-header"><div class="section-title">ðŸ¥‡ Top clientes por compras</div></div>
+            <div class="section-header"><div class="section-title">🥇 Top clientes por compras</div></div>
             <div id="rep-top-clientes"></div>
           </div>
           <div class="card">
@@ -1242,7 +1242,7 @@
           <div class="section-header"><div class="section-title">Historial de clientes</div></div>
           <div class="table-wrap">
             <table>
-              <thead><tr><th>Cliente</th><th>Pedidos</th><th>Total gastado</th><th>Ticket prom.</th><th>Ãšltimo pedido</th><th>Canal</th><th>Dieta</th></tr></thead>
+              <thead><tr><th>Cliente</th><th>Pedidos</th><th>Total gastado</th><th>Ticket prom.</th><th>Último pedido</th><th>Canal</th><th>Dieta</th></tr></thead>
               <tbody id="rep-tabla-clientes"></tbody>
             </table>
           </div>
@@ -1253,7 +1253,7 @@
       <div id="rep-tab-inventario" style="display:none">
         <div class="grid grid-2 mb-14">
           <div class="card">
-            <div class="section-header"><div class="section-title">Ingredientes mÃ¡s usados</div></div>
+            <div class="section-header"><div class="section-title">Ingredientes más usados</div></div>
             <div id="rep-consumo-ingredientes"></div>
           </div>
           <div class="card">
@@ -1276,7 +1276,7 @@
       <div id="rep-tab-finanzas" style="display:none">
         <div class="grid grid-2 mb-14">
           <div class="card">
-            <div class="section-header"><div class="section-title">Resumen financiero del perÃ­odo</div></div>
+            <div class="section-header"><div class="section-title">Resumen financiero del período</div></div>
             <div id="rep-resumen-financiero"></div>
           </div>
           <div class="card">
@@ -1285,7 +1285,7 @@
           </div>
         </div>
         <div class="card">
-          <div class="section-header"><div class="section-title">Comparativo perÃ­odos</div></div>
+          <div class="section-header"><div class="section-title">Comparativo períodos</div></div>
           <div id="rep-comparativo"></div>
         </div>
       </div>
@@ -1293,11 +1293,11 @@
       <!-- TAB: ESTADOS FINANCIEROS -->
       <div id="rep-tab-estados" style="display:none">
 
-        <!-- Selector perÃ­odo estados -->
+        <!-- Selector período estados -->
         <div class="card mb-14" style="padding:16px">
           <div class="flex items-center gap-12" style="flex-wrap:wrap">
             <div>
-              <label class="form-label">Mes / perÃ­odo</label>
+              <label class="form-label">Mes / período</label>
               <select class="form-input" id="ef-mes" style="width:160px" onchange="renderEstadosFinancieros()">
                 <option value="actual">Mes actual</option>
                 <option value="anterior">Mes anterior</option>
@@ -1306,12 +1306,12 @@
             </div>
             <div id="ef-rango-wrap" style="display:none;gap:8px" class="flex items-center gap-8">
               <input type="date" id="ef-desde" class="form-input" style="width:145px" onchange="renderEstadosFinancieros()">
-              <span style="color:var(--text3)">â†’</span>
+              <span style="color:var(--text3)">→</span>
               <input type="date" id="ef-hasta" class="form-input" style="width:145px" onchange="renderEstadosFinancieros()">
             </div>
             <div style="flex:1"></div>
             <button class="btn btn-secondary btn-sm" onclick="openNuevoGasto()">+ Gasto fijo</button>
-            <button class="btn btn-secondary btn-sm" onclick="exportarEstadosCSV()">ðŸ“¤ Exportar</button>
+            <button class="btn btn-secondary btn-sm" onclick="exportarEstadosCSV()">📤 Exportar</button>
           </div>
         </div>
 
@@ -1321,7 +1321,7 @@
           <!-- Estado de Resultados -->
           <div class="card" id="ef-resultados-card">
             <div class="section-header mb-12">
-              <div class="section-title">ðŸ“Š Estado de Resultados</div>
+              <div class="section-title">📊 Estado de Resultados</div>
             </div>
             <div id="ef-resultados"></div>
           </div>
@@ -1329,7 +1329,7 @@
           <!-- Balance General -->
           <div class="card" id="ef-balance-card">
             <div class="section-header mb-12">
-              <div class="section-title">âš–ï¸ Balance General</div>
+              <div class="section-title">⚖️ Balance General</div>
             </div>
             <div id="ef-balance"></div>
           </div>
@@ -1337,7 +1337,7 @@
           <!-- Flujo de Efectivo -->
           <div class="card" id="ef-flujo-card">
             <div class="section-header mb-12">
-              <div class="section-title">ðŸ’¸ Flujo de Efectivo</div>
+              <div class="section-title">💸 Flujo de Efectivo</div>
             </div>
             <div id="ef-flujo"></div>
           </div>
@@ -1352,7 +1352,7 @@
           </div>
           <div class="table-wrap">
             <table>
-              <thead><tr><th>Concepto</th><th>CategorÃ­a</th><th>Monto</th><th>Fecha</th><th>Recurrente</th><th></th></tr></thead>
+              <thead><tr><th>Concepto</th><th>Categoría</th><th>Monto</th><th>Fecha</th><th>Recurrente</th><th></th></tr></thead>
               <tbody id="ef-tabla-gastos"></tbody>
             </table>
           </div>
@@ -1377,7 +1377,7 @@
         </div>
         <div class="card">
           <div class="section-header mb-4"><div class="section-title">Permisos del perfil <span id="permisos-rol-label" style="color:var(--green)">Caja</span></div></div>
-          <div style="font-size:12px;color:var(--text3);margin-bottom:14px">Activa o desactiva quÃ© mÃ³dulos puede ver el perfil Caja</div>
+          <div style="font-size:12px;color:var(--text3);margin-bottom:14px">Activa o desactiva qué módulos puede ver el perfil Caja</div>
           <div id="permisos-lista"></div>
         </div>
       </div>
@@ -1389,16 +1389,16 @@
     <div class="topbar">
       <div class="topbar-title">Carga Masiva de Datos</div>
       <div class="topbar-actions">
-        <button class="btn btn-secondary btn-sm" onclick="descargarPlantillas()">ðŸ“¥ Descargar plantillas Excel</button>
+        <button class="btn btn-secondary btn-sm" onclick="descargarPlantillas()">📥 Descargar plantillas Excel</button>
       </div>
     </div>
     <div class="content">
       <div class="card mb-14" style="border-color:rgba(52,152,219,0.2);background:var(--blue-dim)">
         <div class="flex items-center gap-12">
-          <span style="font-size:24px">ðŸ“‹</span>
+          <span style="font-size:24px">📋</span>
           <div>
             <div style="font-size:13px;font-weight:600;color:var(--blue)">Instrucciones de carga</div>
-            <div style="font-size:12px;color:var(--text2);margin-top:3px">Descarga la plantilla, llÃ©nala en Excel y sÃºbela aquÃ­. El sistema leerÃ¡ las columnas automÃ¡ticamente. Los datos existentes no se borran, se agregan.</div>
+            <div style="font-size:12px;color:var(--text2);margin-top:3px">Descarga la plantilla, llénala en Excel y súbela aquí. El sistema leerá las columnas automáticamente. Los datos existentes no se borran, se agregan.</div>
           </div>
         </div>
       </div>
@@ -1407,12 +1407,12 @@
         <!-- Clientes -->
         <div class="card">
           <div class="flex items-center gap-10 mb-12">
-            <span style="font-size:20px">ðŸ‘¤</span>
-            <div><div style="font-weight:600">Clientes</div><div style="font-size:11px;color:var(--text3)">nombre, telÃ©fono, canal, notas</div></div>
+            <span style="font-size:20px">👤</span>
+            <div><div style="font-weight:600">Clientes</div><div style="font-size:11px;color:var(--text3)">nombre, teléfono, canal, notas</div></div>
           </div>
           <div class="import-zone" onclick="document.getElementById('imp-clientes').click()">
             <input type="file" id="imp-clientes" accept=".xlsx,.csv" style="display:none" onchange="importarArchivo(this,'clientes')">
-            <div style="font-size:24px;margin-bottom:8px">ðŸ“‚</div>
+            <div style="font-size:24px;margin-bottom:8px">📂</div>
             <div style="font-size:13px;font-weight:500">Subir archivo Excel</div>
             <div style="font-size:11px;color:var(--text3);margin-top:4px">.xlsx o .csv</div>
           </div>
@@ -1422,12 +1422,12 @@
         <!-- Insumos -->
         <div class="card">
           <div class="flex items-center gap-10 mb-12">
-            <span style="font-size:20px">ðŸ“¦</span>
-            <div><div style="font-weight:600">Insumos / Inventario</div><div style="font-size:11px;color:var(--text3)">nombre, categorÃ­a, stock, mÃ­nimo, unidad, costo</div></div>
+            <span style="font-size:20px">📦</span>
+            <div><div style="font-weight:600">Insumos / Inventario</div><div style="font-size:11px;color:var(--text3)">nombre, categoría, stock, mínimo, unidad, costo</div></div>
           </div>
           <div class="import-zone" onclick="document.getElementById('imp-insumos').click()">
             <input type="file" id="imp-insumos" accept=".xlsx,.csv" style="display:none" onchange="importarArchivo(this,'insumos')">
-            <div style="font-size:24px;margin-bottom:8px">ðŸ“‚</div>
+            <div style="font-size:24px;margin-bottom:8px">📂</div>
             <div style="font-size:13px;font-weight:500">Subir archivo Excel</div>
             <div style="font-size:11px;color:var(--text3);margin-top:4px">.xlsx o .csv</div>
           </div>
@@ -1437,12 +1437,12 @@
         <!-- Proveedores -->
         <div class="card">
           <div class="flex items-center gap-10 mb-12">
-            <span style="font-size:20px">ðŸš›</span>
-            <div><div style="font-weight:600">Proveedores</div><div style="font-size:11px;color:var(--text3)">nombre, contacto, telÃ©fono, categorÃ­a, dÃ­as</div></div>
+            <span style="font-size:20px">🚛</span>
+            <div><div style="font-weight:600">Proveedores</div><div style="font-size:11px;color:var(--text3)">nombre, contacto, teléfono, categoría, días</div></div>
           </div>
           <div class="import-zone" onclick="document.getElementById('imp-proveedores').click()">
             <input type="file" id="imp-proveedores" accept=".xlsx,.csv" style="display:none" onchange="importarArchivo(this,'proveedores')">
-            <div style="font-size:24px;margin-bottom:8px">ðŸ“‚</div>
+            <div style="font-size:24px;margin-bottom:8px">📂</div>
             <div style="font-size:13px;font-weight:500">Subir archivo Excel</div>
             <div style="font-size:11px;color:var(--text3);margin-top:4px">.xlsx o .csv</div>
           </div>
@@ -1452,12 +1452,12 @@
         <!-- Recetas -->
         <div class="card">
           <div class="flex items-center gap-10 mb-12">
-            <span style="font-size:20px">ðŸ“‹</span>
-            <div><div style="font-weight:600">Recetas / MenÃº</div><div style="font-size:11px;color:var(--text3)">platillo, categorÃ­a, precio, calorias, descripciÃ³n</div></div>
+            <span style="font-size:20px">📋</span>
+            <div><div style="font-weight:600">Recetas / Menú</div><div style="font-size:11px;color:var(--text3)">platillo, categoría, precio, calorias, descripción</div></div>
           </div>
           <div class="import-zone" onclick="document.getElementById('imp-recetas').click()">
             <input type="file" id="imp-recetas" accept=".xlsx,.csv" style="display:none" onchange="importarArchivo(this,'recetas')">
-            <div style="font-size:24px;margin-bottom:8px">ðŸ“‚</div>
+            <div style="font-size:24px;margin-bottom:8px">📂</div>
             <div style="font-size:13px;font-weight:500">Subir archivo Excel</div>
             <div style="font-size:11px;color:var(--text3);margin-top:4px">.xlsx o .csv</div>
           </div>
@@ -1467,12 +1467,12 @@
         <!-- Ventas -->
         <div class="card">
           <div class="flex items-center gap-10 mb-12">
-            <span style="font-size:20px">ðŸ§¾</span>
-            <div><div style="font-weight:600">Ventas histÃ³ricas</div><div style="font-size:11px;color:var(--text3)">fecha, cliente, platillo, cantidad, total, canal, pago</div></div>
+            <span style="font-size:20px">🧾</span>
+            <div><div style="font-weight:600">Ventas históricas</div><div style="font-size:11px;color:var(--text3)">fecha, cliente, platillo, cantidad, total, canal, pago</div></div>
           </div>
           <div class="import-zone" onclick="document.getElementById('imp-ventas').click()">
             <input type="file" id="imp-ventas" accept=".xlsx,.csv" style="display:none" onchange="importarArchivo(this,'ventas')">
-            <div style="font-size:24px;margin-bottom:8px">ðŸ“‚</div>
+            <div style="font-size:24px;margin-bottom:8px">📂</div>
             <div style="font-size:13px;font-weight:500">Subir archivo Excel</div>
             <div style="font-size:11px;color:var(--text3);margin-top:4px">.xlsx o .csv</div>
           </div>
@@ -1482,18 +1482,18 @@
         <!-- Platillos Personalizados -->
         <div class="card" style="border-color:rgba(155,89,182,0.25)">
           <div class="flex items-center gap-10 mb-8">
-            <span style="font-size:20px">ðŸ½</span>
+            <span style="font-size:20px">🍽</span>
             <div>
               <div style="font-weight:600;color:var(--purple)">Platillos Personalizados</div>
               <div style="font-size:11px;color:var(--text3)">nombre, cliente, tiempo_comida, precio_venta, notas</div>
             </div>
           </div>
           <div style="background:var(--purple-dim);border:1px solid rgba(155,89,182,0.2);border-radius:var(--radius-sm);padding:10px;margin-bottom:12px;font-size:11.5px;color:var(--text2);line-height:1.6">
-            ðŸ’¡ Carga los platillos de las dietas personalizadas con sus precios de venta. El sistema los vincula automÃ¡ticamente a la cotizaciÃ³n del cliente.
+            💡 Carga los platillos de las dietas personalizadas con sus precios de venta. El sistema los vincula automáticamente a la cotización del cliente.
           </div>
           <div class="import-zone" onclick="document.getElementById('imp-platillos-pers').click()">
             <input type="file" id="imp-platillos-pers" accept=".xlsx,.csv" style="display:none" onchange="importarArchivo(this,'platillos_personalizados')">
-            <div style="font-size:24px;margin-bottom:8px">ðŸ“‚</div>
+            <div style="font-size:24px;margin-bottom:8px">📂</div>
             <div style="font-size:13px;font-weight:500">Subir archivo Excel</div>
             <div style="font-size:11px;color:var(--text3);margin-top:4px">.xlsx o .csv</div>
           </div>
@@ -1503,18 +1503,18 @@
         <!-- Recetas con Insumos -->
         <div class="card" style="border-color:rgba(46,204,113,0.25)">
           <div class="flex items-center gap-10 mb-8">
-            <span style="font-size:20px">ðŸ§‘â€ðŸ³</span>
+            <span style="font-size:20px">🧑‍🍳</span>
             <div>
               <div style="font-weight:600;color:var(--green)">Recetas con Insumos</div>
               <div style="font-size:11px;color:var(--text3)">platillo, insumo, cantidad, unidad</div>
             </div>
           </div>
           <div style="background:var(--green-dim2);border:1px solid rgba(46,204,113,0.15);border-radius:var(--radius-sm);padding:10px;margin-bottom:12px;font-size:11.5px;color:var(--text2);line-height:1.6">
-            ðŸ’¡ Carga los ingredientes de cada platillo. El sistema busca el costo de cada insumo en tu inventario y calcula el <strong style="color:var(--green)">costo total automÃ¡ticamente</strong>. Si el platillo no existe, lo crea; si ya existe, actualiza su receta y costo.
+            💡 Carga los ingredientes de cada platillo. El sistema busca el costo de cada insumo en tu inventario y calcula el <strong style="color:var(--green)">costo total automáticamente</strong>. Si el platillo no existe, lo crea; si ya existe, actualiza su receta y costo.
           </div>
           <div class="import-zone" onclick="document.getElementById('imp-recetas-insumos').click()">
             <input type="file" id="imp-recetas-insumos" accept=".xlsx,.csv" style="display:none" onchange="importarArchivo(this,'recetas_insumos')">
-            <div style="font-size:24px;margin-bottom:8px">ðŸ“‚</div>
+            <div style="font-size:24px;margin-bottom:8px">📂</div>
             <div style="font-size:13px;font-weight:500">Subir archivo Excel</div>
             <div style="font-size:11px;color:var(--text3);margin-top:4px">.xlsx o .csv</div>
           </div>
@@ -1525,7 +1525,7 @@
     </div>
   </div>
 
-<!-- =================== ELIMINACIÃ“N DE PEDIDOS =================== -->
+<!-- =================== ELIMINACIÓN DE PEDIDOS =================== -->
   <div id="page-eliminacion" class="page">
     <div class="topbar">
       <div class="topbar-title">Eliminar Pedidos</div>
@@ -1534,10 +1534,10 @@
 
       <div class="card mb-16" style="border-color:rgba(231,76,60,0.2);background:var(--red-dim)">
         <div class="flex items-center gap-12">
-          <span style="font-size:24px">âš ï¸</span>
+          <span style="font-size:24px">⚠️</span>
           <div>
-            <div style="font-weight:600;color:var(--red)">Zona de administraciÃ³n â€” EliminaciÃ³n de pedidos</div>
-            <div style="font-size:12px;color:var(--text2);margin-top:2px">Solo disponible para administradores. Cada eliminaciÃ³n queda registrada en el historial con motivo y usuario responsable.</div>
+            <div style="font-weight:600;color:var(--red)">Zona de administración — Eliminación de pedidos</div>
+            <div style="font-size:12px;color:var(--text2);margin-top:2px">Solo disponible para administradores. Cada eliminación queda registrada en el historial con motivo y usuario responsable.</div>
           </div>
         </div>
       </div>
@@ -1546,12 +1546,12 @@
       <div class="card mb-14">
         <div class="flex gap-12 items-center">
           <div class="search-wrap flex-1">
-            <span class="search-icon">ðŸ”</span>
+            <span class="search-icon">🔍</span>
             <input class="form-input" placeholder="Buscar por cliente, #pedido..." oninput="filtrarPedidosAdmin(this.value)">
           </div>
           <select class="form-input" style="width:160px" onchange="filtrarEstadoAdmin(this.value)">
             <option value="">Todos los estados</option>
-            <option>Nuevo</option><option>En preparaciÃ³n</option><option>Listo</option><option>Entregado</option><option>Cancelado</option>
+            <option>Nuevo</option><option>En preparación</option><option>Listo</option><option>Entregado</option><option>Cancelado</option>
           </select>
           <input class="form-input" type="date" style="width:150px" onchange="filtrarFechaAdmin(this.value)" id="admin-filtro-fecha">
         </div>
@@ -1561,7 +1561,7 @@
       <div class="card mb-20">
         <div class="table-wrap">
           <table>
-            <thead><tr><th>#</th><th>Fecha</th><th>Cliente</th><th>Items</th><th>Total</th><th>Estado</th><th>AcciÃ³n</th></tr></thead>
+            <thead><tr><th>#</th><th>Fecha</th><th>Cliente</th><th>Items</th><th>Total</th><th>Estado</th><th>Acción</th></tr></thead>
             <tbody id="tabla-admin-pedidos"></tbody>
           </table>
         </div>
@@ -1569,12 +1569,12 @@
 
       <!-- Historial de eliminaciones -->
       <div class="section-header mb-12">
-        <div class="section-title">ðŸ“‹ Historial de eliminaciones</div>
+        <div class="section-title">📋 Historial de eliminaciones</div>
       </div>
       <div class="card">
         <div class="table-wrap">
           <table>
-            <thead><tr><th>Fecha eliminaciÃ³n</th><th>Pedido</th><th>Cliente</th><th>Total</th><th>Motivo</th><th>Eliminado por</th></tr></thead>
+            <thead><tr><th>Fecha eliminación</th><th>Pedido</th><th>Cliente</th><th>Total</th><th>Motivo</th><th>Eliminado por</th></tr></thead>
             <tbody id="tabla-historial-eliminaciones"></tbody>
           </table>
         </div>
@@ -1588,17 +1588,17 @@
     <div class="topbar">
       <div class="topbar-title">Producciones</div>
       <div class="topbar-actions">
-        <button class="btn btn-primary btn-sm" onclick="openNuevoPreparado()">+ Nueva producciÃ³n</button>
+        <button class="btn btn-primary btn-sm" onclick="openNuevoPreparado()">+ Nueva producción</button>
       </div>
     </div>
     <div class="content">
 
       <div class="card mb-14" style="border-color:rgba(155,89,182,0.2);background:var(--purple-dim)">
         <div class="flex items-center gap-12">
-          <span style="font-size:24px">ðŸ§ª</span>
+          <span style="font-size:24px">🧪</span>
           <div>
-            <div style="font-size:13px;font-weight:600;color:var(--purple)">Â¿CÃ³mo funcionan las Producciones?</div>
-            <div style="font-size:12px;color:var(--text2);margin-top:2px">Define salsas, bases, mezclas y preparados internos con sus insumos. Al <strong>ejecutar una producciÃ³n</strong>, el sistema descuenta los insumos usados del inventario y agrega el preparado resultante como un nuevo insumo disponible para recetas.</div>
+            <div style="font-size:13px;font-weight:600;color:var(--purple)">¿Cómo funcionan las Producciones?</div>
+            <div style="font-size:12px;color:var(--text2);margin-top:2px">Define salsas, bases, mezclas y preparados internos con sus insumos. Al <strong>ejecutar una producción</strong>, el sistema descuenta los insumos usados del inventario y agrega el preparado resultante como un nuevo insumo disponible para recetas.</div>
           </div>
         </div>
       </div>
@@ -1623,7 +1623,7 @@
       <div class="section-header mb-12">
         <div class="section-title">Recetas de preparados</div>
         <div class="search-wrap" style="width:240px">
-          <span class="search-icon">ðŸ”</span>
+          <span class="search-icon">🔍</span>
           <input type="text" class="form-input" placeholder="Buscar preparado..." oninput="buscarPreparado(this.value)">
         </div>
       </div>
@@ -1653,30 +1653,30 @@
     <div class="modal-header">
       <div>
         <div class="modal-title" id="pedido-modal-title">Nuevo Pedido</div>
-        <div style="font-size:11px;color:var(--text3);margin-top:2px" id="pedido-modal-sub">Pedido del dÃ­a de hoy</div>
+        <div style="font-size:11px;color:var(--text3);margin-top:2px" id="pedido-modal-sub">Pedido del día de hoy</div>
       </div>
-      <button class="modal-close" onclick="closeModal('modal-pedido')">Ã—</button>
+      <button class="modal-close" onclick="closeModal('modal-pedido')">×</button>
     </div>
     <div class="modal-body">
 
       <!-- FECHA DEL PEDIDO -->
       <div class="form-group mb-12" style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px">
         <div class="flex items-center gap-12">
-          <span style="font-size:18px">ðŸ“…</span>
+          <span style="font-size:18px">📅</span>
           <div style="flex:1">
             <label class="form-label" style="margin-bottom:4px">Fecha del pedido</label>
             <input class="form-input" type="date" id="pedido-fecha" readonly
                    style="background:var(--bg3);cursor:not-allowed;opacity:0.75">
-            <div style="font-size:10px;color:var(--text3);margin-top:3px">Se toma del "DÃ­a" seleccionado arriba. CÃ¡mbialo ahÃ­ o en el calendario.</div>
+            <div style="font-size:10px;color:var(--text3);margin-top:3px">Se toma del "Día" seleccionado arriba. Cámbialo ahí o en el calendario.</div>
           </div>
           <div style="text-align:right">
-            <div id="pedido-fecha-badge" class="badge badge-green" style="font-size:11px">ðŸ“… Hoy</div>
+            <div id="pedido-fecha-badge" class="badge badge-green" style="font-size:11px">📅 Hoy</div>
             <div style="font-size:10px;color:var(--text3);margin-top:3px" id="pedido-fecha-hint">Registro normal</div>
           </div>
         </div>
       </div>
 
-      <!-- CLIENTE: selector + creaciÃ³n rÃ¡pida -->
+      <!-- CLIENTE: selector + creación rápida -->
       <div class="form-group mb-4">
         <label class="form-label">Cliente</label>
         <div class="flex gap-8">
@@ -1686,16 +1686,16 @@
           <button class="btn btn-secondary btn-sm" onclick="toggleNuevoClienteRapido()" id="btn-nuevo-cli" title="Crear cliente nuevo">+ Nuevo</button>
         </div>
       </div>
-      <!-- Formulario cliente rÃ¡pido (colapsable) -->
+      <!-- Formulario cliente rápido (colapsable) -->
       <div id="panel-nuevo-cliente" style="display:none; background:var(--bg3); border:1px solid var(--border); border-radius:var(--radius-sm); padding:14px; margin-bottom:12px;">
-        <div style="font-size:12px;font-weight:600;color:var(--green);margin-bottom:10px;">âœ¦ Crear cliente nuevo</div>
+        <div style="font-size:12px;font-weight:600;color:var(--green);margin-bottom:10px;">✦ Crear cliente nuevo</div>
         <div class="form-row">
           <div class="form-group" style="margin-bottom:0">
             <label class="form-label">Nombre *</label>
             <input class="form-input" id="quick-cli-nombre" placeholder="Nombre completo">
           </div>
           <div class="form-group" style="margin-bottom:0">
-            <label class="form-label">TelÃ©fono / WhatsApp</label>
+            <label class="form-label">Teléfono / WhatsApp</label>
             <input class="form-input" id="quick-cli-tel" placeholder="+52 999 000 0000">
           </div>
         </div>
@@ -1713,21 +1713,21 @@
             <option>Presencial</option>
             <option>Instagram</option>
             <option>Facebook</option>
-            <option>TelÃ©fono</option>
+            <option>Teléfono</option>
           </select>
         </div>
         <div class="form-group">
-          <label class="form-label">Â¿CuÃ¡ndo paga?</label>
+          <label class="form-label">¿Cuándo paga?</label>
           <div class="flex gap-8">
-            <span class="chip" onclick="setModoPago(this,'inmediato')">ðŸ’³ Paga ahora</span>
-            <span class="chip" onclick="setModoPago(this,'credito')">ðŸ“¥ Queda a deber</span>
+            <span class="chip" onclick="setModoPago(this,'inmediato')">💳 Paga ahora</span>
+            <span class="chip" onclick="setModoPago(this,'credito')">📥 Queda a deber</span>
           </div>
         </div>
       </div>
 
       <!-- Panel pago inmediato -->
       <div id="panel-pago-inmediato" class="form-group">
-        <label class="form-label">MÃ©todo de pago</label>
+        <label class="form-label">Método de pago</label>
         <select class="form-input" id="pedido-pago">
           <option>Efectivo</option>
           <option>Transferencia / SPEI</option>
@@ -1735,9 +1735,9 @@
         </select>
       </div>
 
-      <!-- Panel crÃ©dito / CxC -->
+      <!-- Panel crédito / CxC -->
       <div id="panel-pago-credito" style="display:none; background:var(--blue-dim); border:1px solid rgba(52,152,219,0.2); border-radius:var(--radius-sm); padding:12px; margin-bottom:12px;">
-        <div style="font-size:12px;font-weight:600;color:var(--blue);margin-bottom:8px">ðŸ“¥ El pedido quedarÃ¡ como cuenta por cobrar</div>
+        <div style="font-size:12px;font-weight:600;color:var(--blue);margin-bottom:8px">📥 El pedido quedará como cuenta por cobrar</div>
         <div class="form-row" style="margin-bottom:0">
           <div class="form-group" style="margin-bottom:0">
             <label class="form-label">Vence el</label>
@@ -1750,30 +1750,30 @@
         </div>
       </div>
 
-      <!-- SecciÃ³n menÃº (siempre visible) -->
+      <!-- Sección menú (siempre visible) -->
       <div id="seccion-menu-pedido">
         <div class="flex justify-between items-center mb-8 mt-12">
-          <div class="section-title" style="font-size:13px;">ðŸ¥™ Platillos del menÃº</div>
+          <div class="section-title" style="font-size:13px;">🥙 Platillos del menú</div>
           <span style="font-size:11px;color:var(--text3)" id="menu-conteo-sel">0 seleccionados</span>
         </div>
         <div class="search-wrap mb-8">
-          <span class="search-icon">ðŸ”</span>
+          <span class="search-icon">🔍</span>
           <input type="text" class="form-input" id="buscador-platillos-modal" placeholder="Buscar platillo..." oninput="filtrarMenuModal(this.value)" autocomplete="off">
         </div>
         <div id="menu-selector" style="max-height:220px; overflow-y:auto; border:1px solid var(--border); border-radius:var(--radius-sm); padding:8px;"></div>
       </div>
 
-      <!-- SecciÃ³n dieta (opcional, complementaria al menÃº) -->
+      <!-- Sección dieta (opcional, complementaria al menú) -->
       <div id="seccion-dieta-pedido" style="margin-top:14px">
         <div class="form-group">
-          <label class="form-label">ðŸ“‹ Dieta personalizada (opcional)</label>
+          <label class="form-label">📋 Dieta personalizada (opcional)</label>
           <select class="form-input" id="pedido-dieta-sel" onchange="mostrarPlatillosDieta(this.value)">
-            <option value="">Sin dieta â€” solo menÃº</option>
+            <option value="">Sin dieta — solo menú</option>
           </select>
         </div>
         <!-- Platillos de la dieta con precios editables -->
         <div id="panel-platillos-dieta" style="display:none;margin-bottom:12px">
-          <div style="font-size:12px;font-weight:600;color:var(--blue);margin-bottom:8px">ðŸ’° Platillos de la dieta (marca los que se entregan)</div>
+          <div style="font-size:12px;font-weight:600;color:var(--blue);margin-bottom:8px">💰 Platillos de la dieta (marca los que se entregan)</div>
           <div id="lista-platillos-dieta"></div>
           <div class="card card-sm mt-8" style="background:var(--bg3)">
             <div class="flex justify-between"><span style="font-size:13px;font-weight:600">Total dieta</span><span class="font-mono font-semibold highlight-green" id="total-dieta-display">$0.00</span></div>
@@ -1781,7 +1781,7 @@
         </div>
         <div class="form-group">
           <label class="form-label">Instrucciones especiales (opcional)</label>
-          <textarea class="form-input" id="pedido-instrucciones" placeholder="Ej: sin sal, extra proteÃ­na, porciÃ³n grande..."></textarea>
+          <textarea class="form-input" id="pedido-instrucciones" placeholder="Ej: sin sal, extra proteína, porción grande..."></textarea>
         </div>
       </div>
 
@@ -1790,33 +1790,33 @@
 
       <hr class="divider">
 
-      <!-- ENVÃO A DOMICILIO -->
+      <!-- ENVÍO A DOMICILIO -->
       <div class="form-group">
-        <label class="form-label">Â¿Incluye envÃ­o a domicilio?</label>
+        <label class="form-label">¿Incluye envío a domicilio?</label>
         <div class="flex gap-8">
-          <span class="chip" onclick="setModoEnvio(this,'sin_envio')">ðŸ  Sin envÃ­o</span>
-          <span class="chip" onclick="setModoEnvio(this,'efectivo')">ðŸ’µ Repartidor cobra en efectivo</span>
-          <span class="chip" onclick="setModoEnvio(this,'transferencia')">ðŸ“² Cliente transfiriÃ³ (comida + envÃ­o)</span>
-          <span class="chip" onclick="setModoEnvio(this,'gratis')">ðŸŽ EnvÃ­o gratis / absorbido</span>
-          <span class="chip" onclick="setModoEnvio(this,'didi')">ðŸ›µ DiDi Food</span>
+          <span class="chip" onclick="setModoEnvio(this,'sin_envio')">🏠 Sin envío</span>
+          <span class="chip" onclick="setModoEnvio(this,'efectivo')">💵 Repartidor cobra en efectivo</span>
+          <span class="chip" onclick="setModoEnvio(this,'transferencia')">📲 Cliente transfirió (comida + envío)</span>
+          <span class="chip" onclick="setModoEnvio(this,'gratis')">🎁 Envío gratis / absorbido</span>
+          <span class="chip" onclick="setModoEnvio(this,'didi')">🛵 DiDi Food</span>
         </div>
       </div>
 
-      <!-- Panel envÃ­o (visible si hay envÃ­o) -->
+      <!-- Panel envío (visible si hay envío) -->
       <div id="panel-envio" style="display:none; background:var(--bg3); border:1px solid rgba(52,152,219,0.2); border-radius:var(--radius-sm); padding:12px; margin-top:8px;">
-        <!-- Selector de direcciÃ³n guardada del cliente -->
+        <!-- Selector de dirección guardada del cliente -->
         <div class="form-group" id="wrap-dir-pedido" style="display:none;margin-bottom:8px">
-          <label class="form-label">ðŸ“ DirecciÃ³n de entrega</label>
+          <label class="form-label">📍 Dirección de entrega</label>
           <div style="display:flex;gap:6px;align-items:center">
             <select class="form-input" id="pedido-direccion" style="flex:1" onchange="_aplicarDireccionPedido(this.value)">
-              <option value="">Otra direcciÃ³n / manual</option>
+              <option value="">Otra dirección / manual</option>
             </select>
-            <a id="pedido-dir-maps" href="#" target="_blank" class="btn btn-secondary btn-sm" style="display:none;padding:5px 10px;text-decoration:none;white-space:nowrap">ðŸ“ Maps</a>
+            <a id="pedido-dir-maps" href="#" target="_blank" class="btn btn-secondary btn-sm" style="display:none;padding:5px 10px;text-decoration:none;white-space:nowrap">📍 Maps</a>
           </div>
         </div>
         <div class="form-row" style="margin-bottom:8px">
           <div class="form-group" style="margin-bottom:0">
-            <label class="form-label">Empresa de envÃ­os</label>
+            <label class="form-label">Empresa de envíos</label>
             <input class="form-input" id="envio-empresa" placeholder="Ej: Mr. Delivery, Rappi, DiDi...">
           </div>
           <div class="form-group" style="margin-bottom:0">
@@ -1828,38 +1828,38 @@
         <div id="panel-envio-desglose" style="display:none;margin-bottom:8px">
           <div class="form-row" style="margin-bottom:0">
             <div class="form-group" style="margin-bottom:0">
-              <label class="form-label" style="color:var(--green)">âœ“ Cliente paga (MXN)</label>
+              <label class="form-label" style="color:var(--green)">✓ Cliente paga (MXN)</label>
               <input class="form-input" id="envio-cliente-paga" type="number" placeholder="0.00" oninput="actualizarTotalPedido()">
             </div>
             <div class="form-group" style="margin-bottom:0">
-              <label class="form-label" style="color:var(--amber)">âš  Nosotros absorbemos (MXN)</label>
+              <label class="form-label" style="color:var(--amber)">⚠ Nosotros absorbemos (MXN)</label>
               <input class="form-input" id="envio-absorbemos" type="number" placeholder="0.00" readonly style="background:var(--bg4);cursor:default">
             </div>
           </div>
-          <div style="font-size:11px;color:var(--text3);margin-top:4px">ðŸ’¡ El monto absorbido se registra como gasto de envÃ­os en caja.</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:4px">💡 El monto absorbido se registra como gasto de envíos en caja.</div>
         </div>
         <div id="envio-info" style="margin-top:8px;font-size:12px;color:var(--text2);line-height:1.6;"></div>
       </div>
 
       </div><!-- /seccion-envio-wrap -->
 
-      <!-- CORTESÃA -->
+      <!-- CORTESÍA -->
       <div class="form-group mt-12">
-        <label class="form-label">Â¿Es cortesÃ­a?</label>
+        <label class="form-label">¿Es cortesía?</label>
         <div class="flex gap-8 items-center">
           <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px">
             <input type="checkbox" id="pedido-cortesia" onchange="toggleCortesia(this.checked)" style="width:16px;height:16px;accent-color:var(--purple)">
-            <span>Marcar como cortesÃ­a â€” el costo de producciÃ³n va a Gastos de Venta</span>
+            <span>Marcar como cortesía — el costo de producción va a Gastos de Venta</span>
           </label>
         </div>
         <div id="panel-cortesia" style="display:none;margin-top:8px;background:var(--purple-dim);border:1px solid rgba(155,89,182,0.3);border-radius:var(--radius-sm);padding:10px;font-size:12px;color:var(--purple)">
-          ðŸŽ Este pedido no genera ingreso. El costo de producciÃ³n estimado se registrarÃ¡ como <strong>Gastos de Venta</strong> en los reportes financieros.
+          🎁 Este pedido no genera ingreso. El costo de producción estimado se registrará como <strong>Gastos de Venta</strong> en los reportes financieros.
         </div>
       </div>
 
       <div class="form-row">
         <div class="form-group">
-          <label class="form-label">ðŸ• Hora de entrega</label>
+          <label class="form-label">🕐 Hora de entrega</label>
           <input class="form-input" id="pedido-hora-entrega" type="time">
         </div>
         <div class="form-group">
@@ -1888,8 +1888,8 @@
                 <option>Plan semanal</option>
                 <option>Plan mensual</option>
                 <option>Descuento por volumen</option>
-                <option>CortesÃ­a</option>
-                <option>PromociÃ³n</option>
+                <option>Cortesía</option>
+                <option>Promoción</option>
                 <option>Otro</option>
               </select>
             </div>
@@ -1909,32 +1909,32 @@
           <span class="font-mono" style="color:var(--green)" id="pedido-descuento-display">-$0.00</span>
         </div>
         <div class="flex justify-between mb-4" id="fila-envio" style="display:none!important">
-          <span class="text-muted" id="label-envio-resumen">EnvÃ­o</span>
+          <span class="text-muted" id="label-envio-resumen">Envío</span>
           <span class="font-mono" id="pedido-envio-display">$0.00</span>
         </div>
         <div class="flex justify-between mb-4" id="fila-pago-repartidor" style="display:none!important">
-          <span style="color:var(--amber);font-size:12px">âš  Pagar al repartidor</span>
+          <span style="color:var(--amber);font-size:12px">⚠ Pagar al repartidor</span>
           <span class="font-mono" style="color:var(--amber)" id="pedido-pago-repartidor">$0.00</span>
         </div>
         <div class="flex justify-between mb-4" id="fila-absorbemos" style="display:none!important">
-          <span style="color:var(--purple);font-size:12px">ðŸ“‰ EnvÃ­o absorbido (gasto nuestro)</span>
+          <span style="color:var(--purple);font-size:12px">📉 Envío absorbido (gasto nuestro)</span>
           <span class="font-mono" style="color:var(--purple)" id="pedido-absorbemos-display">$0.00</span>
         </div>
         <hr style="border:none;border-top:1px solid var(--border);margin:8px 0">
         <div class="flex justify-between">
-          <span style="font-size:14px;font-weight:600">ðŸ’³ Total que paga el cliente</span>
+          <span style="font-size:14px;font-weight:600">💳 Total que paga el cliente</span>
           <span class="font-mono font-semibold highlight-green" id="pedido-total-display">$0.00</span>
         </div>
         <div class="flex justify-between mt-4" style="padding-top:6px;border-top:1px dashed var(--border)">
-          <span style="font-size:13px;font-weight:600;color:var(--blue)">ðŸª Nosotros recibimos</span>
+          <span style="font-size:13px;font-weight:600;color:var(--blue)">🏪 Nosotros recibimos</span>
           <span class="font-mono font-semibold" style="color:var(--blue)" id="pedido-recibimos-display">$0.00</span>
         </div>
-        <div style="font-size:10px;color:var(--text3);margin-top:3px">El envÃ­o se entrega completo al repartidor; no es ingreso nuestro.</div>
+        <div style="font-size:10px;color:var(--text3);margin-top:3px">El envío se entrega completo al repartidor; no es ingreso nuestro.</div>
       </div>
     </div>
     <div class="modal-footer">
       <button class="btn btn-secondary" onclick="closeModal('modal-pedido')">Cancelar</button>
-      <button class="btn btn-primary" onclick="guardarPedido()">âœ“ Confirmar pedido</button>
+      <button class="btn btn-primary" onclick="guardarPedido()">✓ Confirmar pedido</button>
     </div>
   </div>
 </div>
@@ -1944,7 +1944,7 @@
   <div class="modal">
     <div class="modal-header">
       <div class="modal-title" id="platillo-modal-title">Nuevo Platillo</div>
-      <button class="modal-close" onclick="closeModal('modal-platillo')">Ã—</button>
+      <button class="modal-close" onclick="closeModal('modal-platillo')">×</button>
     </div>
     <div class="modal-body">
       <div class="form-group">
@@ -1953,7 +1953,7 @@
       </div>
       <div class="form-row">
         <div class="form-group">
-          <label class="form-label">CategorÃ­a</label>
+          <label class="form-label">Categoría</label>
           <select class="form-input" id="platillo-categoria"></select>
         </div>
         <div class="form-group">
@@ -1967,7 +1967,7 @@
           <input class="form-input" id="platillo-costo" type="number" placeholder="0.00" readonly style="background:var(--bg4);cursor:default" id="platillo-costo">
         </div>
         <div class="form-group">
-          <label class="form-label">CalorÃ­as (opcional)</label>
+          <label class="form-label">Calorías (opcional)</label>
           <input class="form-input" id="platillo-calorias" type="number" placeholder="kcal">
         </div>
       </div>
@@ -1991,23 +1991,23 @@
       </div>
 
       <div class="form-group">
-        <label class="form-label">DescripciÃ³n</label>
-        <textarea class="form-input" id="platillo-desc" placeholder="Ingredientes principales, estilo de preparaciÃ³n..."></textarea>
+        <label class="form-label">Descripción</label>
+        <textarea class="form-input" id="platillo-desc" placeholder="Ingredientes principales, estilo de preparación..."></textarea>
       </div>
       <div class="form-group">
         <label class="form-label">Etiquetas</label>
         <div class="flex gap-8" style="flex-wrap:wrap" id="etiquetas-wrap">
-          <span class="chip" onclick="toggleEtiqueta(this,'Keto')">ðŸ¥‘ Keto</span>
-          <span class="chip" onclick="toggleEtiqueta(this,'Vegano')">ðŸŒ± Vegano</span>
-          <span class="chip" onclick="toggleEtiqueta(this,'Sin gluten')">ðŸŒ¾ Sin gluten</span>
-          <span class="chip" onclick="toggleEtiqueta(this,'Alto en proteÃ­na')">ðŸ’ª Alto proteÃ­na</span>
-          <span class="chip" onclick="toggleEtiqueta(this,'Bajo en carbos')">ðŸƒ Bajo carbos</span>
+          <span class="chip" onclick="toggleEtiqueta(this,'Keto')">🥑 Keto</span>
+          <span class="chip" onclick="toggleEtiqueta(this,'Vegano')">🌱 Vegano</span>
+          <span class="chip" onclick="toggleEtiqueta(this,'Sin gluten')">🌾 Sin gluten</span>
+          <span class="chip" onclick="toggleEtiqueta(this,'Alto en proteína')">💪 Alto proteína</span>
+          <span class="chip" onclick="toggleEtiqueta(this,'Bajo en carbos')">🍃 Bajo carbos</span>
         </div>
       </div>
       <div class="form-group">
-        <label class="form-label">Disponible en menÃº</label>
+        <label class="form-label">Disponible en menú</label>
         <select class="form-input" id="platillo-disponible">
-          <option value="true">SÃ­, disponible</option>
+          <option value="true">Sí, disponible</option>
           <option value="false">No disponible</option>
         </select>
       </div>
@@ -2023,13 +2023,13 @@
 <div class="modal-overlay" id="modal-dieta">
   <div class="modal">
     <div class="modal-header">
-      <div class="modal-title" id="modal-dieta-titulo">Nueva cotizaciÃ³n de dieta</div>
-      <button class="modal-close" onclick="closeModal('modal-dieta')">Ã—</button>
+      <div class="modal-title" id="modal-dieta-titulo">Nueva cotización de dieta</div>
+      <button class="modal-close" onclick="closeModal('modal-dieta')">×</button>
     </div>
     <div class="modal-body">
       <input type="hidden" id="dieta-edit-id">
       <div class="card card-sm mb-14" style="background:var(--blue-dim);border-color:rgba(52,152,219,0.2)">
-        <div style="font-size:12px;color:var(--blue)">ðŸ“‹ El cliente manda su dieta, tÃº la cotizas. Adjunta el PDF de referencia si lo tienes.</div>
+        <div style="font-size:12px;color:var(--blue)">📋 El cliente manda su dieta, tú la cotizas. Adjunta el PDF de referencia si lo tienes.</div>
       </div>
       <div class="form-group">
         <label class="form-label">Cliente</label>
@@ -2047,7 +2047,7 @@
              onclick="document.getElementById('dieta-pdf-input').click()"
              onmouseover="this.style.borderColor='var(--green)'" onmouseout="this.style.borderColor='var(--border2)'">
           <input type="file" id="dieta-pdf-input" accept=".pdf" style="display:none" onchange="cargarPDFDieta(this)">
-          <div id="dieta-pdf-label" style="font-size:12px;color:var(--text3)">ðŸ“„ Haz clic para subir el PDF que mandÃ³ el cliente</div>
+          <div id="dieta-pdf-label" style="font-size:12px;color:var(--text3)">📄 Haz clic para subir el PDF que mandó el cliente</div>
         </div>
       </div>
       <div class="form-group">
@@ -2066,13 +2066,13 @@
 <div class="modal-overlay" id="modal-remarketing">
   <div class="modal modal-lg">
     <div class="modal-header">
-      <div class="modal-title">ðŸ“² Remarketing â€” clientes a contactar</div>
-      <button class="modal-close" onclick="closeModal('modal-remarketing')">Ã—</button>
+      <div class="modal-title">📲 Remarketing — clientes a contactar</div>
+      <button class="modal-close" onclick="closeModal('modal-remarketing')">×</button>
     </div>
     <div class="modal-body">
       <div class="card card-sm mb-14" style="background:var(--bg3)">
         <label class="form-label">Mensaje de WhatsApp (editable)</label>
-        <textarea class="form-input" id="remarketing-mensaje" style="min-height:60px">Â¡Hola [Nombre]! ðŸ‘‹ En Fit&Go queremos ayudarte a mantener tu alimentaciÃ³n al dÃ­a. Â¿Te animas a reactivar tu plan de comidas esta semana? ðŸ¥—</textarea>
+        <textarea class="form-input" id="remarketing-mensaje" style="min-height:60px">¡Hola [Nombre]! 👋 En Fit&Go queremos ayudarte a mantener tu alimentación al día. ¿Te animas a reactivar tu plan de comidas esta semana? 🥗</textarea>
         <div style="font-size:10px;color:var(--text3);margin-top:4px">Usa [Nombre] y se reemplaza por el nombre del cliente.</div>
       </div>
       <div id="remarketing-lista"></div>
@@ -2088,7 +2088,7 @@
   <div class="modal">
     <div class="modal-header">
       <div class="modal-title" id="ing-modal-title">Nuevo Ingrediente</div>
-      <button class="modal-close" onclick="closeModal('modal-ingrediente')">Ã—</button>
+      <button class="modal-close" onclick="closeModal('modal-ingrediente')">×</button>
     </div>
     <div class="modal-body">
       <div class="form-group">
@@ -2097,7 +2097,7 @@
       </div>
       <div class="form-row">
         <div class="form-group">
-          <label class="form-label">CategorÃ­a</label>
+          <label class="form-label">Categoría</label>
           <select class="form-input" id="ing-categoria"></select>
         </div>
         <div class="form-group">
@@ -2118,7 +2118,7 @@
           <input class="form-input" id="ing-stock" type="number" placeholder="0">
         </div>
         <div class="form-group">
-          <label class="form-label">Stock mÃ­nimo (alerta)</label>
+          <label class="form-label">Stock mínimo (alerta)</label>
           <input class="form-input" id="ing-minimo" type="number" placeholder="0">
         </div>
       </div>
@@ -2147,11 +2147,11 @@
   <div class="modal">
     <div class="modal-header">
       <div class="modal-title">Nuevo Proveedor</div>
-      <button class="modal-close" onclick="closeModal('modal-proveedor')">Ã—</button>
+      <button class="modal-close" onclick="closeModal('modal-proveedor')">×</button>
     </div>
     <div class="modal-body">
       <div class="form-group">
-        <label class="form-label">Nombre / RazÃ³n social</label>
+        <label class="form-label">Nombre / Razón social</label>
         <input class="form-input" id="prov-nombre" placeholder="Nombre del proveedor">
       </div>
       <div class="form-row">
@@ -2160,18 +2160,18 @@
           <input class="form-input" id="prov-contacto" placeholder="Nombre del representante">
         </div>
         <div class="form-group">
-          <label class="form-label">TelÃ©fono / WhatsApp</label>
+          <label class="form-label">Teléfono / WhatsApp</label>
           <input class="form-input" id="prov-tel" placeholder="+52 999 000 0000">
         </div>
       </div>
       <div class="form-row">
         <div class="form-group">
-          <label class="form-label">CategorÃ­a</label>
+          <label class="form-label">Categoría</label>
           <select class="form-input" id="prov-categoria">
-            <option>Carnes y proteÃ­nas</option>
+            <option>Carnes y proteínas</option>
             <option>Verduras y frutas</option>
             <option>Granos y cereales</option>
-            <option>LÃ¡cteos</option>
+            <option>Lácteos</option>
             <option>Condimentos</option>
             <option>Bebidas</option>
             <option>Empaques</option>
@@ -2179,8 +2179,8 @@
           </select>
         </div>
         <div class="form-group">
-          <label class="form-label">DÃ­as de entrega</label>
-          <input class="form-input" id="prov-dias" placeholder="Ej: Lunes, MiÃ©rcoles">
+          <label class="form-label">Días de entrega</label>
+          <input class="form-input" id="prov-dias" placeholder="Ej: Lunes, Miércoles">
         </div>
       </div>
       <div class="form-group">
@@ -2200,16 +2200,16 @@
   <div class="modal">
     <div class="modal-header">
       <div class="modal-title">Registrar Cuenta por Pagar</div>
-      <button class="modal-close" onclick="closeModal('modal-cxp')">Ã—</button>
+      <button class="modal-close" onclick="closeModal('modal-cxp')">×</button>
     </div>
     <div class="modal-body">
       <!-- Tipo de cuenta -->
       <div class="form-group">
         <label class="form-label">Tipo de cuenta</label>
         <div class="flex gap-8" id="cxp-tipo-chips">
-          <span class="chip active" onclick="setCxpTipo(this,'proveedor')">ðŸš› Proveedor</span>
-          <span class="chip" onclick="setCxpTipo(this,'servicio')">ðŸ¢ Servicio / Renta</span>
-          <span class="chip" onclick="setCxpTipo(this,'otro')">ðŸ“‹ Otro</span>
+          <span class="chip active" onclick="setCxpTipo(this,'proveedor')">🚛 Proveedor</span>
+          <span class="chip" onclick="setCxpTipo(this,'servicio')">🏢 Servicio / Renta</span>
+          <span class="chip" onclick="setCxpTipo(this,'otro')">📋 Otro</span>
         </div>
       </div>
       <!-- Acreedor: proveedor (cuando tipo=proveedor) -->
@@ -2221,7 +2221,7 @@
       </div>
       <!-- Acreedor libre (cuando tipo=servicio/otro) -->
       <div id="cxp-acreedor-wrap" class="form-group" style="display:none">
-        <label class="form-label">Acreedor / DescripciÃ³n</label>
+        <label class="form-label">Acreedor / Descripción</label>
         <input class="form-input" id="cxp-acreedor" placeholder="Ej: Arrendadora Centro, CFE, Telcel...">
       </div>
       <div class="form-group">
@@ -2239,17 +2239,17 @@
         </div>
       </div>
       <div class="form-group">
-        <label class="form-label">MÃ©todo de pago (al liquidar)</label>
+        <label class="form-label">Método de pago (al liquidar)</label>
         <select class="form-input" id="cxp-metodo-pago">
-          <option value="Efectivo">ðŸ’µ Efectivo</option>
-          <option value="Transferencia">ðŸ“² Transferencia / SPEI</option>
-          <option value="Tarjeta">ðŸ’³ Tarjeta</option>
-          <option value="Cheque">ðŸ“„ Cheque</option>
+          <option value="Efectivo">💵 Efectivo</option>
+          <option value="Transferencia">📲 Transferencia / SPEI</option>
+          <option value="Tarjeta">💳 Tarjeta</option>
+          <option value="Cheque">📄 Cheque</option>
         </select>
       </div>
       <div class="form-group">
         <label class="form-label">Notas</label>
-        <textarea class="form-input" id="cxp-notas" placeholder="NÃºmero de factura, referencia..."></textarea>
+        <textarea class="form-input" id="cxp-notas" placeholder="Número de factura, referencia..."></textarea>
       </div>
     </div>
     <div class="modal-footer">
@@ -2264,7 +2264,7 @@
   <div class="modal">
     <div class="modal-header">
       <div class="modal-title">Registrar Saldo por Cobrar</div>
-      <button class="modal-close" onclick="closeModal('modal-cxc')">Ã—</button>
+      <button class="modal-close" onclick="closeModal('modal-cxc')">×</button>
     </div>
     <div class="modal-body">
       <div class="form-group">
@@ -2289,7 +2289,7 @@
       </div>
       <div class="form-group">
         <label class="form-label">Notas</label>
-        <textarea class="form-input" id="cxc-notas" placeholder="Referencia, nÃºmero de pedidos incluidos..."></textarea>
+        <textarea class="form-input" id="cxc-notas" placeholder="Referencia, número de pedidos incluidos..."></textarea>
       </div>
     </div>
     <div class="modal-footer">
@@ -2304,7 +2304,7 @@
   <div class="modal modal-lg">
     <div class="modal-header">
       <div class="modal-title" id="modal-cliente-titulo">Nuevo Cliente</div>
-      <button class="modal-close" onclick="closeModal('modal-cliente')">Ã—</button>
+      <button class="modal-close" onclick="closeModal('modal-cliente')">×</button>
     </div>
     <div class="modal-body">
       <input type="hidden" id="cli-edit-id">
@@ -2314,7 +2314,7 @@
           <input class="form-input" id="cli-nombre" placeholder="Nombre del cliente">
         </div>
         <div class="form-group">
-          <label class="form-label">TelÃ©fono / WhatsApp</label>
+          <label class="form-label">Teléfono / WhatsApp</label>
           <input class="form-input" id="cli-tel" placeholder="+52 999 000 0000">
         </div>
       </div>
@@ -2332,18 +2332,18 @@
           <label class="form-label">Tiene dieta personalizada</label>
           <select class="form-input" id="cli-dieta">
             <option value="false">No</option>
-            <option value="true">SÃ­</option>
+            <option value="true">Sí</option>
           </select>
         </div>
       </div>
 
       <!-- Direcciones de entrega -->
       <div class="section-header" style="margin:14px 0 8px">
-        <div class="section-title" style="font-size:13px">ðŸ“ Direcciones de entrega</div>
-        <button class="btn btn-secondary btn-sm" onclick="_cliAgregarDireccion()">+ Agregar direcciÃ³n</button>
+        <div class="section-title" style="font-size:13px">📍 Direcciones de entrega</div>
+        <button class="btn btn-secondary btn-sm" onclick="_cliAgregarDireccion()">+ Agregar dirección</button>
       </div>
       <div class="card card-sm mb-8" style="background:var(--blue-dim);border-color:rgba(52,152,219,0.2)">
-        <div style="font-size:11px;color:var(--blue)">â„¹ Guarda el costo de envÃ­o de cada ubicaciÃ³n. Al crear un pedido se precarga automÃ¡ticamente. Marca una como principal (â˜…).</div>
+        <div style="font-size:11px;color:var(--blue)">ℹ Guarda el costo de envío de cada ubicación. Al crear un pedido se precarga automáticamente. Marca una como principal (★).</div>
       </div>
       <div id="cli-direcciones-lista"></div>
 
@@ -2364,7 +2364,7 @@
   <div class="modal modal-lg">
     <div class="modal-header">
       <div class="modal-title" id="detalle-titulo">Pedido #000</div>
-      <button class="modal-close" onclick="closeModal('modal-detalle-pedido')">Ã—</button>
+      <button class="modal-close" onclick="closeModal('modal-detalle-pedido')">×</button>
     </div>
     <div class="modal-body" id="detalle-body"></div>
     <div class="modal-footer" id="detalle-footer"></div>
@@ -2375,13 +2375,13 @@
 <div class="modal-overlay" id="modal-apertura-caja">
   <div class="modal modal-lg">
     <div class="modal-header">
-      <div class="modal-title">ðŸŸ¢ Apertura de Caja</div>
-      <button class="modal-close" onclick="closeModal('modal-apertura-caja')">Ã—</button>
+      <div class="modal-title">🟢 Apertura de Caja</div>
+      <button class="modal-close" onclick="closeModal('modal-apertura-caja')">×</button>
     </div>
     <div class="modal-body">
       <div style="text-align:center;margin-bottom:20px">
         <div style="font-size:13px;color:var(--text3)">${new Date().toLocaleDateString('es-MX',{weekday:'long',day:'numeric',month:'long',year:'numeric'})}</div>
-        <div style="font-size:12px;color:var(--text2);margin-top:4px">Cuenta el efectivo fÃ­sico de la caja y regÃ­stralo aquÃ­.</div>
+        <div style="font-size:12px;color:var(--text2);margin-top:4px">Cuenta el efectivo físico de la caja y regístralo aquí.</div>
       </div>
 
       <!-- Billetes -->
@@ -2406,7 +2406,7 @@
     </div>
     <div class="modal-footer">
       <button class="btn btn-secondary" onclick="closeModal('modal-apertura-caja')">Cancelar</button>
-      <button class="btn btn-primary" onclick="confirmarApertura()">âœ“ Abrir caja con este saldo</button>
+      <button class="btn btn-primary" onclick="confirmarApertura()">✓ Abrir caja con este saldo</button>
     </div>
   </div>
 </div>
@@ -2415,8 +2415,8 @@
 <div class="modal-overlay" id="modal-cierre-caja">
   <div class="modal modal-lg">
     <div class="modal-header">
-      <div class="modal-title">ðŸ”’ Cierre de Turno</div>
-      <button class="modal-close" onclick="closeModal('modal-cierre-caja')">Ã—</button>
+      <div class="modal-title">🔒 Cierre de Turno</div>
+      <button class="modal-close" onclick="closeModal('modal-cierre-caja')">×</button>
     </div>
     <div class="modal-body" id="cierre-caja-body">
     </div>
@@ -2432,7 +2432,7 @@
   <div class="modal modal-lg">
     <div class="modal-header">
       <div class="modal-title" id="compra-modal-title">Nueva Compra de Insumos</div>
-      <button class="modal-close" onclick="closeModal('modal-compra')">Ã—</button>
+      <button class="modal-close" onclick="closeModal('modal-compra')">×</button>
     </div>
     <div class="modal-body">
       <div class="form-row mb-4">
@@ -2447,7 +2447,7 @@
           <input class="form-input" type="date" id="compra-fecha">
         </div>
       </div>
-      <!-- LÃ­neas de compra -->
+      <!-- Líneas de compra -->
       <div class="flex justify-between items-center mb-8">
         <label class="form-label" style="margin:0">Ingredientes comprados</label>
         <button class="btn btn-secondary btn-sm" onclick="agregarLineaCompra()" type="button">+ Ingrediente</button>
@@ -2466,26 +2466,26 @@
         <div class="form-group">
           <label class="form-label">Estado</label>
           <select class="form-input" id="compra-estado">
-            <option value="recibida">âœ… Recibida (actualiza inventario ahora)</option>
-            <option value="pendiente">â³ Pendiente de recibir</option>
+            <option value="recibida">✅ Recibida (actualiza inventario ahora)</option>
+            <option value="pendiente">⏳ Pendiente de recibir</option>
           </select>
         </div>
         <div class="form-group">
-          <label class="form-label">Â¿Genera cuenta por pagar?</label>
+          <label class="form-label">¿Genera cuenta por pagar?</label>
           <select class="form-input" id="compra-genera-cxp" onchange="toggleCompraCredito(this.value)">
-            <option value="no">No, ya se pagÃ³</option>
-            <option value="si">SÃ­, registrar en CxP</option>
+            <option value="no">No, ya se pagó</option>
+            <option value="si">Sí, registrar en CxP</option>
           </select>
         </div>
       </div>
       <!-- Panel CxP de compra -->
       <div id="panel-compra-cxp" style="display:none;background:var(--red-dim);border:1px solid rgba(231,76,60,0.2);border-radius:var(--radius-sm);padding:12px;margin-bottom:12px;">
-        <div style="font-size:12px;font-weight:600;color:var(--red);margin-bottom:8px">ðŸ“¤ Se registrarÃ¡ como cuenta por pagar</div>
+        <div style="font-size:12px;font-weight:600;color:var(--red);margin-bottom:8px">📤 Se registrará como cuenta por pagar</div>
         <input class="form-input" id="compra-cxp-vencimiento" type="date" placeholder="Fecha de vencimiento">
       </div>
       <div class="form-group">
         <label class="form-label">Notas</label>
-        <input class="form-input" id="compra-notas" placeholder="NÃºmero de factura, referencia, observaciones...">
+        <input class="form-input" id="compra-notas" placeholder="Número de factura, referencia, observaciones...">
       </div>
     </div>
     <div class="modal-footer">
@@ -2500,19 +2500,19 @@
   <div class="modal">
     <div class="modal-header">
       <div class="modal-title">Detalle de compra</div>
-      <button class="modal-close" onclick="closeModal('modal-detalle-compra')">Ã—</button>
+      <button class="modal-close" onclick="closeModal('modal-detalle-compra')">×</button>
     </div>
     <div class="modal-body" id="detalle-compra-body"></div>
     <div class="modal-footer" id="detalle-compra-footer"></div>
   </div>
 </div>
 
-<!-- Modal CotizaciÃ³n Dieta -->
+<!-- Modal Cotización Dieta -->
 <div class="modal-overlay" id="modal-cotizacion">
   <div class="modal modal-lg">
     <div class="modal-header">
-      <div class="modal-title" id="cotizacion-titulo">CotizaciÃ³n de dieta</div>
-      <button class="modal-close" onclick="closeModal('modal-cotizacion')">Ã—</button>
+      <div class="modal-title" id="cotizacion-titulo">Cotización de dieta</div>
+      <button class="modal-close" onclick="closeModal('modal-cotizacion')">×</button>
     </div>
     <div class="modal-body">
 
@@ -2520,8 +2520,8 @@
       <div class="flex justify-between items-center mb-8">
         <label class="form-label" style="margin:0;font-size:13px;font-weight:600">Platillos del plan</label>
         <div class="flex gap-8">
-          <button class="btn btn-secondary btn-sm" onclick="_cotSeleccionarTodos(true)">âœ“ Todos</button>
-          <button class="btn btn-secondary btn-sm" onclick="_cotSeleccionarTodos(false)">âœ— Ninguno</button>
+          <button class="btn btn-secondary btn-sm" onclick="_cotSeleccionarTodos(true)">✓ Todos</button>
+          <button class="btn btn-secondary btn-sm" onclick="_cotSeleccionarTodos(false)">✗ Ninguno</button>
           <button class="btn btn-secondary btn-sm" onclick="agregarPlatilloCotizacion()">+ Platillo</button>
         </div>
       </div>
@@ -2532,9 +2532,9 @@
         <div id="cotizacion-platillos-lista"></div>
       </div>
 
-      <!-- MÃ¡rgenes globales por tipo de plan -->
+      <!-- Márgenes globales por tipo de plan -->
       <div style="font-size:11px;color:var(--text3);margin-bottom:8px">
-        ðŸ’¡ Define el margen por tipo de plan. El precio es <strong>unitario por platillo</strong>. Puedes redondear cada precio manualmente.
+        💡 Define el margen por tipo de plan. El precio es <strong>unitario por platillo</strong>. Puedes redondear cada precio manualmente.
       </div>
       <div class="grid mb-12" style="grid-template-columns:repeat(3,1fr);gap:8px">
         <div style="background:var(--bg3);border-radius:var(--radius-sm);padding:10px;text-align:center">
@@ -2546,7 +2546,7 @@
           </div>
         </div>
         <div style="background:var(--bg3);border:1px solid rgba(46,204,113,0.2);border-radius:var(--radius-sm);padding:10px;text-align:center">
-          <div style="font-size:10px;color:var(--green);font-weight:600;margin-bottom:6px">â­ MARGEN SEMANAL</div>
+          <div style="font-size:10px;color:var(--green);font-weight:600;margin-bottom:6px">⭐ MARGEN SEMANAL</div>
           <div style="display:flex;align-items:center;gap:4px;justify-content:center">
             <input class="form-input" id="cot-margen-sem-val" type="number" value="50" min="0" max="300" step="1"
                    style="text-align:center;font-size:14px;padding:4px 6px;width:70px" oninput="recalcularCotizacion()">
@@ -2588,31 +2588,31 @@
       <input type="hidden" id="cot-precio-semana" value="0">
       <input type="hidden" id="cot-precio-mes" value="0">
 
-      <!-- Notas de cotizaciÃ³n -->
+      <!-- Notas de cotización -->
       <div class="form-group">
-        <label class="form-label">Notas de la cotizaciÃ³n</label>
-        <textarea class="form-input" id="cotizacion-notas" placeholder="Condiciones, incluye o no incluye, envÃ­o, etc."></textarea>
+        <label class="form-label">Notas de la cotización</label>
+        <textarea class="form-input" id="cotizacion-notas" placeholder="Condiciones, incluye o no incluye, envío, etc."></textarea>
       </div>
     </div>
     <div class="modal-footer">
       <button class="btn btn-secondary" onclick="closeModal('modal-cotizacion')">Cancelar</button>
-      <button class="btn btn-secondary" onclick="generarImagenCotizacion()" style="background:var(--purple-dim);color:var(--purple);border-color:rgba(155,89,182,0.3)">ðŸ“¸ Generar imagen</button>
-      <button class="btn btn-primary" onclick="guardarCotizacion()">ðŸ’¾ Guardar cotizaciÃ³n</button>
+      <button class="btn btn-secondary" onclick="generarImagenCotizacion()" style="background:var(--purple-dim);color:var(--purple);border-color:rgba(155,89,182,0.3)">📸 Generar imagen</button>
+      <button class="btn btn-primary" onclick="guardarCotizacion()">💾 Guardar cotización</button>
     </div>
   </div>
 </div>
 
-<!-- Modal Imagen CotizaciÃ³n -->
+<!-- Modal Imagen Cotización -->
 <div class="modal-overlay" id="modal-imagen-cotizacion">
   <div class="modal" style="max-width:420px">
     <div class="modal-header">
       <div class="modal-title">Imagen para cliente</div>
-      <button class="modal-close" onclick="closeModal('modal-imagen-cotizacion')">Ã—</button>
+      <button class="modal-close" onclick="closeModal('modal-imagen-cotizacion')">×</button>
     </div>
     <div class="modal-body" style="padding:16px">
       <canvas id="canvas-cotizacion" style="width:100%;border-radius:10px;display:block"></canvas>
       <div class="flex gap-8 mt-16">
-        <button class="btn btn-primary w-full" onclick="descargarImagenCotizacion()">â¬‡ Descargar PNG</button>
+        <button class="btn btn-primary w-full" onclick="descargarImagenCotizacion()">⬇ Descargar PNG</button>
       </div>
       <div style="font-size:11px;color:var(--text3);text-align:center;margin-top:8px">Lista para enviar por WhatsApp o Instagram</div>
     </div>
@@ -2624,21 +2624,21 @@
   <div class="modal">
     <div class="modal-header">
       <div class="modal-title">Registrar Gasto</div>
-      <button class="modal-close" onclick="closeModal('modal-gasto')">Ã—</button>
+      <button class="modal-close" onclick="closeModal('modal-gasto')">×</button>
     </div>
     <div class="modal-body">
       <div class="form-group">
         <label class="form-label">Concepto</label>
-        <input class="form-input" id="gasto-concepto" placeholder="Ej: Renta local, NÃ³mina chef, Luz, Gas...">
+        <input class="form-input" id="gasto-concepto" placeholder="Ej: Renta local, Nómina chef, Luz, Gas...">
       </div>
       <div class="form-row">
         <div class="form-group">
-          <label class="form-label">CategorÃ­a</label>
+          <label class="form-label">Categoría</label>
           <select class="form-input" id="gasto-categoria">
             <option>Renta</option>
-            <option>NÃ³mina</option>
+            <option>Nómina</option>
             <option>Servicios (luz, agua, gas)</option>
-            <option>Internet / TelÃ©fono</option>
+            <option>Internet / Teléfono</option>
             <option>Mantenimiento</option>
             <option>Marketing</option>
             <option>Empaques</option>
@@ -2657,17 +2657,17 @@
           <input class="form-input" id="gasto-fecha" type="date">
         </div>
         <div class="form-group">
-          <label class="form-label">Â¿Es gasto recurrente?</label>
+          <label class="form-label">¿Es gasto recurrente?</label>
           <select class="form-input" id="gasto-recurrente">
-            <option value="no">No, es Ãºnico</option>
-            <option value="mensual">SÃ­, mensual</option>
-            <option value="semanal">SÃ­, semanal</option>
+            <option value="no">No, es único</option>
+            <option value="mensual">Sí, mensual</option>
+            <option value="semanal">Sí, semanal</option>
           </select>
         </div>
       </div>
       <div class="form-group">
         <label class="form-label">Notas</label>
-        <input class="form-input" id="gasto-notas" placeholder="Referencia, nÃºmero de factura...">
+        <input class="form-input" id="gasto-notas" placeholder="Referencia, número de factura...">
       </div>
     </div>
     <div class="modal-footer">
@@ -2682,12 +2682,12 @@
   <div class="modal">
     <div class="modal-header">
       <div class="modal-title" id="usuario-modal-title">Nuevo Usuario</div>
-      <button class="modal-close" onclick="closeModal('modal-usuario')">Ã—</button>
+      <button class="modal-close" onclick="closeModal('modal-usuario')">×</button>
     </div>
     <div class="modal-body">
       <div class="form-group">
         <label class="form-label">Nombre completo</label>
-        <input class="form-input" id="usr-nombre" placeholder="Ej: MarÃ­a GarcÃ­a">
+        <input class="form-input" id="usr-nombre" placeholder="Ej: María García">
       </div>
       <div class="form-row">
         <div class="form-group">
@@ -2695,15 +2695,15 @@
           <input class="form-input" id="usr-user" placeholder="Ej: maria" autocomplete="off">
         </div>
         <div class="form-group">
-          <label class="form-label">ContraseÃ±a</label>
-          <input class="form-input" id="usr-pass" type="password" placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢" autocomplete="new-password">
+          <label class="form-label">Contraseña</label>
+          <input class="form-input" id="usr-pass" type="password" placeholder="••••••••" autocomplete="new-password">
         </div>
       </div>
       <div class="form-group">
         <label class="form-label">Perfil</label>
         <div class="flex gap-8" id="usr-rol-chips">
-          <span class="chip active" onclick="setUsrRol(this,'admin')">ðŸ‘‘ Administrador</span>
-          <span class="chip" onclick="setUsrRol(this,'caja')">ðŸ§¾ Caja / Operador</span>
+          <span class="chip active" onclick="setUsrRol(this,'admin')">👑 Administrador</span>
+          <span class="chip" onclick="setUsrRol(this,'caja')">🧾 Caja / Operador</span>
         </div>
       </div>
     </div>
@@ -2714,12 +2714,12 @@
   </div>
 </div>
 
-<!-- Modal Nueva PresentaciÃ³n -->
+<!-- Modal Nueva Presentación -->
 <div class="modal-overlay" id="modal-presentacion">
   <div class="modal">
     <div class="modal-header">
-      <div class="modal-title" id="pres-modal-title">Nueva PresentaciÃ³n</div>
-      <button class="modal-close" onclick="closeModal('modal-presentacion')">Ã—</button>
+      <div class="modal-title" id="pres-modal-title">Nueva Presentación</div>
+      <button class="modal-close" onclick="closeModal('modal-presentacion')">×</button>
     </div>
     <div class="modal-body">
       <div class="form-group">
@@ -2729,7 +2729,7 @@
         </select>
       </div>
       <div class="form-group">
-        <label class="form-label">Nombre de la presentaciÃ³n</label>
+        <label class="form-label">Nombre de la presentación</label>
         <input class="form-input" id="pres-nombre" placeholder="Ej: Caja de 12, Bolsa 1kg, Costal 25kg...">
       </div>
       <div class="form-row">
@@ -2746,7 +2746,7 @@
         </div>
       </div>
       <div class="form-group">
-        <label class="form-label">Costo de la presentaciÃ³n completa (MXN)</label>
+        <label class="form-label">Costo de la presentación completa (MXN)</label>
         <input class="form-input" id="pres-costo" type="number" placeholder="Ej: 45.00" oninput="calcularCostoUnitario()">
       </div>
       <!-- Costo unitario calculado -->
@@ -2755,13 +2755,13 @@
           <span style="font-size:13px;color:var(--text2)">Costo por unidad (calculado)</span>
           <span class="font-mono font-semibold highlight-green" id="pres-costo-unit">$0.00</span>
         </div>
-        <div style="font-size:11px;color:var(--text3);margin-top:4px" id="pres-costo-formula">â€”</div>
+        <div style="font-size:11px;color:var(--text3);margin-top:4px" id="pres-costo-formula">—</div>
       </div>
       <div class="form-group mt-12">
-        <label class="form-label">Â¿Usar como presentaciÃ³n predeterminada?</label>
+        <label class="form-label">¿Usar como presentación predeterminada?</label>
         <select class="form-input" id="pres-default">
-          <option value="true">SÃ­ â€” actualiza el costo unitario del insumo automÃ¡ticamente</option>
-          <option value="false">No â€” solo registrar como referencia</option>
+          <option value="true">Sí — actualiza el costo unitario del insumo automáticamente</option>
+          <option value="false">No — solo registrar como referencia</option>
         </select>
       </div>
     </div>
@@ -2772,16 +2772,16 @@
   </div>
 </div>
 
-<!-- Modal GestiÃ³n de CategorÃ­as -->
+<!-- Modal Gestión de Categorías -->
 <div class="modal-overlay" id="modal-categorias">
   <div class="modal">
     <div class="modal-header">
-      <div class="modal-title" id="categ-modal-title">GestiÃ³n de CategorÃ­as</div>
-      <button class="modal-close" onclick="closeModal('modal-categorias')">Ã—</button>
+      <div class="modal-title" id="categ-modal-title">Gestión de Categorías</div>
+      <button class="modal-close" onclick="closeModal('modal-categorias')">×</button>
     </div>
     <div class="modal-body">
       <div class="flex gap-8 mb-12">
-        <input class="form-input flex-1" id="nueva-categ-input" placeholder="Nueva categorÃ­a..." onkeydown="if(event.key==='Enter')agregarCategoria()">
+        <input class="form-input flex-1" id="nueva-categ-input" placeholder="Nueva categoría..." onkeydown="if(event.key==='Enter')agregarCategoria()">
         <button class="btn btn-primary" onclick="agregarCategoria()">+ Agregar</button>
       </div>
       <div id="lista-categorias" style="max-height:300px;overflow-y:auto"></div>
@@ -2796,8 +2796,8 @@
 <div class="modal-overlay" id="modal-preparado">
   <div class="modal modal-lg">
     <div class="modal-header">
-      <div class="modal-title" id="preparado-modal-title">Nueva ProducciÃ³n</div>
-      <button class="modal-close" onclick="closeModal('modal-preparado')">Ã—</button>
+      <div class="modal-title" id="preparado-modal-title">Nueva Producción</div>
+      <button class="modal-close" onclick="closeModal('modal-preparado')">×</button>
     </div>
     <div class="modal-body">
       <div class="form-row">
@@ -2806,10 +2806,10 @@
           <input class="form-input" id="prep-nombre" placeholder="Ej: Salsa verde, Base de mole, Marinada...">
         </div>
         <div class="form-group">
-          <label class="form-label">CategorÃ­a</label>
+          <label class="form-label">Categoría</label>
           <select class="form-input" id="prep-categoria">
             <option>Salsa</option><option>Base / Fondo</option><option>Marinada</option>
-            <option>Mezcla seca</option><option>Preparado lÃ¡cteo</option><option>Otro</option>
+            <option>Mezcla seca</option><option>Preparado lácteo</option><option>Otro</option>
           </select>
         </div>
       </div>
@@ -2826,8 +2826,8 @@
         </div>
       </div>
       <div class="form-group">
-        <label class="form-label">DescripciÃ³n / notas de preparaciÃ³n</label>
-        <textarea class="form-input" id="prep-desc" placeholder="Pasos, temperatura, tiempo de cocciÃ³n..."></textarea>
+        <label class="form-label">Descripción / notas de preparación</label>
+        <textarea class="form-input" id="prep-desc" placeholder="Pasos, temperatura, tiempo de cocción..."></textarea>
       </div>
 
       <!-- Insumos de la receta -->
@@ -2843,7 +2843,7 @@
           <div id="prep-lineas-items"></div>
         </div>
         <div class="flex justify-between mt-8" style="font-size:13px">
-          <span style="color:var(--text3)">Costo total de producciÃ³n:</span>
+          <span style="color:var(--text3)">Costo total de producción:</span>
           <span class="font-mono font-semibold" id="prep-costo-total" style="color:var(--purple)">$0.00</span>
         </div>
         <div class="flex justify-between" style="font-size:12px;margin-top:4px">
@@ -2859,19 +2859,19 @@
   </div>
 </div>
 
-<!-- Modal Ejecutar ProducciÃ³n -->
+<!-- Modal Ejecutar Producción -->
 <div class="modal-overlay" id="modal-ejecutar-prod">
   <div class="modal">
     <div class="modal-header">
-      <div class="modal-title">Ejecutar ProducciÃ³n</div>
-      <button class="modal-close" onclick="closeModal('modal-ejecutar-prod')">Ã—</button>
+      <div class="modal-title">Ejecutar Producción</div>
+      <button class="modal-close" onclick="closeModal('modal-ejecutar-prod')">×</button>
     </div>
     <div class="modal-body">
       <div id="ejecutar-prod-body"></div>
     </div>
     <div class="modal-footer">
       <button class="btn btn-secondary" onclick="closeModal('modal-ejecutar-prod')">Cancelar</button>
-      <button class="btn btn-primary" onclick="confirmarEjecucion()">âœ“ Ejecutar y descontar inventario</button>
+      <button class="btn btn-primary" onclick="confirmarEjecucion()">✓ Ejecutar y descontar inventario</button>
     </div>
   </div>
 </div>
@@ -2880,21 +2880,21 @@
 <div class="modal-overlay" id="modal-eliminar-pedido">
   <div class="modal">
     <div class="modal-header">
-      <div class="modal-title">ðŸ—‘ Eliminar pedido</div>
-      <button class="modal-close" onclick="closeModal('modal-eliminar-pedido')">Ã—</button>
+      <div class="modal-title">🗑 Eliminar pedido</div>
+      <button class="modal-close" onclick="closeModal('modal-eliminar-pedido')">×</button>
     </div>
     <div class="modal-body">
       <div id="eliminar-pedido-info" style="background:var(--bg3);border-radius:var(--radius-sm);padding:12px;margin-bottom:16px;font-size:13px"></div>
       <div class="form-group">
-        <label class="form-label">Motivo de eliminaciÃ³n</label>
+        <label class="form-label">Motivo de eliminación</label>
         <select class="form-input" id="eliminar-motivo">
           <option value="">Seleccionar motivo...</option>
-          <option>CancelÃ³ el cliente</option>
-          <option>ConfusiÃ³n de pedido</option>
+          <option>Canceló el cliente</option>
+          <option>Confusión de pedido</option>
           <option>Error al capturar</option>
           <option>Pedido duplicado</option>
           <option>Producto no disponible</option>
-          <option>DirecciÃ³n incorrecta</option>
+          <option>Dirección incorrecta</option>
           <option>Falla de pago</option>
           <option>Otro</option>
         </select>
@@ -2908,12 +2908,12 @@
         <input class="form-input" id="eliminar-notas" placeholder="Observaciones, referencia...">
       </div>
       <div class="card card-sm" style="background:var(--red-dim);border-color:rgba(231,76,60,0.2)">
-        <div style="font-size:12px;color:var(--red)">âš  Esta acciÃ³n no se puede deshacer. El pedido serÃ¡ eliminado permanentemente y quedarÃ¡ registrado en el historial con tu usuario.</div>
+        <div style="font-size:12px;color:var(--red)">⚠ Esta acción no se puede deshacer. El pedido será eliminado permanentemente y quedará registrado en el historial con tu usuario.</div>
       </div>
     </div>
     <div class="modal-footer">
       <button class="btn btn-secondary" onclick="closeModal('modal-eliminar-pedido')">Cancelar</button>
-      <button class="btn btn-danger" onclick="confirmarEliminarPedido()">ðŸ—‘ Eliminar definitivamente</button>
+      <button class="btn btn-danger" onclick="confirmarEliminarPedido()">🗑 Eliminar definitivamente</button>
     </div>
   </div>
 </div>
@@ -2922,27 +2922,27 @@
 <div class="modal-overlay" id="modal-config-alertas">
   <div class="modal">
     <div class="modal-header">
-      <div class="modal-title">âš™ Configurar alertas globales</div>
-      <button class="modal-close" onclick="closeModal('modal-config-alertas')">Ã—</button>
+      <div class="modal-title">⚙ Configurar alertas globales</div>
+      <button class="modal-close" onclick="closeModal('modal-config-alertas')">×</button>
     </div>
     <div class="modal-body">
       <div class="form-group">
-        <label class="form-label">Umbral de alerta por defecto (% del mÃ­nimo)</label>
+        <label class="form-label">Umbral de alerta por defecto (% del mínimo)</label>
         <select class="form-input" id="alerta-umbral-global">
-          <option value="1">Cuando llega al mÃ­nimo exacto</option>
-          <option value="1.5" selected>1.5Ã— el mÃ­nimo (recomendado)</option>
-          <option value="2">2Ã— el mÃ­nimo</option>
-          <option value="3">3Ã— el mÃ­nimo</option>
+          <option value="1">Cuando llega al mínimo exacto</option>
+          <option value="1.5" selected>1.5× el mínimo (recomendado)</option>
+          <option value="2">2× el mínimo</option>
+          <option value="3">3× el mínimo</option>
         </select>
       </div>
       <div class="form-group">
         <label class="form-label">Mostrar alerta en dashboard cuando hay stock bajo</label>
         <select class="form-input" id="alerta-dashboard">
-          <option value="si" selected>SÃ­, siempre</option>
+          <option value="si" selected>Sí, siempre</option>
           <option value="no">No</option>
         </select>
       </div>
-      <div style="font-size:12px;color:var(--text2);margin-top:4px">ðŸ’¡ Para ajustar el mÃ­nimo de cada ingrediente individualmente, usa la tabla en la pestaÃ±a Alertas.</div>
+      <div style="font-size:12px;color:var(--text2);margin-top:4px">💡 Para ajustar el mínimo de cada ingrediente individualmente, usa la tabla en la pestaña Alertas.</div>
     </div>
     <div class="modal-footer">
       <button class="btn btn-secondary" onclick="closeModal('modal-config-alertas')">Cancelar</button>
@@ -2955,20 +2955,20 @@
 <div class="modal-overlay" id="modal-pagar-cxp">
   <div class="modal">
     <div class="modal-header">
-      <div class="modal-title">ðŸ’³ Registrar Pago de CxP</div>
-      <button class="modal-close" onclick="closeModal('modal-pagar-cxp')">Ã—</button>
+      <div class="modal-title">💳 Registrar Pago de CxP</div>
+      <button class="modal-close" onclick="closeModal('modal-pagar-cxp')">×</button>
     </div>
     <div class="modal-body">
       <input type="hidden" id="pagar-cxp-id">
       <div class="card card-sm mb-14" style="background:var(--bg3)" id="pagar-cxp-info"></div>
       <div class="form-row">
         <div class="form-group">
-          <label class="form-label">MÃ©todo de pago utilizado</label>
+          <label class="form-label">Método de pago utilizado</label>
           <select class="form-input" id="pagar-cxp-metodo" onchange="document.getElementById('pagar-cxp-banco-aviso').style.display=this.value==='Transferencia'||this.value==='Tarjeta'?'block':'none'">
-            <option value="Efectivo">ðŸ’µ Efectivo</option>
-            <option value="Transferencia">ðŸ“² Transferencia / SPEI</option>
-            <option value="Tarjeta">ðŸ’³ Tarjeta</option>
-            <option value="Cheque">ðŸ“„ Cheque</option>
+            <option value="Efectivo">💵 Efectivo</option>
+            <option value="Transferencia">📲 Transferencia / SPEI</option>
+            <option value="Tarjeta">💳 Tarjeta</option>
+            <option value="Cheque">📄 Cheque</option>
           </select>
         </div>
         <div class="form-group">
@@ -2977,12 +2977,12 @@
         </div>
       </div>
       <div id="pagar-cxp-banco-aviso" style="font-size:12px;color:var(--blue);background:var(--blue-dim);border-radius:6px;padding:9px 12px;margin-top:4px">
-        ðŸ“² Este pago se registrarÃ¡ como salida de <strong>Transferencia</strong> y afectarÃ¡ el saldo de banco en los reportes.
+        📲 Este pago se registrará como salida de <strong>Transferencia</strong> y afectará el saldo de banco en los reportes.
       </div>
     </div>
     <div class="modal-footer">
       <button class="btn btn-secondary" onclick="closeModal('modal-pagar-cxp')">Cancelar</button>
-      <button class="btn btn-primary" onclick="confirmarPagoCXP()">âœ“ Confirmar pago</button>
+      <button class="btn btn-primary" onclick="confirmarPagoCXP()">✓ Confirmar pago</button>
     </div>
   </div>
 </div>
@@ -2991,8 +2991,8 @@
 <div class="modal-overlay" id="modal-editar-pedido">
   <div class="modal">
     <div class="modal-header">
-      <div class="modal-title">âœï¸ Editar pedido</div>
-      <button class="modal-close" onclick="closeModal('modal-editar-pedido')">Ã—</button>
+      <div class="modal-title">✏️ Editar pedido</div>
+      <button class="modal-close" onclick="closeModal('modal-editar-pedido')">×</button>
     </div>
     <div class="modal-body">
       <input type="hidden" id="editar-pedido-id">
@@ -3009,7 +3009,7 @@
             <option>Facebook</option>
             <option>DiDi Food</option>
             <option>Presencial</option>
-            <option>TelÃ©fono</option>
+            <option>Teléfono</option>
             <option>Otro</option>
           </select>
         </div>
@@ -3020,7 +3020,7 @@
       </div>
       <div class="form-row">
         <div class="form-group">
-          <label class="form-label">ðŸ• Hora de entrega</label>
+          <label class="form-label">🕐 Hora de entrega</label>
           <input class="form-input" type="time" id="editar-pedido-hora-entrega">
         </div>
         <div class="form-group">
@@ -3031,7 +3031,7 @@
     </div>
     <div class="modal-footer">
       <button class="btn btn-secondary" onclick="closeModal('modal-editar-pedido')">Cancelar</button>
-      <button class="btn btn-primary" onclick="confirmarEditarPedido()">âœ“ Guardar cambios</button>
+      <button class="btn btn-primary" onclick="confirmarEditarPedido()">✓ Guardar cambios</button>
     </div>
   </div>
 </div>
@@ -3040,8 +3040,8 @@
 <div class="modal-overlay" id="modal-cobrar-cxc">
   <div class="modal">
     <div class="modal-header">
-      <div class="modal-title" id="cobrar-cxc-titulo">âœ“ Registrar cobro / abono</div>
-      <button class="modal-close" onclick="closeModal('modal-cobrar-cxc')">Ã—</button>
+      <div class="modal-title" id="cobrar-cxc-titulo">✓ Registrar cobro / abono</div>
+      <button class="modal-close" onclick="closeModal('modal-cobrar-cxc')">×</button>
     </div>
     <div class="modal-body">
       <input type="hidden" id="cobrar-cxc-id">
@@ -3052,14 +3052,14 @@
         <div class="form-group">
           <label class="form-label">Monto del abono</label>
           <input class="form-input" id="cobrar-cxc-monto" type="number" placeholder="0.00" step="0.01" oninput="_previewAbono()">
-          <div style="font-size:10px;color:var(--text3);margin-top:3px">Deja vacÃ­o o pon el total para liquidar completo.</div>
+          <div style="font-size:10px;color:var(--text3);margin-top:3px">Deja vacío o pon el total para liquidar completo.</div>
         </div>
         <div class="form-group">
-          <label class="form-label">MÃ©todo de cobro</label>
+          <label class="form-label">Método de cobro</label>
           <select class="form-input" id="cobrar-cxc-metodo">
-            <option value="Efectivo">ðŸ’µ Efectivo</option>
-            <option value="Transferencia / SPEI">ðŸ“² Transferencia / SPEI</option>
-            <option value="Tarjeta">ðŸ’³ Tarjeta</option>
+            <option value="Efectivo">💵 Efectivo</option>
+            <option value="Transferencia / SPEI">📲 Transferencia / SPEI</option>
+            <option value="Tarjeta">💳 Tarjeta</option>
           </select>
         </div>
       </div>
@@ -3068,41 +3068,41 @@
         <input class="form-input" type="date" id="cobrar-cxc-fecha">
       </div>
       <div class="card card-sm" style="background:var(--blue-dim);border-color:rgba(52,152,219,0.2)">
-        <div style="font-size:12px;color:var(--blue)" id="cobrar-cxc-preview">â„¹ El cobro se registrarÃ¡ como ingreso en caja (efectivo) o banco (transferencia).</div>
+        <div style="font-size:12px;color:var(--blue)" id="cobrar-cxc-preview">ℹ El cobro se registrará como ingreso en caja (efectivo) o banco (transferencia).</div>
       </div>
     </div>
     <div class="modal-footer">
       <button class="btn btn-secondary" onclick="closeModal('modal-cobrar-cxc')">Cancelar</button>
-      <button class="btn btn-primary" onclick="confirmarCobrarCxC()">âœ“ Registrar abono</button>
+      <button class="btn btn-primary" onclick="confirmarCobrarCxC()">✓ Registrar abono</button>
     </div>
   </div>
 </div>
 
-<!-- Modal Cambiar MÃ©todo de Pago -->
+<!-- Modal Cambiar Método de Pago -->
 <div class="modal-overlay" id="modal-cambiar-pago">
   <div class="modal">
     <div class="modal-header">
-      <div class="modal-title">ðŸ’³ Cambiar mÃ©todo de pago</div>
-      <button class="modal-close" onclick="closeModal('modal-cambiar-pago')">Ã—</button>
+      <div class="modal-title">💳 Cambiar método de pago</div>
+      <button class="modal-close" onclick="closeModal('modal-cambiar-pago')">×</button>
     </div>
     <div class="modal-body">
       <input type="hidden" id="cambio-pago-pedido-id">
       <div class="card card-sm mb-14" style="background:var(--bg3)" id="cambio-pago-info"></div>
       <div class="form-group">
-        <label class="form-label">Nuevo mÃ©todo de pago</label>
+        <label class="form-label">Nuevo método de pago</label>
         <select class="form-input" id="cambio-pago-metodo">
-          <option value="Efectivo">ðŸ’µ Efectivo</option>
-          <option value="Transferencia / SPEI">ðŸ“² Transferencia / SPEI</option>
-          <option value="Tarjeta">ðŸ’³ Tarjeta</option>
+          <option value="Efectivo">💵 Efectivo</option>
+          <option value="Transferencia / SPEI">📲 Transferencia / SPEI</option>
+          <option value="Tarjeta">💳 Tarjeta</option>
         </select>
       </div>
       <div class="card card-sm" style="background:var(--blue-dim);border-color:rgba(52,152,219,0.2)">
-        <div style="font-size:12px;color:var(--blue)">â„¹ El cambio se reflejarÃ¡ automÃ¡ticamente en los movimientos de caja del dÃ­a.</div>
+        <div style="font-size:12px;color:var(--blue)">ℹ El cambio se reflejará automáticamente en los movimientos de caja del día.</div>
       </div>
     </div>
     <div class="modal-footer">
       <button class="btn btn-secondary" onclick="closeModal('modal-cambiar-pago')">Cancelar</button>
-      <button class="btn btn-primary" onclick="confirmarCambiarPago()">âœ“ Confirmar cambio</button>
+      <button class="btn btn-primary" onclick="confirmarCambiarPago()">✓ Confirmar cambio</button>
     </div>
   </div>
 </div>
@@ -3111,8 +3111,8 @@
 <div class="modal-overlay" id="modal-merma">
   <div class="modal">
     <div class="modal-header">
-      <div class="modal-title">ðŸ—‘ Registrar salida por merma</div>
-      <button class="modal-close" onclick="closeModal('modal-merma')">Ã—</button>
+      <div class="modal-title">🗑 Registrar salida por merma</div>
+      <button class="modal-close" onclick="closeModal('modal-merma')">×</button>
     </div>
     <div class="modal-body">
       <div class="form-group">
@@ -3135,10 +3135,10 @@
         <label class="form-label">Motivo de merma</label>
         <select class="form-input" id="merma-motivo">
           <option>Caducidad / vencimiento</option>
-          <option>DaÃ±o en almacÃ©n</option>
-          <option>Error de preparaciÃ³n</option>
+          <option>Daño en almacén</option>
+          <option>Error de preparación</option>
           <option>Derrame o accidente</option>
-          <option>Pedido cancelado (en preparaciÃ³n)</option>
+          <option>Pedido cancelado (en preparación)</option>
           <option>Otro</option>
         </select>
       </div>
@@ -3149,35 +3149,35 @@
     </div>
     <div class="modal-footer">
       <button class="btn btn-secondary" onclick="closeModal('modal-merma')">Cancelar</button>
-      <button class="btn btn-danger" onclick="confirmarMerma()">ðŸ—‘ Registrar merma</button>
+      <button class="btn btn-danger" onclick="confirmarMerma()">🗑 Registrar merma</button>
     </div>
   </div>
 </div>
 
-<!-- Modal Contraste Inventario FÃ­sico -->
+<!-- Modal Contraste Inventario Físico -->
 <div class="modal-overlay" id="modal-contraste-inv">
   <div class="modal modal-lg">
     <div class="modal-header">
-      <div class="modal-title">ðŸ” Contraste inventario fÃ­sico vs. sistema</div>
-      <button class="modal-close" onclick="closeModal('modal-contraste-inv')">Ã—</button>
+      <div class="modal-title">🔍 Contraste inventario físico vs. sistema</div>
+      <button class="modal-close" onclick="closeModal('modal-contraste-inv')">×</button>
     </div>
     <div class="modal-body">
-      <div style="font-size:12px;color:var(--text2);margin-bottom:14px">Ingresa las cantidades que tienes fÃ­sicamente. El sistema calcularÃ¡ la diferencia con el teÃ³rico.</div>
+      <div style="font-size:12px;color:var(--text2);margin-bottom:14px">Ingresa las cantidades que tienes físicamente. El sistema calculará la diferencia con el teórico.</div>
       <div id="contraste-tabla"></div>
     </div>
     <div class="modal-footer">
       <button class="btn btn-secondary" onclick="closeModal('modal-contraste-inv')">Cerrar sin ajustar</button>
-      <button class="btn btn-primary" onclick="aplicarContrasteInventario()">âœ“ Aplicar ajustes al inventario</button>
+      <button class="btn btn-primary" onclick="aplicarContrasteInventario()">✓ Aplicar ajustes al inventario</button>
     </div>
   </div>
 </div>
 
-<!-- Modal RequisiciÃ³n -->
+<!-- Modal Requisición -->
 <div class="modal-overlay" id="modal-requisicion">
   <div class="modal modal-lg">
     <div class="modal-header">
-      <div class="modal-title">ðŸ“‹ RequisiciÃ³n de compras</div>
-      <button class="modal-close" onclick="closeModal('modal-requisicion')">Ã—</button>
+      <div class="modal-title">📋 Requisición de compras</div>
+      <button class="modal-close" onclick="closeModal('modal-requisicion')">×</button>
     </div>
     <div class="modal-body">
       <div style="font-size:12px;color:var(--text2);margin-bottom:14px">Basado en el historial de pedidos. Puedes ajustar manualmente las cantidades antes de generar la orden.</div>
@@ -3185,7 +3185,7 @@
     </div>
     <div class="modal-footer">
       <button class="btn btn-secondary" onclick="closeModal('modal-requisicion')">Cerrar</button>
-      <button class="btn btn-primary" onclick="exportarRequisicion()">ðŸ“¤ Exportar CSV</button>
+      <button class="btn btn-primary" onclick="exportarRequisicion()">📤 Exportar CSV</button>
     </div>
   </div>
 </div>
@@ -3193,7 +3193,7 @@
 <!-- =================== BANCOS =================== -->
 <div id="page-bancos" class="page">
   <div class="topbar">
-    <div class="topbar-title">ðŸ¦ Saldo de bancos</div>
+    <div class="topbar-title">🏦 Saldo de bancos</div>
     <div class="topbar-actions">
       <select class="form-input" id="bancos-periodo" style="width:160px;padding:5px 10px;font-size:12px" onchange="renderBancos()">
         <option value="mes">Este mes</option>
@@ -3201,8 +3201,8 @@
         <option value="hoy">Hoy</option>
         <option value="todo">Todo el historial</option>
       </select>
-      <button class="btn btn-secondary btn-sm" onclick="openSaldoInicialBanco()">âš™ Saldo inicial</button>
-      <button class="btn btn-secondary btn-sm" onclick="exportarBancos()">ðŸ“¤ Exportar CSV</button>
+      <button class="btn btn-secondary btn-sm" onclick="openSaldoInicialBanco()">⚙ Saldo inicial</button>
+      <button class="btn btn-secondary btn-sm" onclick="exportarBancos()">📤 Exportar CSV</button>
     </div>
   </div>
   <div class="content">
@@ -3257,12 +3257,12 @@
 <div class="modal-overlay" id="modal-agendar-semana">
   <div class="modal modal-lg">
     <div class="modal-header">
-      <div class="modal-title">ðŸ—“ Agendar semana del cliente</div>
-      <button class="modal-close" onclick="closeModal('modal-agendar-semana')">Ã—</button>
+      <div class="modal-title">🗓 Agendar semana del cliente</div>
+      <button class="modal-close" onclick="closeModal('modal-agendar-semana')">×</button>
     </div>
     <div class="modal-body">
       <div class="card card-sm mb-14" style="background:var(--blue-dim);border-color:rgba(52,152,219,0.2)">
-        <div style="font-size:12px;color:var(--blue)">â„¹ Elige el cliente y arma cada dÃ­a por separado. Los dÃ­as sin platillos no generan pedido. Cada dÃ­a se crea como un pedido independiente.</div>
+        <div style="font-size:12px;color:var(--blue)">ℹ Elige el cliente y arma cada día por separado. Los días sin platillos no generan pedido. Cada día se crea como un pedido independiente.</div>
       </div>
       <div class="form-row">
         <div class="form-group">
@@ -3279,18 +3279,18 @@
       <div class="form-group">
         <label class="form-label">Canal</label>
         <select class="form-input" id="sem-canal">
-          <option>WhatsApp</option><option>Instagram</option><option>TelÃ©fono</option><option>Presencial</option><option>DiDi Food</option>
+          <option>WhatsApp</option><option>Instagram</option><option>Teléfono</option><option>Presencial</option><option>DiDi Food</option>
         </select>
       </div>
       <div id="sem-dias-wrap"></div>
       <div class="card card-sm mt-8" style="background:var(--bg3)">
         <div class="flex justify-between"><span style="font-size:13px;font-weight:600">Total semana</span><span class="font-mono font-semibold highlight-green" id="sem-total">$0.00</span></div>
-        <div style="font-size:11px;color:var(--text3);margin-top:2px" id="sem-resumen">0 dÃ­as con pedido</div>
+        <div style="font-size:11px;color:var(--text3);margin-top:2px" id="sem-resumen">0 días con pedido</div>
       </div>
     </div>
     <div class="modal-footer">
       <button class="btn btn-secondary" onclick="closeModal('modal-agendar-semana')">Cancelar</button>
-      <button class="btn btn-primary" onclick="guardarSemana()">ðŸ—“ Crear pedidos de la semana</button>
+      <button class="btn btn-primary" onclick="guardarSemana()">🗓 Crear pedidos de la semana</button>
     </div>
   </div>
 </div>
@@ -3299,19 +3299,19 @@
 <div class="modal-overlay" id="modal-movimiento-extra">
   <div class="modal">
     <div class="modal-header">
-      <div class="modal-title">âž• Movimiento extraordinario</div>
-      <button class="modal-close" onclick="closeModal('modal-movimiento-extra')">Ã—</button>
+      <div class="modal-title">➕ Movimiento extraordinario</div>
+      <button class="modal-close" onclick="closeModal('modal-movimiento-extra')">×</button>
     </div>
     <div class="modal-body">
       <div class="card card-sm mb-14" style="background:var(--blue-dim);border-color:rgba(52,152,219,0.2)">
-        <div style="font-size:12px;color:var(--blue)">â„¹ Registra gastos (agua, luz, etc.) o retiros de efectivo. Afecta la caja del dÃ­a y se registra como gasto en el Estado de Resultados.</div>
+        <div style="font-size:12px;color:var(--blue)">ℹ Registra gastos (agua, luz, etc.) o retiros de efectivo. Afecta la caja del día y se registra como gasto en el Estado de Resultados.</div>
       </div>
       <div class="form-group">
         <label class="form-label">Tipo de movimiento</label>
         <div class="flex gap-8">
-          <span class="chip active" id="chip-mov-gasto" onclick="_setTipoMovExtra('gasto')">ðŸ’¸ Gasto</span>
-          <span class="chip" id="chip-mov-retiro" onclick="_setTipoMovExtra('retiro')">ðŸ§ Retiro</span>
-          <span class="chip" id="chip-mov-entrada" onclick="_setTipoMovExtra('entrada')">ðŸ’µ Entrada</span>
+          <span class="chip active" id="chip-mov-gasto" onclick="_setTipoMovExtra('gasto')">💸 Gasto</span>
+          <span class="chip" id="chip-mov-retiro" onclick="_setTipoMovExtra('retiro')">🏧 Retiro</span>
+          <span class="chip" id="chip-mov-entrada" onclick="_setTipoMovExtra('entrada')">💵 Entrada</span>
         </div>
       </div>
       <div class="form-group">
@@ -3324,20 +3324,20 @@
           <input class="form-input" id="mov-extra-monto" type="number" step="0.01" placeholder="0.00">
         </div>
         <div class="form-group">
-          <label class="form-label">MÃ©todo</label>
+          <label class="form-label">Método</label>
           <select class="form-input" id="mov-extra-metodo">
-            <option value="Efectivo">ðŸ’µ Efectivo</option>
-            <option value="Transferencia">ðŸ“² Transferencia / Banco</option>
+            <option value="Efectivo">💵 Efectivo</option>
+            <option value="Transferencia">📲 Transferencia / Banco</option>
           </select>
         </div>
       </div>
       <div class="form-group" id="mov-extra-cat-wrap">
-        <label class="form-label">CategorÃ­a del gasto</label>
+        <label class="form-label">Categoría del gasto</label>
         <select class="form-input" id="mov-extra-categoria">
           <option value="Gastos Administrativos">Gastos Administrativos</option>
           <option value="Servicios">Servicios (agua, luz, gas)</option>
           <option value="Renta">Renta</option>
-          <option value="NÃ³mina">NÃ³mina</option>
+          <option value="Nómina">Nómina</option>
           <option value="Mantenimiento">Mantenimiento</option>
           <option value="Otros">Otros</option>
         </select>
@@ -3345,7 +3345,7 @@
     </div>
     <div class="modal-footer">
       <button class="btn btn-secondary" onclick="closeModal('modal-movimiento-extra')">Cancelar</button>
-      <button class="btn btn-primary" onclick="guardarMovimientoExtra()">ðŸ’¾ Registrar</button>
+      <button class="btn btn-primary" onclick="guardarMovimientoExtra()">💾 Registrar</button>
     </div>
   </div>
 </div>
@@ -3354,12 +3354,12 @@
 <div class="modal-overlay" id="modal-saldo-inicial-banco">
   <div class="modal">
     <div class="modal-header">
-      <div class="modal-title">âš™ Saldo inicial de bancos</div>
-      <button class="modal-close" onclick="closeModal('modal-saldo-inicial-banco')">Ã—</button>
+      <div class="modal-title">⚙ Saldo inicial de bancos</div>
+      <button class="modal-close" onclick="closeModal('modal-saldo-inicial-banco')">×</button>
     </div>
     <div class="modal-body">
       <div class="card card-sm mb-14" style="background:var(--blue-dim);border-color:rgba(52,152,219,0.2)">
-        <div style="font-size:12px;color:var(--blue)">â„¹ Es el dinero que ya tienes en el banco antes de los movimientos del sistema. Se suma como punto de partida al saldo.</div>
+        <div style="font-size:12px;color:var(--blue)">ℹ Es el dinero que ya tienes en el banco antes de los movimientos del sistema. Se suma como punto de partida al saldo.</div>
       </div>
       <div class="form-group">
         <label class="form-label">Saldo inicial (MXN)</label>
@@ -3368,7 +3368,7 @@
     </div>
     <div class="modal-footer">
       <button class="btn btn-secondary" onclick="closeModal('modal-saldo-inicial-banco')">Cancelar</button>
-      <button class="btn btn-primary" onclick="guardarSaldoInicialBanco()">ðŸ’¾ Guardar</button>
+      <button class="btn btn-primary" onclick="guardarSaldoInicialBanco()">💾 Guardar</button>
     </div>
   </div>
 </div>

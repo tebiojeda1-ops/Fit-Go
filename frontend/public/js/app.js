@@ -13,7 +13,7 @@ const firebaseConfig = {
   measurementId: "G-NTNYS48QZ2"
 };
 
-// 2. InicializaciÃ³n segura
+// 2. Inicialización segura
 if (!firebase.apps.length) {
   firebase.initializeApp(firebaseConfig);
 }
@@ -35,8 +35,8 @@ const DB = {
     // Guardado local inmediato para que la app responda al instante en pantalla
     localStorage.setItem('fitgo_'+k, JSON.stringify(v)); 
     
-    // ðŸ›‘ BLOQUEO CRÃTICO: Si Firebase no ha terminado de descargar los datos reales de la nube,
-    // se prohÃ­be rotundamente subir informaciÃ³n para evitar sobreescribir o borrar la base de datos.
+    // 🛑 BLOQUEO CRÍTICO: Si Firebase no ha terminado de descargar los datos reales de la nube,
+    // se prohíbe rotundamente subir información para evitar sobreescribir o borrar la base de datos.
     if (!inicializadoFirebase) return; 
     
     cambiosPendientes[k] = v;
@@ -51,14 +51,14 @@ const DB = {
         // Esperamos medio segundo antes de liberar el canal para limpiar residuos de red
         setTimeout(() => { estoyEscribiendo = false; }, 500); 
       });
-    }, 250); // Tiempo de espera estratÃ©gico para acumular el lote de guardado
+    }, 250); // Tiempo de espera estratégico para acumular el lote de guardado
   }
 };
 
 // 4. Sincronizador en Tiempo Real Protegido
 function sincronizarDesdeLaNube() {
   database.ref('fitgo_erp').on('value', (snapshot) => {
-    // Si este mismo dispositivo estÃ¡ realizando una escritura voluntaria, ignoramos el reflejo
+    // Si este mismo dispositivo está realizando una escritura voluntaria, ignoramos el reflejo
     if (estoyEscribiendo) return;
     
     const datosNube = snapshot.val();
@@ -95,10 +95,10 @@ function sincronizarDesdeLaNube() {
         console.log("Sincronizando flujo de datos...");
       }
       
-      // Â¡Freno liberado con Ã©xito! La nube ya se descargÃ³. Se permiten modificaciones futuras.
+      // ¡Freno liberado con éxito! La nube ya se descargó. Se permiten modificaciones futuras.
       inicializadoFirebase = true;
 
-      // Redibujamos la pestaÃ±a actual en la pantalla del usuario
+      // Redibujamos la pestaña actual en la pantalla del usuario
       const paginaActivaEl = document.querySelector('.page.active');
       if (paginaActivaEl) {
         const paginaActiva = paginaActivaEl.id.replace('page-', '');
@@ -107,13 +107,13 @@ function sincronizarDesdeLaNube() {
         }
       }
     } else {
-      // RECOBRAR DATOS / INICIALIZACIÃ“N SEGURO
-      // Si la nube estÃ¡ totalmente vacÃ­a, verificamos si este dispositivo tiene historial local previo
+      // RECOBRAR DATOS / INICIALIZACIÓN SEGURO
+      // Si la nube está totalmente vacía, verificamos si este dispositivo tiene historial local previo
       const tieneDatosLocales = localStorage.getItem('fitgo_clientes');
       
       if (!inicializadoFirebase) {
         inicializadoFirebase = true;
-        // Solo si el dispositivo NO es nuevo, sube su informaciÃ³n para restaurar o inicializar la nube
+        // Solo si el dispositivo NO es nuevo, sube su información para restaurar o inicializar la nube
         if (tieneDatosLocales && typeof save === "function") {
           save();
         }
@@ -122,17 +122,17 @@ function sincronizarDesdeLaNube() {
   });
 }
 
-// Iniciar la escucha en tiempo real inmediatamente al cargar la pÃ¡gina
+// Iniciar la escucha en tiempo real inmediatamente al cargar la página
 sincronizarDesdeLaNube();
 
 let gastos = DB.get('gastos') || [];
-// MigraciÃ³n: vincular gastos de cortesÃ­a histÃ³ricos sin pedidoId
+// Migración: vincular gastos de cortesía históricos sin pedidoId
 (function _migrarGastosCortesia() {
   const pedidosGuardados = DB.get('pedidos') || [];
   let changed = false;
   gastos.forEach(g => {
     if (!g.pedidoId && g.categoria === 'Gastos de Venta' && g.notas) {
-      const match = g.notas.match(/cortesÃ­a #([A-F0-9]{4})/i);
+      const match = g.notas.match(/cortesía #([A-F0-9]{4})/i);
       if (match) {
         const p = pedidosGuardados.find(x => x.id && x.id.slice(-4).toUpperCase() === match[1].toUpperCase());
         if (p) { g.pedidoId = p.id; changed = true; }
@@ -153,7 +153,7 @@ let clientes = DB.get('clientes') || [];
 let movCaja = DB.get('movCaja') || [];
 let preparados = DB.get('preparados') || [];
 let historialProd = DB.get('historialProd') || [];
-let categoriasInsumos = DB.get('categoriasInsumos') || ['ProteÃ­nas','Verduras','Granos','LÃ¡cteos','Condimentos','Frutas','Preparados'];
+let categoriasInsumos = DB.get('categoriasInsumos') || ['Proteínas','Verduras','Granos','Lácteos','Condimentos','Frutas','Preparados'];
 let categoriasMenu = DB.get('categoriasMenu') || ['Desayuno','Comida','Cena','Snack','Bebida'];
 let pedidoEditId = null;
 let platilloEditId = null;
@@ -195,51 +195,51 @@ function save() {
 function seedData() {
   if (menu.length === 0) {
     menu = [
-      { id: uid(), nombre: 'Bowl de pollo con quinoa', categoria: 'Comida', precio: 145, costo: 52, calorias: 480, desc: 'Pollo a la plancha, quinoa, verduras asadas y aderezo de limÃ³n', etiquetas: ['Alto en proteÃ­na', 'Sin gluten'], disponible: true },
-      { id: uid(), nombre: 'Wrap de atÃºn', categoria: 'Comida', precio: 120, costo: 38, calorias: 380, desc: 'AtÃºn en agua, aguacate, pepino y tortilla integral', etiquetas: ['Alto en proteÃ­na'], disponible: true },
-      { id: uid(), nombre: 'Smoothie verde detox', categoria: 'Bebida', precio: 75, costo: 22, calorias: 180, desc: 'Espinaca, manzana verde, pepino, jengibre y limÃ³n', etiquetas: ['Vegano', 'Bajo carbos'], disponible: true },
-      { id: uid(), nombre: 'Omelette de claras', categoria: 'Desayuno', precio: 95, costo: 28, calorias: 220, desc: 'Claras de huevo, champiÃ±ones, espinaca y queso cottage', etiquetas: ['Keto', 'Sin gluten', 'Alto en proteÃ­na'], disponible: true },
-      { id: uid(), nombre: 'Ensalada mediterrÃ¡nea', categoria: 'Comida', precio: 130, costo: 42, calorias: 350, desc: 'Lechuga, tomate cherry, pepino, aceitunas, queso feta', etiquetas: ['Vegano'], disponible: true },
+      { id: uid(), nombre: 'Bowl de pollo con quinoa', categoria: 'Comida', precio: 145, costo: 52, calorias: 480, desc: 'Pollo a la plancha, quinoa, verduras asadas y aderezo de limón', etiquetas: ['Alto en proteína', 'Sin gluten'], disponible: true },
+      { id: uid(), nombre: 'Wrap de atún', categoria: 'Comida', precio: 120, costo: 38, calorias: 380, desc: 'Atún en agua, aguacate, pepino y tortilla integral', etiquetas: ['Alto en proteína'], disponible: true },
+      { id: uid(), nombre: 'Smoothie verde detox', categoria: 'Bebida', precio: 75, costo: 22, calorias: 180, desc: 'Espinaca, manzana verde, pepino, jengibre y limón', etiquetas: ['Vegano', 'Bajo carbos'], disponible: true },
+      { id: uid(), nombre: 'Omelette de claras', categoria: 'Desayuno', precio: 95, costo: 28, calorias: 220, desc: 'Claras de huevo, champiñones, espinaca y queso cottage', etiquetas: ['Keto', 'Sin gluten', 'Alto en proteína'], disponible: true },
+      { id: uid(), nombre: 'Ensalada mediterránea', categoria: 'Comida', precio: 130, costo: 42, calorias: 350, desc: 'Lechuga, tomate cherry, pepino, aceitunas, queso feta', etiquetas: ['Vegano'], disponible: true },
       { id: uid(), nombre: 'Overnight oats', categoria: 'Desayuno', precio: 85, costo: 25, calorias: 340, desc: 'Avena, leche de almendra, frutos rojos y miel de agave', etiquetas: ['Vegano'], disponible: true },
     ];
   }
   if (inventario.length === 0) {
     inventario = [
-      { id: uid(), nombre: 'Pechuga de pollo', categoria: 'ProteÃ­nas', stock: 8, minimo: 5, unidad: 'kg', costo: 95, proveedor: '' },
-      { id: uid(), nombre: 'AtÃºn en agua', categoria: 'ProteÃ­nas', stock: 24, minimo: 10, unidad: 'pza', costo: 22, proveedor: '' },
+      { id: uid(), nombre: 'Pechuga de pollo', categoria: 'Proteínas', stock: 8, minimo: 5, unidad: 'kg', costo: 95, proveedor: '' },
+      { id: uid(), nombre: 'Atún en agua', categoria: 'Proteínas', stock: 24, minimo: 10, unidad: 'pza', costo: 22, proveedor: '' },
       { id: uid(), nombre: 'Quinoa', categoria: 'Granos', stock: 3, minimo: 4, unidad: 'kg', costo: 85, proveedor: '' },
       { id: uid(), nombre: 'Espinaca', categoria: 'Verduras', stock: 2, minimo: 3, unidad: 'kg', costo: 35, proveedor: '' },
       { id: uid(), nombre: 'Aguacate', categoria: 'Frutas', stock: 15, minimo: 10, unidad: 'pza', costo: 18, proveedor: '' },
-      { id: uid(), nombre: 'Claras de huevo', categoria: 'ProteÃ­nas', stock: 36, minimo: 20, unidad: 'pza', costo: 5, proveedor: '' },
+      { id: uid(), nombre: 'Claras de huevo', categoria: 'Proteínas', stock: 36, minimo: 20, unidad: 'pza', costo: 5, proveedor: '' },
       { id: uid(), nombre: 'Avena', categoria: 'Granos', stock: 5, minimo: 3, unidad: 'kg', costo: 45, proveedor: '' },
-      { id: uid(), nombre: 'Leche de almendra', categoria: 'LÃ¡cteos', stock: 1, minimo: 4, unidad: 'L', costo: 55, proveedor: '' },
+      { id: uid(), nombre: 'Leche de almendra', categoria: 'Lácteos', stock: 1, minimo: 4, unidad: 'L', costo: 55, proveedor: '' },
     ];
   }
   if (clientes.length === 0) {
     clientes = [
-      { id: uid(), nombre: 'MarÃ­a GonzÃ¡lez', tel: '999-123-4567', canal: 'WhatsApp', tieneDieta: true, pedidos: 8, ultimoPedido: '2024-01-15', notas: 'Alergia a mariscos' },
-      { id: uid(), nombre: 'Carlos RamÃ­rez', tel: '999-234-5678', canal: 'Instagram', tieneDieta: false, pedidos: 3, ultimoPedido: '2024-01-14', notas: '' },
-      { id: uid(), nombre: 'Ana LÃ³pez', tel: '999-345-6789', canal: 'WhatsApp', tieneDieta: true, pedidos: 12, ultimoPedido: '2024-01-15', notas: 'Plan pÃ©rdida de peso' },
+      { id: uid(), nombre: 'María González', tel: '999-123-4567', canal: 'WhatsApp', tieneDieta: true, pedidos: 8, ultimoPedido: '2024-01-15', notas: 'Alergia a mariscos' },
+      { id: uid(), nombre: 'Carlos Ramírez', tel: '999-234-5678', canal: 'Instagram', tieneDieta: false, pedidos: 3, ultimoPedido: '2024-01-14', notas: '' },
+      { id: uid(), nombre: 'Ana López', tel: '999-345-6789', canal: 'WhatsApp', tieneDieta: true, pedidos: 12, ultimoPedido: '2024-01-15', notas: 'Plan pérdida de peso' },
     ];
   }
   if (proveedores.length === 0) {
     proveedores = [
-      { id: uid(), nombre: 'Carnes Don Pepe', contacto: 'JosÃ© PÃ©rez', tel: '999-500-0001', categoria: 'Carnes y proteÃ­nas', dias: 'Lunes, Jueves', notas: 'Pago semanal' },
-      { id: uid(), nombre: 'Verduras La Cosecha', contacto: 'Rosa MartÃ­nez', tel: '999-500-0002', categoria: 'Verduras y frutas', dias: 'Martes, Viernes', notas: 'Pedido mÃ­nimo $500' },
-      { id: uid(), nombre: 'Granos del Sur', contacto: 'Luis Torres', tel: '999-500-0003', categoria: 'Granos y cereales', dias: 'MiÃ©rcoles', notas: 'CrÃ©dito a 15 dÃ­as' },
+      { id: uid(), nombre: 'Carnes Don Pepe', contacto: 'José Pérez', tel: '999-500-0001', categoria: 'Carnes y proteínas', dias: 'Lunes, Jueves', notas: 'Pago semanal' },
+      { id: uid(), nombre: 'Verduras La Cosecha', contacto: 'Rosa Martínez', tel: '999-500-0002', categoria: 'Verduras y frutas', dias: 'Martes, Viernes', notas: 'Pedido mínimo $500' },
+      { id: uid(), nombre: 'Granos del Sur', contacto: 'Luis Torres', tel: '999-500-0003', categoria: 'Granos y cereales', dias: 'Miércoles', notas: 'Crédito a 15 días' },
     ];
   }
   if (dietas.length === 0) {
     dietas = [
-      { id: uid(), clienteId: clientes[0]?.id, clienteNombre: 'MarÃ­a GonzÃ¡lez', nombre: 'Plan bajo en sodio', estado: 'confirmada', vigente: true, esHistorica: false, fechaRecibida: '2024-01-01', fechaConfirmada: '2024-01-01', instrucciones: 'Sin sal agregada. Cocinar al vapor o plancha.', pdfRef: null, cotizacion: null },
-      { id: uid(), clienteId: clientes[2]?.id, clienteNombre: 'Ana LÃ³pez', nombre: 'Plan pÃ©rdida de peso', estado: 'recibida', vigente: false, esHistorica: false, fechaRecibida: '2024-01-10', instrucciones: 'Alta proteÃ­na, baja en carbos.', pdfRef: null, cotizacion: null },
+      { id: uid(), clienteId: clientes[0]?.id, clienteNombre: 'María González', nombre: 'Plan bajo en sodio', estado: 'confirmada', vigente: true, esHistorica: false, fechaRecibida: '2024-01-01', fechaConfirmada: '2024-01-01', instrucciones: 'Sin sal agregada. Cocinar al vapor o plancha.', pdfRef: null, cotizacion: null },
+      { id: uid(), clienteId: clientes[2]?.id, clienteNombre: 'Ana López', nombre: 'Plan pérdida de peso', estado: 'recibida', vigente: false, esHistorica: false, fechaRecibida: '2024-01-10', instrucciones: 'Alta proteína, baja en carbos.', pdfRef: null, cotizacion: null },
     ];
   }
   if (cxp.length === 0) {
     cxp = [
-      { id: uid(), proveedor: 'Carnes Don Pepe', concepto: 'Compra semanal proteÃ­nas', monto: 1850, vencimiento: '2024-01-20', estado: 'pendiente', notas: 'Factura #1042' },
+      { id: uid(), proveedor: 'Carnes Don Pepe', concepto: 'Compra semanal proteínas', monto: 1850, vencimiento: '2024-01-20', estado: 'pendiente', notas: 'Factura #1042' },
       { id: uid(), proveedor: 'Verduras La Cosecha', concepto: 'Verduras y frutas semana', monto: 680, vencimiento: '2024-01-18', estado: 'vencida', notas: '' },
-      { id: uid(), proveedor: 'Granos del Sur', concepto: 'Quinoa y avena', monto: 540, vencimiento: '2024-01-25', estado: 'pendiente', notas: 'CrÃ©dito 15 dÃ­as' },
+      { id: uid(), proveedor: 'Granos del Sur', concepto: 'Quinoa y avena', monto: 540, vencimiento: '2024-01-25', estado: 'pendiente', notas: 'Crédito 15 días' },
     ];
   }
   save();
@@ -249,10 +249,10 @@ function seedData() {
 let uidCounter = Date.now();
 function uid() { return 'id_' + (uidCounter++).toString(36); }
 function fmt(n) { return new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(n || 0); }
-function fmtFecha(iso) { if (!iso) return 'â€”'; const d = new Date(iso + 'T12:00:00'); return d.toLocaleDateString('es-MX', { day:'2-digit', month:'short', year:'numeric' }); }
+function fmtFecha(iso) { if (!iso) return '—'; const d = new Date(iso + 'T12:00:00'); return d.toLocaleDateString('es-MX', { day:'2-digit', month:'short', year:'numeric' }); }
 // Devuelve la fecha LOCAL en formato YYYY-MM-DD.
 // No usar toISOString(): convierte a UTC y en zonas con offset negativo
-// (ej. MÃ©rida UTC-6) devuelve el dÃ­a siguiente despuÃ©s de las 6 PM.
+// (ej. Mérida UTC-6) devuelve el día siguiente después de las 6 PM.
 function _fechaLocal(d) {
   const dt = d || new Date();
   const y = dt.getFullYear();
@@ -267,7 +267,7 @@ function toast(msg, type='success') {
   const c = document.getElementById('toast-container');
   const t = document.createElement('div');
   t.className = `toast ${type}`;
-  t.innerHTML = `<span>${type==='success'?'âœ“':'âš '}</span>${msg}`;
+  t.innerHTML = `<span>${type==='success'?'✓':'⚠'}</span>${msg}`;
   c.appendChild(t);
   setTimeout(() => t.remove(), 3000);
 }
@@ -312,7 +312,7 @@ function renderDashboard() {
   const hoyStr = hoy();
   const pedidosHoy = pedidos.filter(p => p.fecha === hoyStr);
   const ventasHoy = pedidosHoy.filter(p => p.estado === 'Entregado').reduce((s,p) => s + p.total, 0);
-  const enProceso = pedidos.filter(p => ['Nuevo','En preparaciÃ³n','Listo'].includes(p.estado)).length;
+  const enProceso = pedidos.filter(p => ['Nuevo','En preparación','Listo'].includes(p.estado)).length;
   const pendCXP = cxp.filter(c => c.estado !== 'pagada').reduce((s,c) => s + c.monto, 0);
   const pendCXC = cxc.filter(c => c.estado !== 'cobrada').reduce((s,c) => s + _saldoCxC(c), 0);
   const ticket = pedidosHoy.filter(p=>p.estado==='Entregado').length ? ventasHoy / pedidosHoy.filter(p=>p.estado==='Entregado').length : 0;
@@ -320,18 +320,18 @@ function renderDashboard() {
   document.getElementById('kpi-ventas').textContent = fmt(ventasHoy);
   const totalPlatillosHoy = pedidosHoy.reduce((s,p) => s + (p.items||[]).reduce((ss,it)=>ss+(it.cantidad||1),0), 0);
   document.getElementById('kpi-pedidos-count').textContent = totalPlatillosHoy;
-  document.getElementById('kpi-pedidos-delta').textContent = `${pedidosHoy.length} pedidos Â· ${enProceso} en proceso`;
+  document.getElementById('kpi-pedidos-delta').textContent = `${pedidosHoy.length} pedidos · ${enProceso} en proceso`;
   document.getElementById('kpi-ticket').textContent = fmt(ticket);
   document.getElementById('kpi-cobrar').textContent = fmt(pendCXC);
-  document.getElementById('kpi-cobrar-delta').textContent = `${cxc.filter(c=>c.estado!=='cobrada').length} pendientes â†’`;
+  document.getElementById('kpi-cobrar-delta').textContent = `${cxc.filter(c=>c.estado!=='cobrada').length} pendientes →`;
   document.getElementById('kpi-pagar').textContent = fmt(pendCXP);
-  document.getElementById('kpi-pagar-delta').textContent = `${cxp.filter(c=>c.estado!=='pagada').length} pendientes â†’`;
+  document.getElementById('kpi-pagar-delta').textContent = `${cxp.filter(c=>c.estado!=='pagada').length} pendientes →`;
 
   // Pedidos activos
-  const activos = pedidos.filter(p => ['Nuevo','En preparaciÃ³n','Listo'].includes(p.estado)).slice(0, 5);
+  const activos = pedidos.filter(p => ['Nuevo','En preparación','Listo'].includes(p.estado)).slice(0, 5);
   const listaEl = document.getElementById('dash-pedidos-lista');
   if (activos.length === 0) {
-    listaEl.innerHTML = '<div class="empty"><div class="empty-icon">ðŸ§¾</div><div class="empty-title">Sin pedidos activos</div></div>';
+    listaEl.innerHTML = '<div class="empty"><div class="empty-icon">🧾</div><div class="empty-title">Sin pedidos activos</div></div>';
   } else {
     listaEl.innerHTML = activos.map(p => `
       <div class="flex items-center gap-12" style="padding:10px 0;border-bottom:1px solid var(--border);">
@@ -350,7 +350,7 @@ function renderDashboard() {
   const alertas = inventario.filter(i => i.stock <= i.minimo);
   const alertasEl = document.getElementById('dash-alertas');
   if (alertas.length === 0) {
-    alertasEl.innerHTML = '<div class="empty" style="padding:24px"><div class="empty-icon">âœ…</div><div class="empty-title">Inventario en buen nivel</div></div>';
+    alertasEl.innerHTML = '<div class="empty" style="padding:24px"><div class="empty-icon">✅</div><div class="empty-title">Inventario en buen nivel</div></div>';
   } else {
     alertasEl.innerHTML = alertas.map(i => `
       <div class="flex items-center gap-8" style="padding:8px 0;border-bottom:1px solid var(--border);">
@@ -380,13 +380,13 @@ function renderDashboard() {
   const canales = {};
   pedidosHoy.forEach(p => canales[p.canal] = (canales[p.canal] || 0) + p.total);
   const totalCanal = Object.values(canales).reduce((s,v) => s+v, 0) || 1;
-  const canalEmoji = { WhatsApp:'ðŸ’¬', Presencial:'ðŸ ', Instagram:'ðŸ“¸', Facebook:'ðŸ‘¥', TelÃ©fono:'ðŸ“ž' };
+  const canalEmoji = { WhatsApp:'💬', Presencial:'🏠', Instagram:'📸', Facebook:'👥', Teléfono:'📞' };
   document.getElementById('dash-canales').innerHTML = Object.entries(canales).length === 0
     ? '<div class="empty" style="padding:24px"><div class="empty-text">Sin datos de canales hoy</div></div>'
     : Object.entries(canales).map(([canal,monto]) => `
       <div style="margin-bottom:12px">
         <div class="flex justify-between mb-4">
-          <span style="font-size:13px">${canalEmoji[canal]||'ðŸ“±'} ${canal}</span>
+          <span style="font-size:13px">${canalEmoji[canal]||'📱'} ${canal}</span>
           <span class="font-mono text-sm">${fmt(monto)}</span>
         </div>
         <div class="stat-bar"><div class="stat-bar-fill" style="width:${(monto/totalCanal)*100}%;background:var(--blue)"></div></div>
@@ -399,11 +399,11 @@ function renderDashboard() {
 }
 
 // ========== PEDIDOS ==========
-const ESTADOS = ['Nuevo', 'En preparaciÃ³n', 'Listo', 'Entregado'];
-const ESTADO_COLORS = { 'Nuevo':'badge-blue', 'En preparaciÃ³n':'badge-amber', 'Listo':'badge-green', 'Entregado':'badge-gray' };
+const ESTADOS = ['Nuevo', 'En preparación', 'Listo', 'Entregado'];
+const ESTADO_COLORS = { 'Nuevo':'badge-blue', 'En preparación':'badge-amber', 'Listo':'badge-green', 'Entregado':'badge-gray' };
 function estadoBadge(e) { return ESTADO_COLORS[e] || 'badge-gray'; }
 
-// ---- Cliente rÃ¡pido desde pedido ----
+// ---- Cliente rápido desde pedido ----
 function toggleNuevoClienteRapido() {
   const panel = document.getElementById('panel-nuevo-cliente');
   const visible = panel.style.display !== 'none';
@@ -435,7 +435,7 @@ function crearClienteRapido() {
   toast(`Cliente "${nuevo.nombre}" creado`);
 }
 
-// ---- Modo pago (inmediato vs crÃ©dito) ----
+// ---- Modo pago (inmediato vs crédito) ----
 function setModoPago(el, modo) {
   modoPagoActual = modo;
   document.querySelectorAll('#modal-pedido .form-group:nth-child(2) .chip').forEach(c => c.classList.remove('active'));
@@ -444,7 +444,7 @@ function setModoPago(el, modo) {
   document.getElementById('panel-pago-credito').style.display = modo === 'credito' ? 'block' : 'none';
 }
 
-// ---- Modo envÃ­o ----
+// ---- Modo envío ----
 let modoEnvioActual = 'sin_envio';
 function setModoEnvio(el, modo) {
   modoEnvioActual = modo;
@@ -460,8 +460,8 @@ function setModoEnvio(el, modo) {
   } else if (modo === 'gratis') {
     panel.style.display = 'block';
     if (desglose) desglose.style.display = 'block';
-    // No pisar la tarifa si ya venÃ­a precargada (ej. desde la direcciÃ³n del cliente):
-    // el envÃ­o "gratis" para el cliente igual tiene un costo real que la empresa absorbe.
+    // No pisar la tarifa si ya venía precargada (ej. desde la dirección del cliente):
+    // el envío "gratis" para el cliente igual tiene un costo real que la empresa absorbe.
     const costoInp = document.getElementById('envio-costo');
     if (costoInp && (!costoInp.value || parseFloat(costoInp.value) === 0)) costoInp.value = '';
     document.getElementById('envio-cliente-paga').value = '0';
@@ -469,14 +469,14 @@ function setModoEnvio(el, modo) {
     const cpEl = document.getElementById('envio-cliente-paga');
     if (cpEl) { cpEl.readOnly = true; cpEl.style.opacity = '0.6'; }
     document.getElementById('envio-absorbemos').value = '0';
-    info.innerHTML = 'ðŸŽ El cliente no paga el envÃ­o. Ingresa la <strong>tarifa real del repartidor</strong>: esa cantidad se registra como gasto de envÃ­o en el estado de resultados.';
+    info.innerHTML = '🎁 El cliente no paga el envío. Ingresa la <strong>tarifa real del repartidor</strong>: esa cantidad se registra como gasto de envío en el estado de resultados.';
     _limitarMetodoPago('');
   } else if (modo === 'didi') {
     panel.style.display = 'block';
     if (desglose) desglose.style.display = 'block';
     const cpEl = document.getElementById('envio-cliente-paga');
     if (cpEl) { cpEl.readOnly = false; cpEl.style.opacity = '1'; }
-    info.innerHTML = 'ðŸ›µ <strong>DiDi Food</strong>: el total del envÃ­o se manda a CxP (DiDi te cobra despuÃ©s). La diferencia vs lo que pagÃ³ el cliente va a gasto de venta.';
+    info.innerHTML = '🛵 <strong>DiDi Food</strong>: el total del envío se manda a CxP (DiDi te cobra después). La diferencia vs lo que pagó el cliente va a gasto de venta.';
     _limitarMetodoPago('');
   } else if (modo === 'efectivo') {
     panel.style.display = 'block';
@@ -484,7 +484,7 @@ function setModoEnvio(el, modo) {
     const cpEl = document.getElementById('envio-cliente-paga');
     if (cpEl) { cpEl.readOnly = false; cpEl.style.opacity = '1'; cpEl.value = ''; }
     document.getElementById('envio-absorbemos').value = '0';
-    info.innerHTML = 'ðŸ’µ Repartidor cobra en efectivo. Si hubo tarifa extra (lluvia, etc.), ingresa cuÃ¡nto paga el cliente y cuÃ¡nto absorbemos nosotros.';
+    info.innerHTML = '💵 Repartidor cobra en efectivo. Si hubo tarifa extra (lluvia, etc.), ingresa cuánto paga el cliente y cuánto absorbemos nosotros.';
     _limitarMetodoPago('Efectivo');
   } else if (modo === 'transferencia') {
     panel.style.display = 'block';
@@ -492,7 +492,7 @@ function setModoEnvio(el, modo) {
     const cpEl = document.getElementById('envio-cliente-paga');
     if (cpEl) { cpEl.readOnly = false; cpEl.style.opacity = '1'; cpEl.value = ''; }
     document.getElementById('envio-absorbemos').value = '0';
-    info.innerHTML = 'ðŸ“² Cliente transfiriÃ³. Ingresa la tarifa total y si absorbemos algo adicional.';
+    info.innerHTML = '📲 Cliente transfirió. Ingresa la tarifa total y si absorbemos algo adicional.';
     _limitarMetodoPago('Transferencia / SPEI');
   }
   actualizarTotalPedido();
@@ -509,7 +509,7 @@ function renderKanban() {
   const board = document.getElementById('vista-kanban');
   board.innerHTML = ESTADOS.map(estado => {
     const cols = pedidos.filter(p => p.estado === estado);
-    const colColors = { 'Nuevo':'var(--blue)', 'En preparaciÃ³n':'var(--amber)', 'Listo':'var(--green)', 'Entregado':'var(--text3)' };
+    const colColors = { 'Nuevo':'var(--blue)', 'En preparación':'var(--amber)', 'Listo':'var(--green)', 'Entregado':'var(--text3)' };
     return `
       <div class="kanban-col">
         <div class="kanban-header">
@@ -526,17 +526,17 @@ function renderKanban() {
 function pedidoCard(p) {
   const mins = Math.floor((Date.now() - new Date(p.createdAt || Date.now())) / 60000);
   const timerClass = mins < 15 ? 'timer-ok' : mins < 30 ? 'timer-warn' : 'timer-late';
-  const canalEmoji = { WhatsApp:'ðŸ’¬', Presencial:'ðŸ ', Instagram:'ðŸ“¸', Facebook:'ðŸ‘¥', TelÃ©fono:'ðŸ“ž' };
+  const canalEmoji = { WhatsApp:'💬', Presencial:'🏠', Instagram:'📸', Facebook:'👥', Teléfono:'📞' };
   return `
     <div class="pedido-card" onclick="verDetallePedido('${p.id}')">
       <div class="flex justify-between mb-4">
         <span class="pedido-id">#${p.id.slice(-4).toUpperCase()}</span>
-        <span class="canal-badge badge-gray">${canalEmoji[p.canal]||'ðŸ“±'} ${p.canal}</span>
+        <span class="canal-badge badge-gray">${canalEmoji[p.canal]||'📱'} ${p.canal}</span>
       </div>
       <div class="pedido-cliente">${p.cliente}</div>
       <div class="pedido-items">${p.items.slice(0,2).map(i=>i.nombre||i).join(', ')}${p.items.length>2?` +${p.items.length-2}`:''}</div>
-      ${p.horaEntrega ? `<div style="font-size:11px;color:var(--blue);margin-top:4px">ðŸ• Entregar: <strong>${p.horaEntrega}</strong></div>` : ''}
-      ${p.notas ? `<div style="font-size:11px;color:var(--amber);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">ðŸ“ ${p.notas}</div>` : ''}
+      ${p.horaEntrega ? `<div style="font-size:11px;color:var(--blue);margin-top:4px">🕐 Entregar: <strong>${p.horaEntrega}</strong></div>` : ''}
+      ${p.notas ? `<div style="font-size:11px;color:var(--amber);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">📝 ${p.notas}</div>` : ''}
       <div class="pedido-footer">
         <span class="timer-chip ${timerClass}">${mins < 1 ? 'Ahora' : mins+'m'}</span>
         <span class="pedido-monto">${fmt(p.total)}</span>
@@ -555,8 +555,8 @@ function renderTablaPedidos(lista) {
       <td class="highlight-green font-mono">${fmt(p.total)}</td>
       <td><span class="badge ${estadoBadge(p.estado)}">${p.estado}</span></td>
       <td class="text-dim">${p.horaStr || p.hora}</td>
-      <td class="text-dim">${p.horaEntrega ? 'ðŸ• '+p.horaEntrega : 'â€”'}</td>
-      <td style="max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:11px;color:var(--amber)">${p.notas||'â€”'}</td>
+      <td class="text-dim">${p.horaEntrega ? '🕐 '+p.horaEntrega : '—'}</td>
+      <td style="max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:11px;color:var(--amber)">${p.notas||'—'}</td>
       <td><button class="btn btn-secondary btn-sm" onclick="verDetallePedido('${p.id}')">Ver</button></td>
     </tr>`).join('') || '<tr><td colspan="10" style="text-align:center;padding:32px;color:var(--text3)">Sin pedidos registrados</td></tr>';
 }
@@ -579,7 +579,7 @@ function filtrarPorEstado(e) {
 }
 
 // ========== AGENDAR SEMANA ==========
-const SEM_DIAS = ['Lunes','Martes','MiÃ©rcoles','Jueves','Viernes','SÃ¡bado','Domingo'];
+const SEM_DIAS = ['Lunes','Martes','Miércoles','Jueves','Viernes','Sábado','Domingo'];
 let _semData = {}; // { 0: {items:{}, dietaItems:[], pago:'Efectivo', modoPago:'inmediato'}, ... }
 
 function _semFechaDe(idx) {
@@ -595,7 +595,7 @@ function openAgendarSemana() {
   const sel = document.getElementById('sem-cliente');
   sel.innerHTML = '<option value="">Seleccionar cliente...</option>' +
     clientes.map(c => `<option value="${c.id}">${c.nombre}</option>`).join('');
-  // PrÃ³ximo lunes (o hoy si es lunes)
+  // Próximo lunes (o hoy si es lunes)
   const hoyD = new Date(hoy() + 'T12:00:00');
   const diaSem = hoyD.getDay(); // 0=dom
   const diffLunes = diaSem === 1 ? 0 : (diaSem === 0 ? 1 : 8 - diaSem);
@@ -631,7 +631,7 @@ function _semRenderDias() {
                  style="width:16px;height:16px;accent-color:var(--green);cursor:pointer">
           <div>
             <div style="font-size:13px;font-weight:600">${nombre}</div>
-            <div style="font-size:10px;color:var(--text3)">${fecha ? fmtFecha(fecha) : 'â€”'}</div>
+            <div style="font-size:10px;color:var(--text3)">${fecha ? fmtFecha(fecha) : '—'}</div>
           </div>
         </div>
         <div style="font-size:11px;color:${nSel?'var(--green)':'var(--text3)'}">${nSel} platillo${nSel!==1?'s':''}</div>
@@ -646,7 +646,7 @@ function _semRenderDias() {
             </select>
           </div>
           <div class="form-group" style="margin-bottom:0">
-            <label class="form-label" style="font-size:10px">MÃ©todo</label>
+            <label class="form-label" style="font-size:10px">Método</label>
             <select class="form-input" style="font-size:12px;padding:4px 8px" ${d.modoPago==='credito'?'disabled':''} onchange="_semData[${i}].pago=this.value">
               <option ${d.pago==='Efectivo'?'selected':''}>Efectivo</option>
               <option ${d.pago==='Transferencia'?'selected':''}>Transferencia</option>
@@ -655,25 +655,25 @@ function _semRenderDias() {
           </div>
         </div>
 
-        <!-- ENVÃO del dÃ­a -->
+        <!-- ENVÍO del día -->
         <div style="background:var(--bg3);border:1px solid rgba(52,152,219,0.15);border-radius:6px;padding:8px;margin-bottom:8px">
-          <div style="font-size:10px;font-weight:600;color:var(--blue);margin-bottom:6px">ðŸ›µ ENVÃO DE ESTE DÃA</div>
+          <div style="font-size:10px;font-weight:600;color:var(--blue);margin-bottom:6px">🛵 ENVÍO DE ESTE DÍA</div>
           <div class="form-row" style="margin-bottom:6px">
             <div class="form-group" style="margin-bottom:0">
               <label class="form-label" style="font-size:10px">Modo</label>
               <select class="form-input" style="font-size:12px;padding:4px 8px" onchange="_semSetEnvio(${i},'modo',this.value)">
-                <option value="sin_envio" ${d.modoEnvio==='sin_envio'?'selected':''}>ðŸ  Sin envÃ­o</option>
-                <option value="efectivo" ${d.modoEnvio==='efectivo'?'selected':''}>ðŸ’µ Repartidor cobra</option>
-                <option value="transferencia" ${d.modoEnvio==='transferencia'?'selected':''}>ðŸ“² Transferido</option>
-                <option value="gratis" ${d.modoEnvio==='gratis'?'selected':''}>ðŸŽ Gratis / absorbido</option>
-                <option value="didi" ${d.modoEnvio==='didi'?'selected':''}>ðŸ›µ DiDi Food</option>
+                <option value="sin_envio" ${d.modoEnvio==='sin_envio'?'selected':''}>🏠 Sin envío</option>
+                <option value="efectivo" ${d.modoEnvio==='efectivo'?'selected':''}>💵 Repartidor cobra</option>
+                <option value="transferencia" ${d.modoEnvio==='transferencia'?'selected':''}>📲 Transferido</option>
+                <option value="gratis" ${d.modoEnvio==='gratis'?'selected':''}>🎁 Gratis / absorbido</option>
+                <option value="didi" ${d.modoEnvio==='didi'?'selected':''}>🛵 DiDi Food</option>
               </select>
             </div>
             <div class="form-group" style="margin-bottom:0">
-              <label class="form-label" style="font-size:10px">DirecciÃ³n</label>
+              <label class="form-label" style="font-size:10px">Dirección</label>
               <select class="form-input" style="font-size:12px;padding:4px 8px" ${d.modoEnvio==='sin_envio'?'disabled':''} onchange="_semSetDireccion(${i},this.value)">
                 <option value="">Manual</option>
-                ${dirsCliente.map(dd => `<option value="${dd.id}" ${d.direccionId===dd.id?'selected':''}>${dd.principal?'â˜… ':''}${dd.nombre||'Sin nombre'}</option>`).join('')}
+                ${dirsCliente.map(dd => `<option value="${dd.id}" ${d.direccionId===dd.id?'selected':''}>${dd.principal?'★ ':''}${dd.nombre||'Sin nombre'}</option>`).join('')}
               </select>
             </div>
           </div>
@@ -697,7 +697,7 @@ function _semRenderDias() {
           </div>` : ''}
         </div>
 
-        <div style="font-size:11px;font-weight:600;color:var(--text3);margin-bottom:4px">PLATILLOS DEL MENÃš</div>
+        <div style="font-size:11px;font-weight:600;color:var(--text3);margin-bottom:4px">PLATILLOS DEL MENÚ</div>
         <div style="max-height:120px;overflow-y:auto;border:1px solid var(--border);border-radius:6px;padding:6px;margin-bottom:8px">
           ${menu.filter(m=>m.disponible).map(m => `
             <div class="flex items-center gap-6" style="padding:3px 0">
@@ -705,7 +705,7 @@ function _semRenderDias() {
                      style="width:14px;height:14px;accent-color:var(--green);cursor:pointer">
               <span style="flex:1;font-size:12px">${m.nombre}</span>
               ${d.items[m.id] ? `
-                <button class="btn btn-secondary btn-sm" style="padding:0 6px;font-size:12px" onclick="_semCantItem(${i},'${m.id}',-1)">âˆ’</button>
+                <button class="btn btn-secondary btn-sm" style="padding:0 6px;font-size:12px" onclick="_semCantItem(${i},'${m.id}',-1)">−</button>
                 <span style="font-size:12px;min-width:16px;text-align:center">${d.items[m.id].cantidad}</span>
                 <button class="btn btn-secondary btn-sm" style="padding:0 6px;font-size:12px" onclick="_semCantItem(${i},'${m.id}',1)">+</button>` : ''}
               <span style="font-size:11px;color:var(--text3);min-width:48px;text-align:right">${fmt(m.precio)}</span>
@@ -722,9 +722,9 @@ function _semRenderDias() {
               <div class="flex items-center gap-6" style="padding:3px 0">
                 <input type="checkbox" ${inc?'checked':''} onchange="_semToggleDieta(${i},'${(pl.nombre||'').replace(/'/g,"\\'")}',${pl.precioDia||0},'${dietaCliente.id}')"
                        style="width:14px;height:14px;accent-color:var(--blue);cursor:pointer">
-                <span style="flex:1;font-size:12px">${pl.nombre}<span style="font-size:10px;color:var(--text3)"> Â· ${pl.tiempo||''}</span></span>
+                <span style="flex:1;font-size:12px">${pl.nombre}<span style="font-size:10px;color:var(--text3)"> · ${pl.tiempo||''}</span></span>
                 ${inc ? `
-                  <button class="btn btn-secondary btn-sm" style="padding:0 6px;font-size:12px" onclick="_semCantDieta(${i},'${(pl.nombre||'').replace(/'/g,"\\'")}',-1)">âˆ’</button>
+                  <button class="btn btn-secondary btn-sm" style="padding:0 6px;font-size:12px" onclick="_semCantDieta(${i},'${(pl.nombre||'').replace(/'/g,"\\'")}',-1)">−</button>
                   <span style="font-size:12px;min-width:16px;text-align:center">${cant}</span>
                   <button class="btn btn-secondary btn-sm" style="padding:0 6px;font-size:12px" onclick="_semCantDieta(${i},'${(pl.nombre||'').replace(/'/g,"\\'")}',1)">+</button>` : ''}
                 <span style="font-size:11px;color:var(--text3);min-width:48px;text-align:right">${fmt(pl.precioDia||0)}</span>
@@ -774,8 +774,8 @@ function _semSetEnvio(i, campo, valor) {
     d.modoEnvio = valor;
     if (valor === 'sin_envio') { d.costoEnvioBase = 0; d.envioClientePaga = 0; }
     else if (valor === 'gratis') {
-      // Precargar tarifa de la direcciÃ³n si aÃºn no hay una capturada (igual que en los demÃ¡s modos):
-      // el envÃ­o "gratis" para el cliente igual tiene un costo real que la empresa absorbe.
+      // Precargar tarifa de la dirección si aún no hay una capturada (igual que en los demás modos):
+      // el envío "gratis" para el cliente igual tiene un costo real que la empresa absorbe.
       if (d.costoEnvioBase === 0 && d.direccionId) {
         const clienteId = document.getElementById('sem-cliente').value;
         const dir = getDireccionesCliente(clienteId).find(x => x.id === d.direccionId);
@@ -784,7 +784,7 @@ function _semSetEnvio(i, campo, valor) {
       d.envioClientePaga = 0; // absorbemos todo
     }
     else if (d.costoEnvioBase === 0 && d.direccionId) {
-      // precargar tarifa de la direcciÃ³n
+      // precargar tarifa de la dirección
       const clienteId = document.getElementById('sem-cliente').value;
       const dir = getDireccionesCliente(clienteId).find(x => x.id === d.direccionId);
       if (dir?.costoEnvio) { d.costoEnvioBase = dir.costoEnvio; d.envioClientePaga = dir.costoEnvio; }
@@ -827,7 +827,7 @@ function _semActualizarTotal() {
   const tEl = document.getElementById('sem-total');
   const rEl = document.getElementById('sem-resumen');
   if (tEl) tEl.textContent = fmt(total);
-  if (rEl) rEl.textContent = `${dias} dÃ­a${dias!==1?'s':''} con pedido` + (totalEnvios>0 ? ` Â· ${fmt(totalEnvios)} en envÃ­os` : '');
+  if (rEl) rEl.textContent = `${dias} día${dias!==1?'s':''} con pedido` + (totalEnvios>0 ? ` · ${fmt(totalEnvios)} en envíos` : '');
 }
 
 function guardarSemana() {
@@ -851,14 +851,14 @@ function guardarSemana() {
     const fecha = _semFechaDe(i);
     const esCredito = d.modoPago === 'credito';
 
-    // EnvÃ­o del dÃ­a
+    // Envío del día
     const modoEnv = d.modoEnvio || 'sin_envio';
     const costoEnvioBase = (modoEnv === 'sin_envio') ? 0 : (d.costoEnvioBase || 0);
     const envioClientePaga = (modoEnv === 'sin_envio' || modoEnv === 'gratis') ? 0 : (d.envioClientePaga || 0);
     const envioAbsorbemos = Math.max(0, costoEnvioBase - envioClientePaga);
     const dirObj = getDireccionesCliente(clienteId).find(x => x.id === d.direccionId) || null;
 
-    // Total que paga el cliente (misma lÃ³gica que un pedido normal)
+    // Total que paga el cliente (misma lógica que un pedido normal)
     let totalCliente = subtotal;
     if (modoEnv === 'transferencia' || modoEnv === 'gratis' || modoEnv === 'didi') totalCliente = subtotal + envioClientePaga;
     else if (modoEnv === 'efectivo') totalCliente = subtotal + envioClientePaga;
@@ -874,7 +874,7 @@ function guardarSemana() {
       pago: esCredito ? 'Pendiente' : d.pago,
       modoPago: d.modoPago,
       estado: 'Nuevo', fecha,
-      hora: hora(), horaEntrega: '', notas: `Agendado semanal â€” ${nombreDia}`,
+      hora: hora(), horaEntrega: '', notas: `Agendado semanal — ${nombreDia}`,
       esCortesia: false,
     };
     // Datos financieros diferidos (se registran al Entregar)
@@ -892,16 +892,16 @@ function guardarSemana() {
     creados++;
   });
 
-  if (creados === 0) { toast('Activa al menos un dÃ­a con platillos', 'error'); return; }
+  if (creados === 0) { toast('Activa al menos un día con platillos', 'error'); return; }
   save();
   closeModal('modal-agendar-semana');
-  toast(`âœ… ${creados} pedido${creados!==1?'s':''} creado${creados!==1?'s':''} para la semana de ${cliente.nombre}`);
+  toast(`✅ ${creados} pedido${creados!==1?'s':''} creado${creados!==1?'s':''} para la semana de ${cliente.nombre}`);
   renderPedidos();
   renderDashboard();
   if (vistaCalActiva) renderCalendario();
 }
 
-// ===== DÃA DE TRABAJO (fecha activa para nuevos pedidos) =====
+// ===== DÍA DE TRABAJO (fecha activa para nuevos pedidos) =====
 let _diaTrabajo = null; // null = hoy
 
 function getDiaTrabajo() { return _diaTrabajo || hoy(); }
@@ -911,7 +911,7 @@ function cambiarDiaTrabajo(fecha) {
   const inp = document.getElementById('dia-trabajo');
   if (inp) inp.value = _diaTrabajo;
   const esHoy = _diaTrabajo === hoy();
-  toast(esHoy ? 'DÃ­a de trabajo: hoy' : `DÃ­a de trabajo: ${fmtFecha(_diaTrabajo)}`);
+  toast(esHoy ? 'Día de trabajo: hoy' : `Día de trabajo: ${fmtFecha(_diaTrabajo)}`);
   renderPedidos();
   renderResumenPlatillos();
 }
@@ -924,7 +924,7 @@ function initDiaTrabajo() {
 }
 
 function openNuevoPedido() {
-  // Solo resetear flag de ediciÃ³n si NO venimos de openEditarPedido
+  // Solo resetear flag de edición si NO venimos de openEditarPedido
   if (!_editandoPedidoId) {
     const titEl = document.querySelector('#modal-pedido .modal-title');
     if (titEl) titEl.textContent = 'Nuevo pedido';
@@ -935,10 +935,10 @@ function openNuevoPedido() {
   etiquetasSeleccionadas = [];
   modoEnvioActual = 'sin_envio';
   descuentoTipoActual = 'ninguno';
-  // La fecha del pedido viene del "DÃ­a de trabajo" seleccionado en la barra
+  // La fecha del pedido viene del "Día de trabajo" seleccionado en la barra
   const fechaInp = document.getElementById('pedido-fecha');
   if (fechaInp) { const f = getDiaTrabajo(); fechaInp.value = f; onChangeFechaPedido(f); }
-  // Reset envÃ­o chips
+  // Reset envío chips
   document.getElementById('panel-envio').style.display = 'none';
   document.getElementById('panel-nuevo-cliente').style.display = 'none';
   document.getElementById('panel-descuento').style.display = 'none';
@@ -946,7 +946,7 @@ function openNuevoPedido() {
   document.getElementById('panel-pago-inmediato').style.display = 'block';
   document.getElementById('panel-pago-credito').style.display = 'none';
   modoPagoActual = 'inmediato';
-  // Reset chips de modo pago â€” ninguno activo al inicio
+  // Reset chips de modo pago — ninguno activo al inicio
   setTimeout(() => {
     const pagoChips = document.querySelectorAll('#chips-modo-pago .chip');
     pagoChips.forEach(c => { c.classList.remove('active'); c.style.opacity='1'; c.style.pointerEvents='auto'; });
@@ -960,7 +960,7 @@ function openNuevoPedido() {
   const sel = document.getElementById('pedido-cliente');
   sel.innerHTML = '<option value="">Seleccionar cliente...</option>' +
     clientes.map(c => `<option value="${c.id}">${c.nombre}</option>`).join('');
-  // Reset envÃ­o chips visual
+  // Reset envío chips visual
   setTimeout(() => {
     document.querySelectorAll('#modal-pedido .chip').forEach(c => {
       if (c.getAttribute('onclick')?.includes('setModoEnvio')) c.classList.remove('active');
@@ -975,7 +975,7 @@ function openNuevoPedido() {
          onclick="toggleItemPedido('${m.id}','${m.nombre.replace(/'/g,"\\'")}',${m.precio})">
       <div style="flex:1">
         <div style="font-size:13px;font-weight:500">${m.nombre}</div>
-        <div style="font-size:11px;color:var(--text3)">${m.categoria} â€¢ ${fmt(m.precio)}</div>
+        <div style="font-size:11px;color:var(--text3)">${m.categoria} • ${fmt(m.precio)}</div>
       </div>
       <div class="num-input" id="num-${m.id}" style="display:none">
         <button class="num-btn" onclick="event.stopPropagation();cambiarCantidad('${m.id}','${m.nombre.replace(/'/g,"\\'")}',${m.precio},-1)">-</button>
@@ -987,7 +987,7 @@ function openNuevoPedido() {
   // Limpiar buscador
   const buscador = document.getElementById('buscador-platillos-modal');
   if (buscador) buscador.value = '';
-  // Reset notas y cortesÃ­a por pedido
+  // Reset notas y cortesía por pedido
   const notasEl = document.getElementById('pedido-notas');
   if (notasEl) notasEl.value = '';
   const horaEntEl = document.getElementById('pedido-hora-entrega');
@@ -996,7 +996,7 @@ function openNuevoPedido() {
   if (cortesiaEl) { cortesiaEl.checked = false; }
   const panelCort = document.getElementById('panel-cortesia');
   if (panelCort) panelCort.style.display = 'none';
-  // Reset envÃ­o desglose
+  // Reset envío desglose
   const cpEl = document.getElementById('envio-cliente-paga');
   if (cpEl) cpEl.value = '';
   const absEl = document.getElementById('envio-absorbemos');
@@ -1004,11 +1004,11 @@ function openNuevoPedido() {
   const desglosePanel = document.getElementById('panel-envio-desglose');
   if (desglosePanel) desglosePanel.style.display = 'none';
   actualizarConteoSel();
-  // Populate dietas â€” solo las vigentes (confirmadas y activas)
+  // Populate dietas — solo las vigentes (confirmadas y activas)
   const ds = document.getElementById('pedido-dieta-sel');
   const dietasVigentes = dietas.filter(d => d.estado === 'confirmada' && d.vigente && d.cotizacion?.platillos?.length);
-  ds.innerHTML = '<option value="">Sin dieta â€” solo menÃº</option>' +
-    dietasVigentes.map(d => `<option value="${d.id}">${d.clienteNombre}${d.nombre ? ' â€” '+d.nombre : ''}</option>`).join('');
+  ds.innerHTML = '<option value="">Sin dieta — solo menú</option>' +
+    dietasVigentes.map(d => `<option value="${d.id}">${d.clienteNombre}${d.nombre ? ' — '+d.nombre : ''}</option>`).join('');
   // Reset panel platillos dieta
   window._dietaPlatillosPrecios = [];
   window._dietaPlanActual = 'Dia';
@@ -1027,7 +1027,7 @@ function toggleItemPedido(id, nombre, precio) {
     document.getElementById('num-'+id).style.display = 'none';
   } else {
     itemsPedidoActual[id] = { nombre, precio, cantidad: 1 };
-    document.getElementById('check-'+id).textContent = 'âœ“';
+    document.getElementById('check-'+id).textContent = '✓';
     document.getElementById('check-'+id).style.background = 'var(--green)';
     document.getElementById('check-'+id).style.borderColor = 'var(--green)';
     document.getElementById('check-'+id).style.color = '#FFFFFF';
@@ -1047,34 +1047,34 @@ function cambiarCantidad(id, nombre, precio, delta) {
 function actualizarTotalPedido() {
   let subtotal = 0;
   let items = Object.values(itemsPedidoActual);
-  // Subtotal del menÃº
+  // Subtotal del menú
   const subtotalMenu = items.reduce((s,i) => s + i.precio * i.cantidad, 0);
-  // Subtotal de la dieta (platillos incluidos Ã— cantidad)
+  // Subtotal de la dieta (platillos incluidos × cantidad)
   const subtotalDieta = (window._dietaPlatillosPrecios || []).filter(p => p.incluido).reduce((s, p) => s + (p.precio || 0) * (p.cantidad || 1), 0);
   subtotal = subtotalMenu + subtotalDieta;
 
-  // Desglose items (menÃº + dieta)
+  // Desglose items (menú + dieta)
   const itemsDieta = (window._dietaPlatillosPrecios || []).filter(p => p.incluido).map(p => ({ nombre: p.nombre, precio: p.precio, cantidad: p.cantidad||1 }));
   const todosItems = [...items, ...itemsDieta];
   const desgloseEl = document.getElementById('desglose-items-pedido');
   if (desgloseEl) {
     if (todosItems.length > 0) {
       desgloseEl.style.display = 'block';
-      desgloseEl.innerHTML = todosItems.map(i => `${i.nombre} Ã—${i.cantidad} <span style="float:right;color:var(--text2)">${fmt(i.precio*i.cantidad)}</span>`).join('<br>');
+      desgloseEl.innerHTML = todosItems.map(i => `${i.nombre} ×${i.cantidad} <span style="float:right;color:var(--text2)">${fmt(i.precio*i.cantidad)}</span>`).join('<br>');
     } else {
       desgloseEl.style.display = 'none';
     }
   }
 
-  // CortesÃ­a
+  // Cortesía
   const esCortesia = document.getElementById('pedido-cortesia')?.checked;
 
-  // EnvÃ­o
+  // Envío
   let costoEnvioBase = 0, envioClientePaga = 0, envioAbsorbemos = 0;
   if (modoEnvioActual !== 'sin_envio') {
     costoEnvioBase = parseFloat(document.getElementById('envio-costo')?.value) || 0;
     if (modoEnvioActual === 'gratis') {
-      // EnvÃ­o GRATIS para el cliente â†’ nosotros absorbemos todo el costo
+      // Envío GRATIS para el cliente → nosotros absorbemos todo el costo
       envioClientePaga = 0;
       envioAbsorbemos = costoEnvioBase;
       const absEl = document.getElementById('envio-absorbemos');
@@ -1099,7 +1099,7 @@ function actualizarTotalPedido() {
   montoDescuento = Math.min(montoDescuento, subtotal);
   const subtotalConDescuento = esCortesia ? 0 : (subtotal - montoDescuento);
 
-  document.getElementById('pedido-subtotal').textContent = esCortesia ? '$0.00 (cortesÃ­a)' : fmt(subtotal);
+  document.getElementById('pedido-subtotal').textContent = esCortesia ? '$0.00 (cortesía)' : fmt(subtotal);
 
   // Fila descuento
   const filaDesc = document.getElementById('fila-descuento');
@@ -1121,7 +1121,7 @@ function actualizarTotalPedido() {
     document.getElementById('pedido-total-display').textContent = fmt(subtotalConDescuento);
   } else if (modoEnvioActual === 'gratis' || modoEnvioActual === 'didi') {
     filaEnvio.style.setProperty('display', 'flex', 'important');
-    document.getElementById('label-envio-resumen').textContent = modoEnvioActual === 'didi' ? 'EnvÃ­o DiDi (cliente paga)' : 'EnvÃ­o (cliente paga)';
+    document.getElementById('label-envio-resumen').textContent = modoEnvioActual === 'didi' ? 'Envío DiDi (cliente paga)' : 'Envío (cliente paga)';
     document.getElementById('pedido-envio-display').textContent = fmt(envioClientePaga);
     filaPago.style.setProperty('display', 'none', 'important');
     if (filaAbs) {
@@ -1135,7 +1135,7 @@ function actualizarTotalPedido() {
     document.getElementById('pedido-total-display').textContent = fmt(subtotalConDescuento + envioClientePaga);
   } else if (modoEnvioActual === 'efectivo') {
     filaEnvio.style.setProperty('display', 'flex', 'important');
-    document.getElementById('label-envio-resumen').textContent = 'EnvÃ­o (cliente paga)';
+    document.getElementById('label-envio-resumen').textContent = 'Envío (cliente paga)';
     document.getElementById('pedido-envio-display').textContent = fmt(envioClientePaga);
     filaPago.style.setProperty('display', 'none', 'important');
     if (filaAbs) {
@@ -1146,11 +1146,11 @@ function actualizarTotalPedido() {
         filaAbs.style.setProperty('display', 'none', 'important');
       }
     }
-    // Total que paga el cliente = comida + envÃ­o que Ã©l paga (aunque se lo dÃ© al repartidor)
+    // Total que paga el cliente = comida + envío que él paga (aunque se lo dé al repartidor)
     document.getElementById('pedido-total-display').textContent = fmt(subtotalConDescuento + envioClientePaga);
   } else if (modoEnvioActual === 'transferencia') {
     filaEnvio.style.setProperty('display', 'flex', 'important');
-    document.getElementById('label-envio-resumen').textContent = 'EnvÃ­o (cliente transfiere)';
+    document.getElementById('label-envio-resumen').textContent = 'Envío (cliente transfiere)';
     document.getElementById('pedido-envio-display').textContent = fmt(envioClientePaga);
     filaPago.style.setProperty('display', 'flex', 'important');
     document.getElementById('pedido-pago-repartidor').textContent = fmt(envioClientePaga);
@@ -1162,12 +1162,12 @@ function actualizarTotalPedido() {
         filaAbs.style.setProperty('display', 'none', 'important');
       }
     }
-    // Total = comida + lo que paga el cliente por envÃ­o (no el absorbido)
+    // Total = comida + lo que paga el cliente por envío (no el absorbido)
     document.getElementById('pedido-total-display').textContent = fmt(subtotalConDescuento + envioClientePaga);
   }
 
-  // "Nosotros recibimos" = solo la comida menos lo que absorbemos del envÃ­o
-  // (el envÃ­o que paga el cliente se entrega completo al repartidor, no es ingreso nuestro)
+  // "Nosotros recibimos" = solo la comida menos lo que absorbemos del envío
+  // (el envío que paga el cliente se entrega completo al repartidor, no es ingreso nuestro)
   // En transferencia NO se muestra (el cliente transfiere todo junto)
   const recibimosEl = document.getElementById('pedido-recibimos-display');
   const filaRecibimos = recibimosEl ? recibimosEl.closest('.flex') : null;
@@ -1260,18 +1260,18 @@ function _cargarDireccionesPedido(clienteId) {
   const dirs = getDireccionesCliente(clienteId);
   if (!dirs.length) {
     wrap.style.display = 'none';
-    sel.innerHTML = '<option value="">Otra direcciÃ³n / manual</option>';
+    sel.innerHTML = '<option value="">Otra dirección / manual</option>';
     return;
   }
   wrap.style.display = 'block';
-  sel.innerHTML = '<option value="">Otra direcciÃ³n / manual</option>' +
-    dirs.map(d => `<option value="${d.id}">${d.principal?'â˜… ':''}${d.nombre || 'Sin nombre'}${d.costoEnvio ? ' â€” '+fmt(d.costoEnvio) : ''}</option>`).join('');
+  sel.innerHTML = '<option value="">Otra dirección / manual</option>' +
+    dirs.map(d => `<option value="${d.id}">${d.principal?'★ ':''}${d.nombre || 'Sin nombre'}${d.costoEnvio ? ' — '+fmt(d.costoEnvio) : ''}</option>`).join('');
   // Preseleccionar la principal
   const prin = dirs.find(d => d.principal) || dirs[0];
   if (prin) { sel.value = prin.id; _aplicarDireccionPedido(prin.id); }
 }
 
-// Aplica el costo de envÃ­o de la direcciÃ³n seleccionada
+// Aplica el costo de envío de la dirección seleccionada
 function _aplicarDireccionPedido(dirId) {
   const mapsBtn = document.getElementById('pedido-dir-maps');
   const clienteId = document.getElementById('pedido-cliente')?.value;
@@ -1282,12 +1282,12 @@ function _aplicarDireccionPedido(dirId) {
   const costoInp = document.getElementById('envio-costo');
   if (costoInp && dir.costoEnvio > 0) {
     costoInp.value = dir.costoEnvio;
-    // Por defecto el cliente paga todo el envÃ­o
+    // Por defecto el cliente paga todo el envío
     const cpInp = document.getElementById('envio-cliente-paga');
     if (cpInp && !cpInp.value) cpInp.value = dir.costoEnvio;
     actualizarTotalPedido();
   }
-  // BotÃ³n de Maps
+  // Botón de Maps
   if (mapsBtn) {
     if (dir.maps) { mapsBtn.href = dir.maps; mapsBtn.style.display = 'inline-block'; }
     else mapsBtn.style.display = 'none';
@@ -1304,7 +1304,7 @@ function mostrarPlatillosDieta(dietaId) {
   if (!dieta) { panel.style.display = 'none'; return; }
 
   if (dieta.cotizacion?.platillos?.length) {
-    // Solo platillos que estaban seleccionados en la cotizaciÃ³n
+    // Solo platillos que estaban seleccionados en la cotización
     const platillos = dieta.cotizacion.platillos.filter(p => p.seleccionado !== false);
     // plan por defecto: diario
     window._dietaPlanActual = window._dietaPlanActual || 'Dia';
@@ -1356,7 +1356,7 @@ function renderListaPlatillosDieta() {
         <div style="font-size:11px;color:var(--text3)">${p.tiempo}</div>
       </div>
       <div style="display:flex;align-items:center;gap:6px">
-        <button class="btn btn-secondary btn-sm" style="padding:2px 8px;font-size:14px" onclick="_cambiarCantidadDieta(${i},-1)">âˆ’</button>
+        <button class="btn btn-secondary btn-sm" style="padding:2px 8px;font-size:14px" onclick="_cambiarCantidadDieta(${i},-1)">−</button>
         <span style="min-width:20px;text-align:center;font-size:13px;font-weight:600">${p.cantidad||1}</span>
         <button class="btn btn-secondary btn-sm" style="padding:2px 8px;font-size:14px" onclick="_cambiarCantidadDieta(${i},1)">+</button>
       </div>
@@ -1407,7 +1407,7 @@ function guardarPedido() {
   const costoEnvioBase = modoEnvioActual !== 'sin_envio' ? (parseFloat(document.getElementById('envio-costo')?.value) || 0) : 0;
   let envioClientePaga = 0, envioAbsorbemos = 0;
   if (modoEnvioActual === 'gratis') {
-    // EnvÃ­o GRATIS para el cliente â†’ absorbemos todo
+    // Envío GRATIS para el cliente → absorbemos todo
     envioClientePaga = 0;
     envioAbsorbemos = costoEnvioBase;
   } else if (['didi','efectivo','transferencia'].includes(modoEnvioActual)) {
@@ -1423,7 +1423,7 @@ function guardarPedido() {
   let items = [];
   let subtotal = 0;
 
-  // --- Items del MENÃš (inventario se descuenta al pasar a "En preparaciÃ³n") ---
+  // --- Items del MENÚ (inventario se descuenta al pasar a "En preparación") ---
   const itemsMenu = Object.values(itemsPedidoActual);
 
   // --- Items de la DIETA ---
@@ -1437,7 +1437,7 @@ function guardarPedido() {
 
   // --- Combinar ambos ---
   items = [...itemsMenu, ...itemsDieta];
-  if (items.length === 0) { toast('Agrega al menos un platillo (menÃº o dieta)', 'error'); return; }
+  if (items.length === 0) { toast('Agrega al menos un platillo (menú o dieta)', 'error'); return; }
   subtotal = items.reduce((s, i) => s + i.precio * (i.cantidad || 1), 0);
   if (instrucciones && itemsDieta.length) items.instrucciones = instrucciones;
 
@@ -1452,21 +1452,21 @@ function guardarPedido() {
   }
   const subtotalConDescuento = subtotal - montoDescuento;
 
-  // Total segÃºn modo envÃ­o y cortesÃ­a
+  // Total según modo envío y cortesía
   let totalCliente = esCortesia ? 0 : subtotalConDescuento;
   if (!esCortesia) {
     if (modoEnvioActual === 'transferencia') totalCliente = subtotalConDescuento + envioClientePaga;
     else if (modoEnvioActual === 'gratis' || modoEnvioActual === 'didi') totalCliente = subtotalConDescuento + envioClientePaga;
-    else if (modoEnvioActual === 'efectivo') totalCliente = subtotalConDescuento; // el envÃ­o lo cobra el repartidor, no cuenta en lo que nos debe
+    else if (modoEnvioActual === 'efectivo') totalCliente = subtotalConDescuento; // el envío lo cobra el repartidor, no cuenta en lo que nos debe
   }
 
-  // Calcular costo de producciÃ³n estimado para cortesÃ­a (menÃº + dieta)
+  // Calcular costo de producción estimado para cortesía (menú + dieta)
   let costoProduccionEstimado = 0;
   if (esCortesia) {
     items.forEach(item => {
       const plat = menu.find(m => m.nombre === item.nombre || m.id === item.id);
       if (plat) { costoProduccionEstimado += (plat.costo || 0) * (item.cantidad || 1); return; }
-      // Si es de dieta, buscar su costo en la cotizaciÃ³n
+      // Si es de dieta, buscar su costo en la cotización
       if (dieta?.cotizacion?.platillos) {
         const pc = dieta.cotizacion.platillos.find(x => x.nombre === item.nombre);
         if (pc) costoProduccionEstimado += (pc.costo || 0) * (item.cantidad || 1);
@@ -1506,16 +1506,16 @@ function guardarPedido() {
   const _eraEdicion = !!_editandoPedidoId;
   _editandoPedidoId = null;
 
-  // Si se editÃ³ un pedido que ya estaba en estado avanzado, re-aplicar descuento de inventario
+  // Si se editó un pedido que ya estaba en estado avanzado, re-aplicar descuento de inventario
   if (_eraEdicion && _editandoPedidoEstado) {
-    if (['En preparaciÃ³n','Listo','Entregado'].includes(_editandoPedidoEstado)) {
+    if (['En preparación','Listo','Entregado'].includes(_editandoPedidoEstado)) {
       _descontarInventarioPedido(p);
     }
   }
 
   if (clienteObj && !_eraEdicion) { clienteObj.pedidos = (clienteObj.pedidos || 0) + 1; clienteObj.ultimoPedido = hoy(); }
 
-  // Guardar datos financieros en el pedido â€” se registran cuando llegue a "Entregado"
+  // Guardar datos financieros en el pedido — se registran cuando llegue a "Entregado"
   p.finPendiente = {
     esCortesia, modoPagoActual, modoEnvioActual, pago,
     clienteNombre, empresaEnvio,
@@ -1528,19 +1528,19 @@ function guardarPedido() {
   if (_eraEdicion) toast('Pedido actualizado correctamente');
 
   if (modoPagoActual === 'credito' && totalCliente > 0) {
-    // Guardar datos de CxC en el pedido â€” se genera cuando el pedido llegue a "Entregado"
+    // Guardar datos de CxC en el pedido — se genera cuando el pedido llegue a "Entregado"
     const montoCxC = (modoEnvioActual === 'efectivo' && envioAbsorbemos > 0)
       ? subtotalConDescuento + (envioClientePaga || 0)
       : totalCliente;
     const vencCxC = document.getElementById('credito-vencimiento')?.value || '';
     const conceptoCxC = document.getElementById('credito-concepto')?.value || `Pedido #${p.id.slice(-4).toUpperCase()}`;
     p.cxcPendiente = { monto: montoCxC, vencimiento: vencCxC, concepto: conceptoCxC };
-    if (!_eraEdicion) toast(`Pedido creado â€” la cuenta por cobrar se generarÃ¡ al marcarlo Entregado`);
+    if (!_eraEdicion) toast(`Pedido creado — la cuenta por cobrar se generará al marcarlo Entregado`);
   } else if (!_eraEdicion) {
     toast(`Pedido de ${clienteNombre} creado${montoDescuento > 0 ? ' con descuento de '+fmt(montoDescuento) : ''}`);
   }
 
-  // Si el pedido estÃ¡ Entregado (nace asÃ­ o se editÃ³ estando entregado): registrar financieros + CxC
+  // Si el pedido está Entregado (nace así o se editó estando entregado): registrar financieros + CxC
   if (p.estado === 'Entregado') {
     _registrarFinancierosPedido(p);
     _generarCxCDesdePedido(p);
@@ -1557,10 +1557,10 @@ function _registrarFinancierosPedido(p) {
   if (!p.finPendiente || p.financierosRegistrados) return;
   const f = p.finPendiente;
   const ref = `Pedido #${p.id.slice(-4).toUpperCase()}`;
-  // La fecha del movimiento es la de ENTREGA (cuando afecta las cuentas), no la de creaciÃ³n
+  // La fecha del movimiento es la de ENTREGA (cuando afecta las cuentas), no la de creación
   const fechaMov = p.fechaEntrega || hoy();
 
-  // Venta con pago inmediato â†’ entra a caja/banco
+  // Venta con pago inmediato → entra a caja/banco
   if (!f.esCortesia && f.modoPagoActual === 'inmediato') {
     const montoACaja = f.modoEnvioActual === 'transferencia'
       ? f.subtotalConDescuento + f.envioClientePaga
@@ -1568,40 +1568,40 @@ function _registrarFinancierosPedido(p) {
     if (montoACaja > 0)
       movCaja.push({ hora: hora(), pedidoId: p.id, cliente: f.clienteNombre, metodo: f.pago, monto: montoACaja, tipo: 'venta', estado: 'Cobrado', fecha: fechaMov });
     if (f.modoEnvioActual === 'efectivo' && f.envioAbsorbemos > 0) {
-      movCaja.push({ hora: hora(), pedidoId: p.id, cliente: f.clienteNombre, metodo: 'Efectivo', monto: f.envioAbsorbemos, tipo: 'envio_absorbido', estado: 'Gasto absorbido', concepto: `Tarifa extra â€” ${f.clienteNombre}`, fecha: fechaMov });
-      gastos.push({ id: uid(), pedidoId: p.id, concepto: `Tarifa extra envÃ­o: ${f.clienteNombre}`, categoria: 'Gastos de Venta', monto: f.envioAbsorbemos, fecha: fechaMov, recurrente: 'no', notas: ref });
+      movCaja.push({ hora: hora(), pedidoId: p.id, cliente: f.clienteNombre, metodo: 'Efectivo', monto: f.envioAbsorbemos, tipo: 'envio_absorbido', estado: 'Gasto absorbido', concepto: `Tarifa extra — ${f.clienteNombre}`, fecha: fechaMov });
+      gastos.push({ id: uid(), pedidoId: p.id, concepto: `Tarifa extra envío: ${f.clienteNombre}`, categoria: 'Gastos de Venta', monto: f.envioAbsorbemos, fecha: fechaMov, recurrente: 'no', notas: ref });
     }
   }
 
-  // AbsorciÃ³n en crÃ©dito efectivo
+  // Absorción en crédito efectivo
   if (f.modoPagoActual === 'credito' && f.envioAbsorbemos > 0 && f.modoEnvioActual === 'efectivo') {
-    gastos.push({ id: uid(), pedidoId: p.id, concepto: `Tarifa extra envÃ­o: ${f.clienteNombre}`, categoria: 'Gastos de Venta', monto: f.envioAbsorbemos, fecha: fechaMov, recurrente: 'no', notas: ref });
-    movCaja.push({ hora: hora(), pedidoId: p.id, cliente: f.clienteNombre, metodo: 'Efectivo', monto: f.envioAbsorbemos, tipo: 'envio_absorbido', estado: 'Gasto absorbido', concepto: `Tarifa extra â€” ${f.clienteNombre}`, fecha: fechaMov });
+    gastos.push({ id: uid(), pedidoId: p.id, concepto: `Tarifa extra envío: ${f.clienteNombre}`, categoria: 'Gastos de Venta', monto: f.envioAbsorbemos, fecha: fechaMov, recurrente: 'no', notas: ref });
+    movCaja.push({ hora: hora(), pedidoId: p.id, cliente: f.clienteNombre, metodo: 'Efectivo', monto: f.envioAbsorbemos, tipo: 'envio_absorbido', estado: 'Gasto absorbido', concepto: `Tarifa extra — ${f.clienteNombre}`, fecha: fechaMov });
   }
 
-  // CortesÃ­a â†’ su costo de producciÃ³n se refleja en COSTO DE VENTAS (no genera ingreso).
+  // Cortesía → su costo de producción se refleja en COSTO DE VENTAS (no genera ingreso).
   // Solo se deja el rastro en movCaja para trazabilidad; NO se duplica en gastos[].
   if (f.esCortesia && f.costoProduccionEstimado > 0) {
-    movCaja.push({ hora: hora(), pedidoId: p.id, cliente: f.clienteNombre, metodo: 'â€”', monto: f.costoProduccionEstimado, tipo: 'cortesia_gasto', estado: 'Costo producciÃ³n', concepto: 'CortesÃ­a â€” costo producciÃ³n', fecha: fechaMov });
+    movCaja.push({ hora: hora(), pedidoId: p.id, cliente: f.clienteNombre, metodo: '—', monto: f.costoProduccionEstimado, tipo: 'cortesia_gasto', estado: 'Costo producción', concepto: 'Cortesía — costo producción', fecha: fechaMov });
   }
 
-  // EnvÃ­o transferencia â†’ salida de efectivo al repartidor
+  // Envío transferencia → salida de efectivo al repartidor
   if (f.modoEnvioActual === 'transferencia' && f.costoEnvio > 0) {
     movCaja.push({ hora: hora(), pedidoId: p.id, cliente: f.empresaEnvio || 'Repartidor', metodo: 'Efectivo', monto: f.costoEnvio, tipo: 'envio_salida', estado: 'Pendiente pago', fecha: fechaMov });
   }
 
-  // EnvÃ­o gratis absorbido / DiDi
+  // Envío gratis absorbido / DiDi
   if (f.modoEnvioActual === 'gratis') {
     if (f.envioAbsorbemos > 0) {
-      movCaja.push({ hora: hora(), pedidoId: p.id, cliente: f.clienteNombre, metodo: 'Efectivo', monto: f.envioAbsorbemos, tipo: 'envio_gratis', estado: 'Gasto de envÃ­o', concepto: `EnvÃ­o absorbido â€” ${f.clienteNombre}`, fecha: fechaMov });
-      gastos.push({ id: uid(), pedidoId: p.id, concepto: `EnvÃ­o absorbido: ${f.clienteNombre}`, categoria: 'Gastos de Venta', monto: f.envioAbsorbemos, fecha: fechaMov, recurrente: 'no', notas: ref });
+      movCaja.push({ hora: hora(), pedidoId: p.id, cliente: f.clienteNombre, metodo: 'Efectivo', monto: f.envioAbsorbemos, tipo: 'envio_gratis', estado: 'Gasto de envío', concepto: `Envío absorbido — ${f.clienteNombre}`, fecha: fechaMov });
+      gastos.push({ id: uid(), pedidoId: p.id, concepto: `Envío absorbido: ${f.clienteNombre}`, categoria: 'Gastos de Venta', monto: f.envioAbsorbemos, fecha: fechaMov, recurrente: 'no', notas: ref });
     }
   } else if (f.modoEnvioActual === 'didi') {
     if (f.costoEnvioBase > 0) {
-      cxp.push({ id: uid(), pedidoId: p.id, concepto: `EnvÃ­o DiDi â€” ${f.clienteNombre} #${p.id.slice(-4).toUpperCase()}`, proveedor: f.empresaEnvio || 'DiDi Food', categoria: 'servicio', monto: f.costoEnvioBase, vencimiento: p.fecha, estado: 'pendiente', notas: `Cargo de plataforma DiDi ${ref}` });
+      cxp.push({ id: uid(), pedidoId: p.id, concepto: `Envío DiDi — ${f.clienteNombre} #${p.id.slice(-4).toUpperCase()}`, proveedor: f.empresaEnvio || 'DiDi Food', categoria: 'servicio', monto: f.costoEnvioBase, vencimiento: p.fecha, estado: 'pendiente', notas: `Cargo de plataforma DiDi ${ref}` });
     }
     if (f.envioAbsorbemos > 0) {
-      gastos.push({ id: uid(), pedidoId: p.id, concepto: `EnvÃ­o DiDi absorbido: ${f.clienteNombre}`, categoria: 'Gastos de Venta', monto: f.envioAbsorbemos, fecha: fechaMov, recurrente: 'no', notas: ref });
+      gastos.push({ id: uid(), pedidoId: p.id, concepto: `Envío DiDi absorbido: ${f.clienteNombre}`, categoria: 'Gastos de Venta', monto: f.envioAbsorbemos, fecha: fechaMov, recurrente: 'no', notas: ref });
     }
   }
 
@@ -1609,7 +1609,7 @@ function _registrarFinancierosPedido(p) {
   save();
 }
 
-// Genera la CxC de un pedido a crÃ©dito (se llama al marcar Entregado)
+// Genera la CxC de un pedido a crédito (se llama al marcar Entregado)
 function _generarCxCDesdePedido(p) {
   if (!p.cxcPendiente) return;
   // Evitar duplicado si ya existe
@@ -1624,8 +1624,8 @@ function _generarCxCDesdePedido(p) {
   });
 }
 
-// Descuenta inventario de un pedido (menÃº + dieta) y muestra alertas.
-// Se llama cuando el pedido pasa a "En preparaciÃ³n".
+// Descuenta inventario de un pedido (menú + dieta) y muestra alertas.
+// Se llama cuando el pedido pasa a "En preparación".
 function _descontarInventarioPedido(p) {
   if (p.inventarioDescontado) return; // evitar doble descuento
   const alertasAgotado = [];
@@ -1633,10 +1633,10 @@ function _descontarInventarioPedido(p) {
 
   (p.items || []).forEach(item => {
     let receta = null;
-    // Platillo de menÃº
+    // Platillo de menú
     const platillo = menu.find(m => m.nombre === (item.nombre||item) || m.id === item.id);
     if (platillo?.receta?.length) receta = platillo.receta;
-    // Platillo de dieta: buscar receta en la cotizaciÃ³n de la dieta
+    // Platillo de dieta: buscar receta en la cotización de la dieta
     if (!receta && item.esDieta && item.dietaId) {
       const dieta = dietas.find(d => d.id === item.dietaId);
       const platCot = dieta?.cotizacion?.platillos?.find(pc => pc.nombre === item.nombre);
@@ -1657,13 +1657,13 @@ function _descontarInventarioPedido(p) {
 
   if (alertasAgotado.length || alertasBajo.length) {
     let msg = '';
-    if (alertasAgotado.length) msg += `â›” AGOTADO: ${alertasAgotado.join(', ')}. `;
-    if (alertasBajo.length) msg += `âš  Stock bajo: ${alertasBajo.join(', ')}.`;
+    if (alertasAgotado.length) msg += `⛔ AGOTADO: ${alertasAgotado.join(', ')}. `;
+    if (alertasBajo.length) msg += `⚠ Stock bajo: ${alertasBajo.join(', ')}.`;
     setTimeout(() => {
       const t = document.createElement('div');
       t.className = 'toast toast-error';
       t.style.cssText = 'max-width:420px;line-height:1.5;padding:12px 16px';
-      t.innerHTML = `<div style="font-size:12px;font-weight:600;margin-bottom:4px">âš  Alerta de inventario</div><div style="font-size:11px">${msg}</div>`;
+      t.innerHTML = `<div style="font-size:12px;font-weight:600;margin-bottom:4px">⚠ Alerta de inventario</div><div style="font-size:11px">${msg}</div>`;
       const tc = document.getElementById('toast-container');
       if (tc) { tc.appendChild(t); setTimeout(()=>t.remove(), 6000); }
     }, 300);
@@ -1680,71 +1680,71 @@ function verDetallePedido(id) {
       ${ESTADOS.map((e,i) => `<div style="display:flex;align-items:center;gap:4px">
         <span style="width:24px;height:24px;border-radius:50%;background:${i<=idxEstado?'var(--green)':'var(--bg4)'};display:flex;align-items:center;justify-content:center;font-size:11px;color:${i<=idxEstado?'#FFFFFF':'var(--text3)'}">${i+1}</span>
         <span style="font-size:11px;color:${i===idxEstado?'var(--green)':'var(--text3)'}">${e}</span>
-        ${i<ESTADOS.length-1?'<span style="color:var(--text3);margin:0 4px">â†’</span>':''}
+        ${i<ESTADOS.length-1?'<span style="color:var(--text3);margin:0 4px">→</span>':''}
       </div>`).join('')}
     </div>
     <div class="grid grid-2 mb-16" style="font-size:13px">
       <div><span class="text-dim">Cliente:</span> <strong>${p.cliente}</strong></div>
       <div><span class="text-dim">Canal:</span> ${p.canal}</div>
       <div><span class="text-dim">Fecha:</span> ${p.fecha}</div>
-      <div><span class="text-dim">MÃ©todo de pago:</span> <strong>${p.pago}${p.modoPago==='credito'?' (crÃ©dito)':''}</strong></div>
+      <div><span class="text-dim">Método de pago:</span> <strong>${p.pago}${p.modoPago==='credito'?' (crédito)':''}</strong></div>
       ${p.horaEntrega ? `<div><span class="text-dim">Hora entrega:</span> ${p.horaEntrega}</div>` : ''}
-      ${p.modoEnvio && p.modoEnvio!=='sin' ? `<div><span class="text-dim">EnvÃ­o:</span> ${p.modoEnvio}</div>` : ''}
+      ${p.modoEnvio && p.modoEnvio!=='sin' ? `<div><span class="text-dim">Envío:</span> ${p.modoEnvio}</div>` : ''}
     </div>
     ${(p.costoEnvio > 0 || p.envioClientePaga > 0 || p.envioAbsorbemos > 0) ? `
       <div class="card card-sm mb-12" style="background:var(--bg3)">
-        <div style="font-size:11px;color:var(--text3);margin-bottom:6px;font-weight:600">ðŸ›µ ENVÃO</div>
+        <div style="font-size:11px;color:var(--text3);margin-bottom:6px;font-weight:600">🛵 ENVÍO</div>
         ${p.direccion ? `
           <div class="flex justify-between items-center" style="padding-bottom:6px;margin-bottom:6px;border-bottom:1px solid var(--border)">
             <div>
-              <div style="font-size:12px;font-weight:600">ðŸ“ ${p.direccion.nombre||'DirecciÃ³n'}</div>
+              <div style="font-size:12px;font-weight:600">📍 ${p.direccion.nombre||'Dirección'}</div>
               ${p.direccion.direccion ? `<div style="font-size:11px;color:var(--text3)">${p.direccion.direccion}</div>` : ''}
             </div>
             ${p.direccion.maps ? `<a href="${p.direccion.maps}" target="_blank" class="btn btn-secondary btn-sm" style="padding:4px 10px;font-size:11px;text-decoration:none">Abrir Maps</a>` : ''}
           </div>` : ''}
         <div class="flex justify-between" style="font-size:12px"><span>Cliente paga:</span><span class="font-mono">${fmt(p.envioClientePaga||0)}</span></div>
         ${p.envioAbsorbemos > 0 ? `<div class="flex justify-between" style="font-size:12px;color:var(--amber)"><span>Nosotros absorbemos:</span><span class="font-mono">${fmt(p.envioAbsorbemos)}</span></div>` : ''}
-        <div class="flex justify-between" style="font-size:12px;color:var(--text2)"><span>Costo total envÃ­o:</span><span class="font-mono">${fmt(p.costoEnvio||0)}</span></div>
+        <div class="flex justify-between" style="font-size:12px;color:var(--text2)"><span>Costo total envío:</span><span class="font-mono">${fmt(p.costoEnvio||0)}</span></div>
       </div>` : ''}
     <div style="margin-bottom:12px">
       <div class="text-dim mb-8" style="font-size:12px">ITEMS (${(p.items||[]).reduce((s,i)=>s+(i.cantidad||1),0)} platillos)</div>
       ${p.items.map(i => `
         <div class="flex justify-between" style="padding:8px 0;border-bottom:1px solid var(--border)">
-          <span>${i.nombre || i} ${i.cantidad > 1 ? `Ã—${i.cantidad}` : ''}${i.tiempo ? ` <span style="font-size:10px;color:var(--text3)">(${i.tiempo})</span>`:''}</span>
+          <span>${i.nombre || i} ${i.cantidad > 1 ? `×${i.cantidad}` : ''}${i.tiempo ? ` <span style="font-size:10px;color:var(--text3)">(${i.tiempo})</span>`:''}</span>
           <span class="font-mono">${fmt((i.precio||0)*(i.cantidad||1))}</span>
         </div>`).join('')}
       <div class="flex justify-between mt-8"><strong>Total que paga el cliente</strong><strong class="highlight-green font-mono">${fmt(p.total)}</strong></div>
     </div>
-    ${p.notas ? `<div class="card card-sm mb-8" style="background:var(--amber-dim);border-color:rgba(255,122,0,0.3)"><span style="font-size:12px">ðŸ“ <strong>Notas:</strong> ${p.notas}</span></div>` : ''}
-    ${p.esCortesia ? `<div class="card card-sm mb-8" style="background:var(--purple-dim);border-color:rgba(155,89,182,0.3)"><span style="font-size:12px;color:var(--purple)">ðŸŽ CortesÃ­a â€” costo de producciÃ³n registrado como gasto de venta</span></div>` : ''}
-    ${(p.envioAbsorbemos > 0) ? `<div class="card card-sm" style="background:var(--purple-dim);border-color:rgba(155,89,182,0.2)"><span style="font-size:12px;color:var(--purple)">ðŸ“‰ EnvÃ­o absorbido: ${fmt(p.envioAbsorbemos)} (registrado como gasto)</span></div>` : ''}`;
+    ${p.notas ? `<div class="card card-sm mb-8" style="background:var(--amber-dim);border-color:rgba(255,122,0,0.3)"><span style="font-size:12px">📝 <strong>Notas:</strong> ${p.notas}</span></div>` : ''}
+    ${p.esCortesia ? `<div class="card card-sm mb-8" style="background:var(--purple-dim);border-color:rgba(155,89,182,0.3)"><span style="font-size:12px;color:var(--purple)">🎁 Cortesía — costo de producción registrado como gasto de venta</span></div>` : ''}
+    ${(p.envioAbsorbemos > 0) ? `<div class="card card-sm" style="background:var(--purple-dim);border-color:rgba(155,89,182,0.2)"><span style="font-size:12px;color:var(--purple)">📉 Envío absorbido: ${fmt(p.envioAbsorbemos)} (registrado como gasto)</span></div>` : ''}`;
   const footer = document.getElementById('detalle-footer');
   const nextEstado = ESTADOS[idxEstado + 1];
-  const esEditable = ['Nuevo','En preparaciÃ³n','Listo'].includes(p.estado);
+  const esEditable = ['Nuevo','En preparación','Listo'].includes(p.estado);
   footer.innerHTML = `
     ${p.estado !== 'Cancelado' ? `<button class="btn btn-danger btn-sm" onclick="cancelarPedido('${id}')">Cancelar</button>` : ''}
-    <button class="btn btn-secondary btn-sm" onclick="openCambiarPago('${id}')">ðŸ’³ Pago</button>
-    ${esEditable ? `<button class="btn btn-secondary btn-sm" onclick="openEditarPedido('${id}')">âœï¸ Editar</button>` : ''}
+    <button class="btn btn-secondary btn-sm" onclick="openCambiarPago('${id}')">💳 Pago</button>
+    ${esEditable ? `<button class="btn btn-secondary btn-sm" onclick="openEditarPedido('${id}')">✏️ Editar</button>` : ''}
     <div style="flex:1"></div>
-    ${nextEstado ? `<button class="btn btn-primary" onclick="avanzarEstado('${id}')">â†’ "${nextEstado}"</button>` : '<span class="badge badge-green">âœ“ Completado</span>'}`;
+    ${nextEstado ? `<button class="btn btn-primary" onclick="avanzarEstado('${id}')">→ "${nextEstado}"</button>` : '<span class="badge badge-green">✓ Completado</span>'}`;
   openModal('modal-detalle-pedido');
 }
 
-// ========== CAMBIAR MÃ‰TODO DE PAGO ==========
+// ========== CAMBIAR MÉTODO DE PAGO ==========
 function openEditarPedido(id) {
   const p = pedidos.find(x => x.id === id);
   if (!p) return;
   closeModal('modal-detalle-pedido');
-  // Abrir el modal completo de creaciÃ³n, luego precargar datos
+  // Abrir el modal completo de creación, luego precargar datos
   _editandoPedidoId = id;
   openNuevoPedido();
 
   setTimeout(() => {
-    // Cambiar tÃ­tulo y botÃ³n
+    // Cambiar título y botón
     const titEl = document.querySelector('#modal-pedido .modal-title');
     if (titEl) titEl.textContent = `Editar pedido #${id.slice(-4).toUpperCase()}`;
     const btnGuardar = document.querySelector('#modal-pedido .modal-footer .btn-primary');
-    if (btnGuardar) btnGuardar.textContent = 'âœ“ Guardar cambios';
+    if (btnGuardar) btnGuardar.textContent = '✓ Guardar cambios';
 
     // Cliente
     document.getElementById('pedido-cliente').value = p.clienteId || '';
@@ -1756,7 +1756,7 @@ function openEditarPedido(id) {
     const heEl = document.getElementById('pedido-hora-entrega'); if (heEl) heEl.value = p.horaEntrega || '';
     const ntEl = document.getElementById('pedido-notas'); if (ntEl) ntEl.value = p.notas || '';
 
-    // Cargar items del MENÃš (los que no son de dieta)
+    // Cargar items del MENÚ (los que no son de dieta)
     itemsPedidoActual = {};
     (p.items||[]).filter(i => !i.esDieta).forEach(item => {
       const plat = menu.find(m => m.nombre === item.nombre || m.id === item.id);
@@ -1768,7 +1768,7 @@ function openEditarPedido(id) {
       const qtyEl = document.getElementById('qty-'+pid);
       if (numEl) numEl.style.display = 'flex';
       if (qtyEl) qtyEl.textContent = item.cantidad||1;
-      if (checkEl) { checkEl.style.background='var(--green)'; checkEl.style.borderColor='var(--green)'; checkEl.textContent='âœ“'; }
+      if (checkEl) { checkEl.style.background='var(--green)'; checkEl.style.borderColor='var(--green)'; checkEl.textContent='✓'; }
     });
     actualizarConteoSel();
 
@@ -1780,7 +1780,7 @@ function openEditarPedido(id) {
       if (dietaSel && dietaId) {
         dietaSel.value = dietaId;
         mostrarPlatillosDieta(dietaId); // reconstruye la lista base
-        // Restaurar exactamente lo que se habÃ­a guardado: marcados, cantidades y precios
+        // Restaurar exactamente lo que se había guardado: marcados, cantidades y precios
         setTimeout(() => {
           (window._dietaPlatillosPrecios || []).forEach(pp => {
             const guardado = itemsDietaGuardados.find(g => g.nombre === pp.nombre);
@@ -1797,11 +1797,11 @@ function openEditarPedido(id) {
       }
     }
 
-    // CortesÃ­a
+    // Cortesía
     const cortEl = document.getElementById('pedido-cortesia');
     if (cortEl) { cortEl.checked = !!p.esCortesia; if (p.esCortesia) { const pc=document.getElementById('panel-cortesia'); if(pc) pc.style.display='block'; } }
 
-    // Modo de pago â€” activar el chip correspondiente
+    // Modo de pago — activar el chip correspondiente
     const modoPago = (p.pago === 'Pendiente') ? 'credito' : 'inmediato';
     const pagoChips = document.querySelectorAll('#chips-modo-pago .chip');
     pagoChips.forEach(c => {
@@ -1810,11 +1810,11 @@ function openEditarPedido(id) {
     });
 
     setTimeout(() => {
-      // MÃ©todo de pago especÃ­fico
+      // Método de pago específico
       if (p.pago && p.pago !== 'Pendiente') {
         const mpEl = document.getElementById('pedido-pago'); if (mpEl) mpEl.value = p.pago;
       }
-      // Modo de envÃ­o â€” activar chip
+      // Modo de envío — activar chip
       const envioModo = p.modoEnvio || 'sin_envio';
       modoEnvioActual = envioModo;
       document.querySelectorAll('#modal-pedido .chip').forEach(c => {
@@ -1822,7 +1822,7 @@ function openEditarPedido(id) {
         if (oc.includes('setModoEnvio') && oc.includes(`'${envioModo}'`)) c.click();
       });
       setTimeout(() => {
-        // Datos de envÃ­o
+        // Datos de envío
         const ecEl = document.getElementById('envio-costo'); if (ecEl) ecEl.value = p.costoEnvio || '';
         const emEl = document.getElementById('envio-empresa'); if (emEl) emEl.value = p.empresaEnvio || '';
         const cpEl = document.getElementById('envio-cliente-paga'); if (cpEl && p.envioClientePaga !== undefined) cpEl.value = p.envioClientePaga;
@@ -1858,7 +1858,7 @@ function openCambiarPago(id) {
   const p = pedidos.find(x => x.id === id);
   if (!p) return;
   document.getElementById('cambio-pago-pedido-id').value = id;
-  document.getElementById('cambio-pago-info').innerHTML = `<strong>${p.cliente}</strong> â€” Pedido #${id.slice(-4).toUpperCase()} â€” ${fmt(p.total)}<br><span style="font-size:11px;color:var(--text3)">Pago actual: <strong>${p.pago || 'Sin definir'}</strong></span>`;
+  document.getElementById('cambio-pago-info').innerHTML = `<strong>${p.cliente}</strong> — Pedido #${id.slice(-4).toUpperCase()} — ${fmt(p.total)}<br><span style="font-size:11px;color:var(--text3)">Pago actual: <strong>${p.pago || 'Sin definir'}</strong></span>`;
   document.getElementById('cambio-pago-metodo').value = p.pago || 'Efectivo';
   openModal('modal-cambiar-pago');
 }
@@ -1876,16 +1876,16 @@ function confirmarCambiarPago() {
   if (mov) {
     mov.metodo = nuevoMetodo;
   } else if (p.total > 0) {
-    // Si no existÃ­a movimiento (venÃ­a de crÃ©dito), crear entrada en caja
-    movCaja.push({ hora: hora(), pedidoId: id, cliente: p.cliente, metodo: nuevoMetodo, monto: p.total, tipo: 'venta', estado: p.estado === 'Entregado' ? 'Cobrado' : 'Nuevo', concepto: 'Pago registrado (cambio de mÃ©todo)' });
-    // Cerrar CxC si existÃ­a
+    // Si no existía movimiento (venía de crédito), crear entrada en caja
+    movCaja.push({ hora: hora(), pedidoId: id, cliente: p.cliente, metodo: nuevoMetodo, monto: p.total, tipo: 'venta', estado: p.estado === 'Entregado' ? 'Cobrado' : 'Nuevo', concepto: 'Pago registrado (cambio de método)' });
+    // Cerrar CxC si existía
     const cxcItem = cxc.find(c => c.pedidoId === id && c.estado !== 'pagada');
     if (cxcItem) { cxcItem.estado = 'pagada'; cxcItem.fechaPago = hoy(); }
   }
   save();
   closeModal('modal-cambiar-pago');
   closeModal('modal-detalle-pedido');
-  toast(`MÃ©todo de pago actualizado a "${nuevoMetodo}"`);
+  toast(`Método de pago actualizado a "${nuevoMetodo}"`);
   renderPedidos();
   renderDashboard();
 }
@@ -1896,14 +1896,14 @@ function avanzarEstado(id) {
   const idx = ESTADOS.indexOf(p.estado);
   if (idx < ESTADOS.length - 1) {
     p.estado = ESTADOS[idx + 1];
-    // Al pasar a "En preparaciÃ³n": descontar insumos del inventario
-    if (p.estado === 'En preparaciÃ³n') {
+    // Al pasar a "En preparación": descontar insumos del inventario
+    if (p.estado === 'En preparación') {
       _descontarInventarioPedido(p);
     }
     if (p.estado === 'Entregado') {
-      // Marcar la fecha de entrega (dÃ­a en que afecta las cuentas)
+      // Marcar la fecha de entrega (día en que afecta las cuentas)
       p.fechaEntrega = hoy();
-      // Registrar todos los movimientos financieros ahora que se entregÃ³
+      // Registrar todos los movimientos financieros ahora que se entregó
       _registrarFinancierosPedido(p);
       _generarCxCDesdePedido(p);
     }
@@ -1920,10 +1920,10 @@ function avanzarEstado(id) {
 function _reversarPedido(p, estadoAnterior, sinMerma) {
   const id = p.id;
 
-  // 1. Insumos: solo si se habÃ­an descontado (estado habÃ­a llegado a "En preparaciÃ³n" o mÃ¡s)
+  // 1. Insumos: solo si se habían descontado (estado había llegado a "En preparación" o más)
   if (p.inventarioDescontado && p.items && p.items.length) {
     p.items.forEach(item => {
-      // Obtener receta (menÃº o dieta)
+      // Obtener receta (menú o dieta)
       let receta = null;
       const plat = menu.find(m => m.nombre === item.nombre || m.id === item.id);
       if (plat?.receta?.length) receta = plat.receta;
@@ -1935,19 +1935,19 @@ function _reversarPedido(p, estadoAnterior, sinMerma) {
       if (!receta) return;
 
       // sinMerma = true (ej. "Error al capturar"): devolver insumos, NO registrar merma
-      const yaPreparado = (estadoAnterior === 'Entregado' || estadoAnterior === 'Listo' || estadoAnterior === 'En preparaciÃ³n');
+      const yaPreparado = (estadoAnterior === 'Entregado' || estadoAnterior === 'Listo' || estadoAnterior === 'En preparación');
       if (yaPreparado && !sinMerma) {
-        // Ya se habÃ­a preparado â†’ merma
+        // Ya se había preparado → merma
         const totalMerma = receta.reduce((s, l) => {
           const ing = inventario.find(i => i.id === l.ingId);
           return s + (ing ? (ing.costo||0) * l.cantidad * (item.cantidad || 1) : 0);
         }, 0);
         if (totalMerma > 0) {
-          historialMerma.push({ id: uid(), fecha: hoy(), hora: hora(), pedidoId: id, cliente: p.cliente, concepto: `CancelaciÃ³n: ${item.nombre} Ã—${item.cantidad||1}`, monto: totalMerma, tipo: 'pedido_cancelado' });
+          historialMerma.push({ id: uid(), fecha: hoy(), hora: hora(), pedidoId: id, cliente: p.cliente, concepto: `Cancelación: ${item.nombre} ×${item.cantidad||1}`, monto: totalMerma, tipo: 'pedido_cancelado' });
           gastos.push({ id: uid(), concepto: `Merma: ${item.nombre} (cancelado)`, categoria: 'Merma', monto: totalMerma, fecha: hoy(), recurrente: 'no', notas: `Pedido #${id.slice(-4).toUpperCase()}` });
         }
       } else {
-        // Devolver insumos al inventario (nunca se preparÃ³, o fue error de captura)
+        // Devolver insumos al inventario (nunca se preparó, o fue error de captura)
         receta.forEach(linea => {
           const ing = inventario.find(i => i.id === linea.ingId);
           if (ing) ing.stock = Math.round((ing.stock + linea.cantidad * (item.cantidad || 1)) * 1000) / 1000;
@@ -1956,7 +1956,7 @@ function _reversarPedido(p, estadoAnterior, sinMerma) {
     });
   }
 
-  // 2. Revertir gastos ligados al pedido (cortesÃ­a, envÃ­o gratis, etc.)
+  // 2. Revertir gastos ligados al pedido (cortesía, envío gratis, etc.)
   gastos = gastos.filter(g => g.pedidoId !== id);
 
   // 3. Revertir movimientos de caja del pedido
@@ -1965,7 +1965,7 @@ function _reversarPedido(p, estadoAnterior, sinMerma) {
   // 4. Eliminar CxC asociada
   cxc = cxc.filter(c => c.pedidoId !== id);
 
-  // 5. Eliminar CxP asociada (envÃ­o DiDi)
+  // 5. Eliminar CxP asociada (envío DiDi)
   cxp = cxp.filter(c => c.pedidoId !== id);
 }
 
@@ -1979,16 +1979,16 @@ function cancelarPedido(id) {
   closeModal('modal-detalle-pedido');
   const esCort = p.esCortesia;
   const msg = esCort
-    ? 'CortesÃ­a cancelada â€” gasto revertido en estado de resultados'
-    : estadoAnterior === 'En preparaciÃ³n'
-      ? 'Pedido cancelado â€” insumos registrados como merma'
-      : 'Pedido cancelado â€” insumos devueltos al inventario';
+    ? 'Cortesía cancelada — gasto revertido en estado de resultados'
+    : estadoAnterior === 'En preparación'
+      ? 'Pedido cancelado — insumos registrados como merma'
+      : 'Pedido cancelado — insumos devueltos al inventario';
   toast(msg, 'error');
   renderPedidos();
   renderDashboard();
 }
 
-// ========== MENÃš ==========
+// ========== MENÚ ==========
 let categoriaFiltro = 'todas';
 function renderMenu() {
   actualizarSelectsCategorias();
@@ -2005,21 +2005,21 @@ function renderMenu() {
         <div style="font-size:15px;font-weight:600;margin-bottom:4px">${m.nombre}</div>
         <div style="font-size:12px;color:var(--text3);margin-bottom:10px;line-height:1.5">${m.desc || ''}</div>
         ${m.etiquetas?.length ? `<div class="flex gap-4 mb-10" style="flex-wrap:wrap">${m.etiquetas.map(e=>`<span style="font-size:10px;padding:2px 7px;background:var(--bg3);border-radius:10px;color:var(--text2)">${e}</span>`).join('')}</div>` : ''}
-        ${m.calorias ? `<div style="font-size:11px;color:var(--text3);margin-bottom:8px">ðŸ”¥ ${m.calorias} kcal</div>` : ''}
+        ${m.calorias ? `<div style="font-size:11px;color:var(--text3);margin-bottom:8px">🔥 ${m.calorias} kcal</div>` : ''}
         <hr class="divider">
         <div class="flex justify-between items-center">
           <div>
             <div style="font-size:18px;font-weight:600;color:var(--green)">${fmt(m.precio)}</div>
-            <div style="font-size:11px;color:var(--text3)">costo: ${fmt(m.costo)} â€¢ margen: <span style="color:${margen>50?'var(--green)':margen>30?'var(--amber)':'var(--red)'}">${margen}%</span></div>
-            ${m.receta?.length ? `<div style="font-size:11px;color:var(--text3);margin-top:2px">ðŸ“‹ ${m.receta.length} ingrediente${m.receta.length>1?'s':''} en receta</div>` : '<div style="font-size:11px;color:var(--amber);margin-top:2px">âš  Sin receta cargada</div>'}
+            <div style="font-size:11px;color:var(--text3)">costo: ${fmt(m.costo)} • margen: <span style="color:${margen>50?'var(--green)':margen>30?'var(--amber)':'var(--red)'}">${margen}%</span></div>
+            ${m.receta?.length ? `<div style="font-size:11px;color:var(--text3);margin-top:2px">📋 ${m.receta.length} ingrediente${m.receta.length>1?'s':''} en receta</div>` : '<div style="font-size:11px;color:var(--amber);margin-top:2px">⚠ Sin receta cargada</div>'}
           </div>
           <div class="flex gap-6">
             <button class="btn btn-secondary btn-sm" onclick="editarPlatillo('${m.id}')">Editar</button>
-            <button class="btn btn-danger btn-sm" onclick="eliminarPlatillo('${m.id}')">ðŸ—‘</button>
+            <button class="btn btn-danger btn-sm" onclick="eliminarPlatillo('${m.id}')">🗑</button>
           </div>
         </div>
       </div>`;
-  }).join('') || `<div class="empty" style="grid-column:1/-1"><div class="empty-icon">ðŸ¥—</div><div class="empty-title">Sin platillos en esta categorÃ­a</div></div>`;
+  }).join('') || `<div class="empty" style="grid-column:1/-1"><div class="empty-icon">🥗</div><div class="empty-title">Sin platillos en esta categoría</div></div>`;
 }
 
 function filtrarCategoria(el, cat) {
@@ -2056,7 +2056,7 @@ function agregarLineaReceta() {
 function renderRecetaLineas() {
   const cont = document.getElementById('receta-items');
   if (recetaActual.length === 0) {
-    cont.innerHTML = '<div style="padding:12px;text-align:center;font-size:12px;color:var(--text3)">Sin ingredientes. Agrega uno para calcular el costo automÃ¡ticamente.</div>';
+    cont.innerHTML = '<div style="padding:12px;text-align:center;font-size:12px;color:var(--text3)">Sin ingredientes. Agrega uno para calcular el costo automáticamente.</div>';
     document.getElementById('receta-costo-total').textContent = '$0.00';
     document.getElementById('platillo-costo').value = '';
     return;
@@ -2075,7 +2075,7 @@ function renderRecetaLineas() {
              placeholder="0" value="${linea.cantidad||''}"
              onchange="actualizarLineaReceta(${idx},'cantidad',parseFloat(this.value)||0)">
       <span class="font-mono" style="font-size:12px;color:var(--amber);padding-left:8px">${fmt(costoLinea)}</span>
-      <button onclick="eliminarLineaReceta(${idx})" style="background:none;border:none;color:var(--red);cursor:pointer;font-size:16px;padding:0 4px;">Ã—</button>
+      <button onclick="eliminarLineaReceta(${idx})" style="background:none;border:none;color:var(--red);cursor:pointer;font-size:16px;padding:0 4px;">×</button>
     </div>`;
   }).join('');
   recalcularCostoReceta();
@@ -2152,7 +2152,7 @@ function guardarPlatillo() {
     toast('Platillo actualizado');
   } else {
     menu.push({ id: uid(), ...datos });
-    toast('Platillo agregado al menÃº');
+    toast('Platillo agregado al menú');
   }
   save();
   closeModal('modal-platillo');
@@ -2178,11 +2178,11 @@ function toggleEtiqueta(el, etiqueta) {
 // ========== DIETAS ==========
 // ====== ESTADOS DEL PIPELINE DE DIETAS ======
 const DIETA_ESTADOS = [
-  { key: 'recibida',   label: 'Recibida',   emoji: 'ðŸ“¥', color: 'var(--text2)' },
-  { key: 'cotizada',   label: 'Cotizada',   emoji: 'ðŸ’°', color: 'var(--blue)' },
-  { key: 'enviada',    label: 'Enviada',    emoji: 'ðŸ“¤', color: 'var(--amber)' },
-  { key: 'confirmada', label: 'Confirmada', emoji: 'âœ…', color: 'var(--green)' },
-  { key: 'rechazada',  label: 'Rechazada',  emoji: 'âŒ', color: 'var(--red)' },
+  { key: 'recibida',   label: 'Recibida',   emoji: '📥', color: 'var(--text2)' },
+  { key: 'cotizada',   label: 'Cotizada',   emoji: '💰', color: 'var(--blue)' },
+  { key: 'enviada',    label: 'Enviada',    emoji: '📤', color: 'var(--amber)' },
+  { key: 'confirmada', label: 'Confirmada', emoji: '✅', color: 'var(--green)' },
+  { key: 'rechazada',  label: 'Rechazada',  emoji: '❌', color: 'var(--red)' },
 ];
 
 function _diasDesde(fechaStr) {
@@ -2194,14 +2194,14 @@ function _textoHaceCuanto(fechaStr) {
   const d = _diasDesde(fechaStr);
   if (d === null) return '';
   if (d === 0) return 'hoy';
-  if (d === 1) return 'hace 1 dÃ­a';
-  if (d < 30) return `hace ${d} dÃ­as`;
+  if (d === 1) return 'hace 1 día';
+  if (d < 30) return `hace ${d} días`;
   const meses = Math.floor(d/30);
   return meses === 1 ? 'hace 1 mes' : `hace ${meses} meses`;
 }
 
 function renderDietas() {
-  // MigraciÃ³n: dietas viejas sin estado â†’ confirmada + vigente
+  // Migración: dietas viejas sin estado → confirmada + vigente
   let cambios = false;
   dietas.forEach(d => {
     if (!d.estado) {
@@ -2213,7 +2213,7 @@ function renderDietas() {
   });
   if (cambios) save();
 
-  // KPIs de conversiÃ³n (mes en curso)
+  // KPIs de conversión (mes en curso)
   const desde = hoy().slice(0,7) + '-01';
   const enMes = d => (d.fechaEnviada || d.fechaConfirmada || d.fechaRechazada || d.fechaRecibida || '') >= desde;
   const enviadas = dietas.filter(d => ['enviada','confirmada','rechazada'].includes(d.estado) && enMes(d)).length;
@@ -2226,7 +2226,7 @@ function renderDietas() {
   set('diet-kpi-confirmadas', confirmadas);
   set('diet-kpi-rechazadas', rechazadas);
   set('diet-kpi-pendientes', pendientes);
-  set('diet-kpi-conversion', `${conv}% conversiÃ³n`);
+  set('diet-kpi-conversion', `${conv}% conversión`);
 
   // Pipeline kanban
   const kanban = document.getElementById('dietas-kanban');
@@ -2239,7 +2239,7 @@ function renderDietas() {
           <span style="font-size:12px;font-weight:600;color:${est.color}">${est.emoji} ${est.label}</span>
           <span class="badge badge-gray" style="font-size:10px">${items.length}</span>
         </div>
-        ${items.map(d => _tarjetaDietaPipeline(d)).join('') || '<div style="font-size:11px;color:var(--text3);text-align:center;padding:12px 4px">â€”</div>'}
+        ${items.map(d => _tarjetaDietaPipeline(d)).join('') || '<div style="font-size:11px;color:var(--text3);text-align:center;padding:12px 4px">—</div>'}
       </div>`;
     }).join('');
   }
@@ -2252,21 +2252,21 @@ function _tarjetaDietaPipeline(d) {
   const tieneCot = d.cotizacion && d.cotizacion.platillos?.length > 0;
   const fechaEstado = d['fecha'+d.estado.charAt(0).toUpperCase()+d.estado.slice(1)] || d.fechaRecibida;
   let acciones = '';
-  if (d.estado === 'recibida') acciones = `<button class="btn btn-primary btn-sm" style="font-size:10px;padding:3px 8px" onclick="openCotizacion('${d.id}')">ðŸ’° Cotizar</button>`;
-  else if (d.estado === 'cotizada') acciones = `<button class="btn btn-secondary btn-sm" style="font-size:10px;padding:3px 8px" onclick="openCotizacion('${d.id}')">âœï¸</button><button class="btn btn-primary btn-sm" style="font-size:10px;padding:3px 8px" onclick="avanzarDieta('${d.id}','enviada')">ðŸ“¤ Enviar</button>`;
-  else if (d.estado === 'enviada') acciones = `<button class="btn btn-secondary btn-sm" style="font-size:10px;padding:3px 8px;color:var(--green)" onclick="avanzarDieta('${d.id}','confirmada')">âœ…</button><button class="btn btn-secondary btn-sm" style="font-size:10px;padding:3px 8px;color:var(--red)" onclick="rechazarDieta('${d.id}')">âŒ</button>`;
-  else if (d.estado === 'rechazada') acciones = `<button class="btn btn-secondary btn-sm" style="font-size:10px;padding:3px 8px" onclick="openCotizacion('${d.id}')">â†» Recotizar</button>`;
-  else if (d.estado === 'confirmada') acciones = `<span class="badge badge-green" style="font-size:9px">${d.vigente?'VIGENTE':'histÃ³rica'}</span>`;
+  if (d.estado === 'recibida') acciones = `<button class="btn btn-primary btn-sm" style="font-size:10px;padding:3px 8px" onclick="openCotizacion('${d.id}')">💰 Cotizar</button>`;
+  else if (d.estado === 'cotizada') acciones = `<button class="btn btn-secondary btn-sm" style="font-size:10px;padding:3px 8px" onclick="openCotizacion('${d.id}')">✏️</button><button class="btn btn-primary btn-sm" style="font-size:10px;padding:3px 8px" onclick="avanzarDieta('${d.id}','enviada')">📤 Enviar</button>`;
+  else if (d.estado === 'enviada') acciones = `<button class="btn btn-secondary btn-sm" style="font-size:10px;padding:3px 8px;color:var(--green)" onclick="avanzarDieta('${d.id}','confirmada')">✅</button><button class="btn btn-secondary btn-sm" style="font-size:10px;padding:3px 8px;color:var(--red)" onclick="rechazarDieta('${d.id}')">❌</button>`;
+  else if (d.estado === 'rechazada') acciones = `<button class="btn btn-secondary btn-sm" style="font-size:10px;padding:3px 8px" onclick="openCotizacion('${d.id}')">↻ Recotizar</button>`;
+  else if (d.estado === 'confirmada') acciones = `<span class="badge badge-green" style="font-size:9px">${d.vigente?'VIGENTE':'histórica'}</span>`;
 
   return `
   <div class="card" style="padding:10px;margin-bottom:8px;cursor:default">
     <div style="font-size:13px;font-weight:600;margin-bottom:2px">${d.clienteNombre}</div>
     ${d.nombre ? `<div style="font-size:10px;color:var(--text3);margin-bottom:4px">${d.nombre}</div>` : ''}
-    ${tieneCot ? `<div style="font-size:11px;color:var(--green);font-family:'DM Mono',monospace;margin-bottom:4px">${fmt(d.cotizacion.preciodia)}/dÃ­a</div>` : ''}
-    ${d.pdfRef?.nombre ? `<div style="font-size:10px;color:var(--text2);margin-bottom:4px">ðŸ“„ ${d.pdfRef.nombre}</div>` : ''}
+    ${tieneCot ? `<div style="font-size:11px;color:var(--green);font-family:'DM Mono',monospace;margin-bottom:4px">${fmt(d.cotizacion.preciodia)}/día</div>` : ''}
+    ${d.pdfRef?.nombre ? `<div style="font-size:10px;color:var(--text2);margin-bottom:4px">📄 ${d.pdfRef.nombre}</div>` : ''}
     <div style="font-size:10px;color:var(--text3);margin-bottom:6px">${_textoHaceCuanto(fechaEstado)}</div>
     <div class="flex gap-4" style="flex-wrap:wrap">${acciones}
-      <button class="btn btn-danger btn-sm" style="font-size:10px;padding:3px 6px" onclick="eliminarDieta('${d.id}')">ðŸ—‘</button>
+      <button class="btn btn-danger btn-sm" style="font-size:10px;padding:3px 6px" onclick="eliminarDieta('${d.id}')">🗑</button>
     </div>
   </div>`;
 }
@@ -2281,26 +2281,26 @@ function renderDietasVigentes() {
     return `
     <div class="card" style="padding:16px;border-color:rgba(46,204,113,0.25)">
       <div class="flex justify-between items-center mb-8">
-        <span class="badge badge-green">âœ… Vigente Â· ${_textoHaceCuanto(d.fechaConfirmada)}</span>
+        <span class="badge badge-green">✅ Vigente · ${_textoHaceCuanto(d.fechaConfirmada)}</span>
         <div class="flex gap-6">
-          <button class="btn btn-secondary btn-sm" onclick="openCotizacion('${d.id}')">âœï¸ Ver/editar</button>
-          <button class="btn btn-secondary btn-sm" onclick="verHistorialDieta('${d.clienteId}')">ðŸ• Historial</button>
+          <button class="btn btn-secondary btn-sm" onclick="openCotizacion('${d.id}')">✏️ Ver/editar</button>
+          <button class="btn btn-secondary btn-sm" onclick="verHistorialDieta('${d.clienteId}')">🕐 Historial</button>
         </div>
       </div>
       <div style="font-size:15px;font-weight:600;margin-bottom:2px">${d.clienteNombre}</div>
       ${d.nombre ? `<div style="font-size:12px;color:var(--text3);margin-bottom:8px">${d.nombre}</div>` : ''}
-      ${d.pdfRef?.dataUrl ? `<div style="margin-bottom:8px"><a href="${d.pdfRef.dataUrl}" download="${d.pdfRef.nombre}" style="font-size:11px;color:var(--blue);text-decoration:none">ðŸ“„ ${d.pdfRef.nombre} (descargar)</a></div>` : ''}
+      ${d.pdfRef?.dataUrl ? `<div style="margin-bottom:8px"><a href="${d.pdfRef.dataUrl}" download="${d.pdfRef.nombre}" style="font-size:11px;color:var(--blue);text-decoration:none">📄 ${d.pdfRef.nombre} (descargar)</a></div>` : ''}
       ${cot ? `
         <div style="background:var(--green-dim);border:1px solid rgba(46,204,113,0.2);border-radius:6px;padding:10px">
           <div style="font-size:11px;color:var(--text2);margin-bottom:6px">${nPlatillos} platillo${nPlatillos!==1?'s':''}</div>
           <div class="grid" style="grid-template-columns:repeat(3,1fr);gap:6px">
-            <div style="text-align:center;background:var(--bg2);border-radius:6px;padding:8px"><div style="font-size:14px;font-weight:700;color:var(--green)">${fmt(cot.preciodia)}</div><div style="font-size:10px;color:var(--text3)">dÃ­a</div></div>
+            <div style="text-align:center;background:var(--bg2);border-radius:6px;padding:8px"><div style="font-size:14px;font-weight:700;color:var(--green)">${fmt(cot.preciodia)}</div><div style="font-size:10px;color:var(--text3)">día</div></div>
             <div style="text-align:center;background:var(--bg2);border-radius:6px;padding:8px"><div style="font-size:14px;font-weight:700;color:var(--green)">${fmt(cot.preciosemana)}</div><div style="font-size:10px;color:var(--text3)">semana</div></div>
             <div style="text-align:center;background:var(--bg2);border-radius:6px;padding:8px"><div style="font-size:14px;font-weight:700;color:var(--green)">${fmt(cot.preciomes)}</div><div style="font-size:10px;color:var(--text3)">mes</div></div>
           </div>
         </div>` : ''}
     </div>`;
-  }).join('') || '<div class="empty" style="grid-column:1/-1"><div class="empty-icon">ðŸ½</div><div class="empty-title">Sin dietas vigentes</div><div class="empty-text">Confirma una cotizaciÃ³n para activar la dieta de un cliente</div></div>';
+  }).join('') || '<div class="empty" style="grid-column:1/-1"><div class="empty-icon">🍽</div><div class="empty-title">Sin dietas vigentes</div><div class="empty-text">Confirma una cotización para activar la dieta de un cliente</div></div>';
 }
 
 // ====== TRANSICIONES DE ESTADO ======
@@ -2312,7 +2312,7 @@ function avanzarDieta(id, nuevoEstado) {
   d[campo] = hoy();
 
   if (nuevoEstado === 'confirmada') {
-    // Las demÃ¡s dietas confirmadas del mismo cliente pasan a histÃ³ricas
+    // Las demás dietas confirmadas del mismo cliente pasan a históricas
     dietas.forEach(otra => {
       if (otra.id !== id && otra.clienteId === d.clienteId && otra.estado === 'confirmada') {
         otra.vigente = false;
@@ -2338,7 +2338,7 @@ function rechazarDieta(id) {
   d.fechaRechazada = hoy();
   d.motivoRechazo = motivo;
   save();
-  toast('CotizaciÃ³n marcada como rechazada', 'error');
+  toast('Cotización marcada como rechazada', 'error');
   renderDietas();
 }
 
@@ -2347,8 +2347,8 @@ function verHistorialDieta(clienteId) {
   const cli = clientes.find(c => c.id === clienteId);
   if (!historico.length) { toast('Sin historial para este cliente'); return; }
   const lista = historico.sort((a,b)=>(b.fechaConfirmada||'').localeCompare(a.fechaConfirmada||''))
-    .map(d => `â€¢ ${d.nombre||'Dieta'} â€” ${fmt(d.cotizacion?.preciodia||0)}/dÃ­a â€” ${d.vigente?'VIGENTE':'histÃ³rica'} (${fmtFecha(d.fechaConfirmada)})`).join('\n');
-  alert(`Historial de dietas â€” ${cli?.nombre||''}\n\n${lista}`);
+    .map(d => `• ${d.nombre||'Dieta'} — ${fmt(d.cotizacion?.preciodia||0)}/día — ${d.vigente?'VIGENTE':'histórica'} (${fmtFecha(d.fechaConfirmada)})`).join('\n');
+  alert(`Historial de dietas — ${cli?.nombre||''}\n\n${lista}`);
 }
 
 // ====== REMARKETING ======
@@ -2360,19 +2360,19 @@ function openRemarketing() {
 function renderRemarketing() {
   const cont = document.getElementById('remarketing-lista');
   if (!cont) return;
-  // Rechazados + confirmados con 7+ dÃ­as sin actividad
+  // Rechazados + confirmados con 7+ días sin actividad
   const candidatos = [];
   dietas.forEach(d => {
     if (d.estado === 'rechazada') {
-      candidatos.push({ dieta: d, razon: 'RechazÃ³ cotizaciÃ³n', dias: _diasDesde(d.fechaRechazada) });
+      candidatos.push({ dieta: d, razon: 'Rechazó cotización', dias: _diasDesde(d.fechaRechazada) });
     } else if (d.estado === 'confirmada' && d.vigente) {
       const dias = _diasDesde(d.fechaConfirmada);
-      if (dias !== null && dias >= 7) candidatos.push({ dieta: d, razon: `Confirmada hace ${dias} dÃ­as`, dias });
+      if (dias !== null && dias >= 7) candidatos.push({ dieta: d, razon: `Confirmada hace ${dias} días`, dias });
     }
   });
   candidatos.sort((a,b)=>(b.dias||0)-(a.dias||0));
   if (!candidatos.length) {
-    cont.innerHTML = '<div class="empty"><div class="empty-icon">âœ…</div><div class="empty-title">Nada por ahora</div><div class="empty-text">No hay clientes pendientes de seguimiento</div></div>';
+    cont.innerHTML = '<div class="empty"><div class="empty-icon">✅</div><div class="empty-title">Nada por ahora</div><div class="empty-text">No hay clientes pendientes de seguimiento</div></div>';
     return;
   }
   cont.innerHTML = `<div style="font-size:11px;font-weight:600;color:var(--text3);margin-bottom:8px">${candidatos.length} CLIENTE(S) PARA CONTACTAR</div>` +
@@ -2384,10 +2384,10 @@ function renderRemarketing() {
       <div class="flex justify-between items-center" style="padding:10px;border:1px solid var(--border);border-radius:8px;margin-bottom:6px">
         <div>
           <div style="font-size:13px;font-weight:600">${c.dieta.clienteNombre}</div>
-          <div style="font-size:11px;color:var(--text3)">${c.razon}${tieneTel?'':' Â· âš  sin telÃ©fono'}</div>
+          <div style="font-size:11px;color:var(--text3)">${c.razon}${tieneTel?'':' · ⚠ sin teléfono'}</div>
         </div>
         ${tieneTel
-          ? `<button class="btn btn-primary btn-sm" onclick="enviarWhatsappRemarketing('${c.dieta.clienteId}')">ðŸ“² WhatsApp</button>`
+          ? `<button class="btn btn-primary btn-sm" onclick="enviarWhatsappRemarketing('${c.dieta.clienteId}')">📲 WhatsApp</button>`
           : `<span class="badge badge-gray" style="font-size:10px">Sin tel.</span>`}
       </div>`;
     }).join('');
@@ -2397,7 +2397,7 @@ function enviarWhatsappRemarketing(clienteId) {
   const cli = clientes.find(c => c.id === clienteId);
   if (!cli) return;
   let tel = (cli.tel||'').replace(/\D/g,'');
-  if (tel.length === 10) tel = '521' + tel; // MÃ©xico
+  if (tel.length === 10) tel = '521' + tel; // México
   else if (tel.length === 12 && tel.startsWith('52')) tel = '521' + tel.slice(2);
   const plantilla = document.getElementById('remarketing-mensaje').value || '';
   const mensaje = plantilla.replace(/\[Nombre\]/g, cli.nombre.split(' ')[0]);
@@ -2407,13 +2407,13 @@ function enviarWhatsappRemarketing(clienteId) {
 
 function openNuevaDieta() {
   document.getElementById('dieta-edit-id').value = '';
-  document.getElementById('modal-dieta-titulo').textContent = 'Nueva cotizaciÃ³n de dieta';
+  document.getElementById('modal-dieta-titulo').textContent = 'Nueva cotización de dieta';
   const sel = document.getElementById('dieta-cliente');
   sel.innerHTML = '<option value="">Seleccionar cliente...</option>' +
     clientes.map(c => `<option value="${c.id}">${c.nombre}</option>`).join('');
   document.getElementById('dieta-nombre').value = '';
   document.getElementById('dieta-instrucciones').value = '';
-  document.getElementById('dieta-pdf-label').textContent = 'ðŸ“„ Haz clic para subir el PDF que mandÃ³ el cliente';
+  document.getElementById('dieta-pdf-label').textContent = '📄 Haz clic para subir el PDF que mandó el cliente';
   document.getElementById('dieta-pdf-input').value = '';
   window._dietaPDF = null;
   openModal('modal-dieta');
@@ -2425,7 +2425,7 @@ function cargarPDFDieta(input) {
   const reader = new FileReader();
   reader.onload = e => {
     window._dietaPDF = { nombre: file.name, dataUrl: e.target.result };
-    document.getElementById('dieta-pdf-label').innerHTML = `âœ… <strong>${file.name}</strong> cargado`;
+    document.getElementById('dieta-pdf-label').innerHTML = `✅ <strong>${file.name}</strong> cargado`;
   };
   reader.readAsDataURL(file);
 }
@@ -2463,11 +2463,11 @@ function guardarDieta() {
   }
   save();
   closeModal('modal-dieta');
-  toast('CotizaciÃ³n guardada');
+  toast('Cotización guardada');
   renderDietas();
 }
 
-// ---- CotizaciÃ³n ----
+// ---- Cotización ----
 let cotizacionDietaId = null;
 let platillosCotizacion = [];
 
@@ -2475,11 +2475,11 @@ function openCotizacion(dietaId) {
   cotizacionDietaId = dietaId;
   const d = dietas.find(x => x.id === dietaId);
   if (!d) return;
-  document.getElementById('cotizacion-titulo').textContent = `CotizaciÃ³n â€” ${d.nombre} (${d.clienteNombre})`;
-  // Cargar cotizaciÃ³n existente o vacÃ­a
+  document.getElementById('cotizacion-titulo').textContent = `Cotización — ${d.nombre} (${d.clienteNombre})`;
+  // Cargar cotización existente o vacía
   platillosCotizacion = d.cotizacion?.platillos ? JSON.parse(JSON.stringify(d.cotizacion.platillos)) : [];
   document.getElementById('cotizacion-notas').value = d.cotizacion?.notas || '';
-  // Restaurar mÃ¡rgenes guardados
+  // Restaurar márgenes guardados
   const mDiaEl = document.getElementById('cot-margen-dia-val');
   const mSemEl = document.getElementById('cot-margen-sem-val');
   const mMesEl = document.getElementById('cot-margen-mes-val');
@@ -2491,7 +2491,7 @@ function openCotizacion(dietaId) {
   openModal('modal-cotizacion');
 }
 
-const TIEMPOS_COMIDA = ['Desayuno', 'ColaciÃ³n AM', 'Comida', 'ColaciÃ³n PM', 'Cena', 'Cena ligera', 'Otro'];
+const TIEMPOS_COMIDA = ['Desayuno', 'Colación AM', 'Comida', 'Colación PM', 'Cena', 'Cena ligera', 'Otro'];
 
 function agregarPlatilloCotizacion() {
   platillosCotizacion.push({ nombre: '', tiempo: 'Desayuno', ingIds: [], costo: 0, notas: '' });
@@ -2520,7 +2520,7 @@ function renderPlatillosCotizacion() {
           ${TIEMPOS_COMIDA.map(t=>`<option ${t===p.tiempo?'selected':''}>${t}</option>`).join('')}
         </select>
         <span style="font-size:12px;color:var(--red);text-align:right;font-family:'DM Mono',monospace">${fmt(costoPlat)}</span>
-        <button onclick="eliminarPlatilloCot(${idx})" style="background:none;border:none;color:var(--red);cursor:pointer;font-size:16px">Ã—</button>
+        <button onclick="eliminarPlatilloCot(${idx})" style="background:none;border:none;color:var(--red);cursor:pointer;font-size:16px">×</button>
       </div>
       <!-- Ingredientes del platillo -->
       <div style="padding-left:34px">
@@ -2533,7 +2533,7 @@ function renderPlatillosCotizacion() {
             </select>
             <input type="number" class="form-input" style="font-size:11px;padding:4px 6px" placeholder="cant"
                    value="${l.cantidad||''}" onchange="actualizarLineaCot(${idx},${li},'cantidad',parseFloat(this.value)||0)">
-            <button onclick="eliminarLineaCot(${idx},${li})" style="background:none;border:none;color:var(--red);cursor:pointer;font-size:14px">Ã—</button>
+            <button onclick="eliminarLineaCot(${idx},${li})" style="background:none;border:none;color:var(--red);cursor:pointer;font-size:14px">×</button>
           `).join('')}
         </div>
         <button onclick="agregarLineaCot(${idx})" class="btn btn-secondary btn-sm" style="font-size:11px;padding:3px 8px">+ ingrediente</button>
@@ -2626,7 +2626,7 @@ function renderTablaPreciosCot() {
     const sel = p.seleccionado !== false;
     return `
     <div style="display:grid;grid-template-columns:1.4fr 70px 1fr 1fr 1fr;padding:7px 10px;border-top:1px solid var(--border);align-items:center;gap:6px;${sel?'':'opacity:0.45'}">
-      <span style="font-size:12px;font-weight:500">${p.nombre||'â€”'}<div style="font-size:10px;color:var(--text3)">${p.tiempo||''}</div></span>
+      <span style="font-size:12px;font-weight:500">${p.nombre||'—'}<div style="font-size:10px;color:var(--text3)">${p.tiempo||''}</div></span>
       <span style="font-size:12px;color:var(--red);text-align:right;font-family:'DM Mono',monospace">${fmt(p.costo||0)}</span>
       <input type="number" class="form-input" style="font-size:12px;padding:4px 5px;text-align:center;font-family:'DM Mono',monospace"
              value="${(p.precioDia||0).toFixed(2)}" min="0" step="0.5"
@@ -2710,7 +2710,7 @@ function guardarCotizacion() {
     save();
   }
   closeModal('modal-cotizacion');
-  toast(`CotizaciÃ³n guardada â€” ${sel.length} platillo(s)`);
+  toast(`Cotización guardada — ${sel.length} platillo(s)`);
   renderDietas();
 }
 
@@ -2737,7 +2737,7 @@ function generarImagenCotizacion() {
   ctx.fillStyle = grad;
   ctx.fillRect(0,0,W,H);
 
-  // PatrÃ³n de puntos sutil
+  // Patrón de puntos sutil
   ctx.fillStyle = 'rgba(46,204,113,0.03)';
   for(let x=0;x<W;x+=30) for(let y=0;y<H;y+=30) { ctx.beginPath(); ctx.arc(x,y,1,0,Math.PI*2); ctx.fill(); }
 
@@ -2749,14 +2749,14 @@ function generarImagenCotizacion() {
 
   // Logo emoji + nombre
   ctx.font = 'bold 36px serif'; ctx.fillStyle = '#ffffff'; ctx.textAlign = 'left';
-  ctx.fillText('ðŸ¥—', 36, 75);
+  ctx.fillText('🥗', 36, 75);
   ctx.font = 'bold 32px system-ui, sans-serif'; ctx.fillStyle = '#ffffff';
   ctx.fillText('Fit&Go', 90, 72);
   ctx.font = '14px system-ui, sans-serif'; ctx.fillStyle = 'rgba(255,255,255,0.7)';
-  ctx.fillText('Cocina saludable Â· MÃ©rida', 90, 96);
+  ctx.fillText('Cocina saludable · Mérida', 90, 96);
   ctx.font = 'bold 14px system-ui, sans-serif'; ctx.fillStyle = '#FFFFFF';
   ctx.textAlign = 'right';
-  ctx.fillText('COTIZACIÃ“N', W-36, 60);
+  ctx.fillText('COTIZACIÓN', W-36, 60);
   ctx.font = '12px system-ui, sans-serif'; ctx.fillStyle = 'rgba(255,255,255,0.6)';
   ctx.fillText(new Date().toLocaleDateString('es-MX',{day:'2-digit',month:'long',year:'numeric'}), W-36, 82);
   ctx.textAlign = 'left';
@@ -2786,7 +2786,7 @@ function generarImagenCotizacion() {
   });
   if (platillosCotizacion.filter(p=>p.nombre).length > 6) {
     ctx.font = '13px system-ui, sans-serif'; ctx.fillStyle = 'rgba(28,28,30,0.35)';
-    ctx.fillText(`+ ${platillosCotizacion.filter(p=>p.nombre).length - 6} platillos mÃ¡s...`, 60, y); y+=28;
+    ctx.fillText(`+ ${platillosCotizacion.filter(p=>p.nombre).length - 6} platillos más...`, 60, y); y+=28;
   }
 
   y = Math.max(y + 20, 480);
@@ -2797,15 +2797,15 @@ function generarImagenCotizacion() {
   // Restricciones si hay
   if (d.restricciones?.length) {
     ctx.font = '12px system-ui, sans-serif'; ctx.fillStyle = 'rgba(28,28,30,0.45)';
-    ctx.fillText('Sin: ' + d.restricciones.join(' Â· '), 36, y); y+=30;
+    ctx.fillText('Sin: ' + d.restricciones.join(' · '), 36, y); y+=30;
   }
 
-  // Precios â€” 3 cards
+  // Precios — 3 cards
   const cardW = (W-72-24)/3, cardH = 110, cardY = y+10;
   const cards = [
-    { label:'Diario', precio:pdia, sub:'por dÃ­a', color:'rgba(46,204,113,0.15)', border:'rgba(46,204,113,0.3)' },
-    { label:'Semanal â­', precio:psemana, sub:'7 dÃ­as', color:'rgba(46,204,113,0.25)', border:'rgba(46,204,113,0.6)' },
-    { label:'Mensual', precio:pmes, sub:'30 dÃ­as', color:'rgba(46,204,113,0.15)', border:'rgba(46,204,113,0.3)' },
+    { label:'Diario', precio:pdia, sub:'por día', color:'rgba(46,204,113,0.15)', border:'rgba(46,204,113,0.3)' },
+    { label:'Semanal ⭐', precio:psemana, sub:'7 días', color:'rgba(46,204,113,0.25)', border:'rgba(46,204,113,0.6)' },
+    { label:'Mensual', precio:pmes, sub:'30 días', color:'rgba(46,204,113,0.15)', border:'rgba(46,204,113,0.3)' },
   ];
   cards.forEach((c,i) => {
     const cx = 36 + i*(cardW+12);
@@ -2829,14 +2829,14 @@ function generarImagenCotizacion() {
     ctx.fillStyle = 'rgba(28,28,30,0.05)';
     roundRect(ctx,36,y,W-72,60,8); ctx.fill();
     ctx.font = '13px system-ui, sans-serif'; ctx.fillStyle = 'rgba(28,28,30,0.55)';
-    ctx.fillText('ðŸ“ ' + notas.substring(0,90)+(notas.length>90?'â€¦':''), 50, y+22);
+    ctx.fillText('📝 ' + notas.substring(0,90)+(notas.length>90?'…':''), 50, y+22);
     y+=70;
   }
 
   // Footer
   ctx.fillStyle = 'rgba(46,204,113,0.08)'; ctx.fillRect(0,H-60,W,60);
   ctx.font = '13px system-ui, sans-serif'; ctx.fillStyle = 'rgba(28,28,30,0.35)'; ctx.textAlign='center';
-  ctx.fillText('CotizaciÃ³n vÃ¡lida por 7 dÃ­as Â· Fit&Go MÃ©rida', W/2, H-32);
+  ctx.fillText('Cotización válida por 7 días · Fit&Go Mérida', W/2, H-32);
   ctx.fillStyle = '#27AE60'; ctx.font = 'bold 13px system-ui, sans-serif';
   ctx.fillText('fitandgo.mx', W/2, H-14);
   ctx.textAlign='left';
@@ -2860,7 +2860,7 @@ function descargarImagenCotizacion() {
   a.href = canvas.toDataURL('image/png');
   a.download = `cotizacion_${d?.clienteNombre?.replace(/\s+/g,'_')||'fitgo'}_${hoy()}.png`;
   a.click();
-  toast('Imagen descargada âœ…');
+  toast('Imagen descargada ✅');
 }
 
 function eliminarDieta(id) {
@@ -2913,7 +2913,7 @@ function renderTablaInventario(lista) {
         </td>
         <td>
           <div class="flex gap-6">
-            <button class="btn btn-danger btn-sm" onclick="eliminarIngrediente('${i.id}')">ðŸ—‘</button>
+            <button class="btn btn-danger btn-sm" onclick="eliminarIngrediente('${i.id}')">🗑</button>
           </div>
         </td>
       </tr>`;
@@ -2986,7 +2986,7 @@ const BILLETES = [1000,500,200,100,50,20];
 const MONEDAS  = [10,5,2,1,0.50];
 let conteoEfectivo = {}; // { '500': 3, '100': 2, ... }
 
-// Estado de caja: guardado por dÃ­a
+// Estado de caja: guardado por día
 function getCajaHoy() {
   const hoyStr = hoy();
   let caja = DB.get('cajaEstado') || {};
@@ -3021,10 +3021,10 @@ function renderGridDenominaciones() {
     return `
     <div style="border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px;text-align:center;background:var(--bg2)">
       <div style="font-size:${esBillete?'18':'15'}px;font-weight:700;color:${esBillete?'var(--green)':'var(--amber)'};margin-bottom:6px">
-        ${val >= 1 ? '$'+val : val*100+'Â¢'}
+        ${val >= 1 ? '$'+val : val*100+'¢'}
       </div>
       <div class="num-input" style="justify-content:center">
-        <button class="num-btn" onclick="cambiarConteo('${key}',-1)">âˆ’</button>
+        <button class="num-btn" onclick="cambiarConteo('${key}',-1)">−</button>
         <span class="num-val" id="cnt-${key.replace('.','_')}">${cnt}</span>
         <button class="num-btn" onclick="cambiarConteo('${key}',1)">+</button>
       </div>
@@ -3061,7 +3061,7 @@ function confirmarApertura() {
   estado.conteoInicial = {...conteoEfectivo};
   setCajaHoy(estado);
   closeModal('modal-apertura-caja');
-  toast(`âœ… Caja abierta con saldo inicial de ${fmt(saldo)}`);
+  toast(`✅ Caja abierta con saldo inicial de ${fmt(saldo)}`);
   renderCaja();
 }
 
@@ -3083,7 +3083,7 @@ function openCierreCaja() {
   document.getElementById('cierre-caja-body').innerHTML = `
     <div style="text-align:center;margin-bottom:20px">
       <div style="font-size:12px;color:var(--text3)">${new Date().toLocaleDateString('es-MX',{weekday:'long',day:'numeric',month:'long'})}</div>
-      <div style="font-size:11px;color:var(--text3)">Apertura: ${estado.horaApertura || 'â€”'} Â· Cierre: ${hora()}</div>
+      <div style="font-size:11px;color:var(--text3)">Apertura: ${estado.horaApertura || '—'} · Cierre: ${hora()}</div>
     </div>
 
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px">
@@ -3104,28 +3104,28 @@ function openCierreCaja() {
         <div style="font-size:20px;font-weight:700;margin-top:2px;font-family:'DM Mono',monospace;color:var(--blue)">${fmt(digitalCobrado)}</div>
       </div>
       <div class="card card-sm" style="text-align:center;border-color:rgba(231,76,60,0.2)">
-        <div style="font-size:11px;color:var(--text3)">Gasto de envÃ­os (salida)</div>
-        <div style="font-size:20px;font-weight:700;margin-top:2px;font-family:'DM Mono',monospace;color:var(--red)">âˆ’${fmt(totalEnvios)}</div>
+        <div style="font-size:11px;color:var(--text3)">Gasto de envíos (salida)</div>
+        <div style="font-size:20px;font-weight:700;margin-top:2px;font-family:'DM Mono',monospace;color:var(--red)">−${fmt(totalEnvios)}</div>
       </div>
       <div class="card card-sm" style="text-align:center;border-color:rgba(46,204,113,0.25);background:var(--green-dim)">
-        <div style="font-size:11px;color:var(--text3)">ðŸ’µ Efectivo fÃ­sico en caja</div>
+        <div style="font-size:11px;color:var(--text3)">💵 Efectivo físico en caja</div>
         <div style="font-size:22px;font-weight:700;margin-top:2px;font-family:'DM Mono',monospace;color:var(--green)">${fmt(saldoEfectivoFinal)}</div>
-        <div style="font-size:10px;color:var(--text3);margin-top:2px">Inicial + efectivo cobrado âˆ’ envÃ­os</div>
+        <div style="font-size:10px;color:var(--text3);margin-top:2px">Inicial + efectivo cobrado − envíos</div>
       </div>
     </div>
 
     ${enviosGasto.length > 0 ? `
-    <div style="font-size:12px;font-weight:600;color:var(--text3);margin-bottom:8px">DETALLE DE GASTOS DE ENVÃO</div>
+    <div style="font-size:12px;font-weight:600;color:var(--text3);margin-bottom:8px">DETALLE DE GASTOS DE ENVÍO</div>
     <div style="border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden;margin-bottom:12px">
       ${enviosGasto.map(m=>`
         <div class="flex justify-between" style="padding:7px 12px;border-bottom:1px solid var(--border);font-size:12px">
           <span>${m.cliente} <span class="badge ${m.tipo==='envio_gratis'?'badge-amber':'badge-red'}" style="font-size:10px">${m.tipo==='envio_gratis'?'Gratis (absorbido)':'Pagado repartidor'}</span></span>
-          <span class="font-mono highlight-red">âˆ’${fmt(m.monto)}</span>
+          <span class="font-mono highlight-red">−${fmt(m.monto)}</span>
         </div>`).join('')}
     </div>` : ''}
 
     <div class="card card-sm" style="background:var(--bg3);margin-bottom:0">
-      <div style="font-size:12px;color:var(--text2)">ðŸ’¡ Al confirmar el cierre, el dÃ­a quedarÃ¡ bloqueado. Los envÃ­os gratuitos/absorbidos ya quedaron registrados como <strong>gasto de venta</strong> en el estado de resultados desde que se entregÃ³ cada pedido.</div>
+      <div style="font-size:12px;color:var(--text2)">💡 Al confirmar el cierre, el día quedará bloqueado. Los envíos gratuitos/absorbidos ya quedaron registrados como <strong>gasto de venta</strong> en el estado de resultados desde que se entregó cada pedido.</div>
     </div>`;
 
   openModal('modal-cierre-caja');
@@ -3137,17 +3137,17 @@ function confirmarCierre() {
   estado.horaCierre = hora();
   setCajaHoy(estado);
 
-  // Nota: los envÃ­os gratis/absorbidos NO se registran aquÃ­. Ya se registran una sola vez
-  // como gasto (categorÃ­a 'Gastos de Venta') en _registrarFinancierosPedido() al momento
-  // de marcar el pedido como "Entregado". Hacerlo tambiÃ©n aquÃ­ duplicaba el gasto cada
-  // vez que se cerraba caja (el candado _movCajaRef nunca coincidÃ­a con ese registro).
+  // Nota: los envíos gratis/absorbidos NO se registran aquí. Ya se registran una sola vez
+  // como gasto (categoría 'Gastos de Venta') en _registrarFinancierosPedido() al momento
+  // de marcar el pedido como "Entregado". Hacerlo también aquí duplicaba el gasto cada
+  // vez que se cerraba caja (el candado _movCajaRef nunca coincidía con ese registro).
   save();
   closeModal('modal-cierre-caja');
-  toast('âœ… Turno cerrado');
+  toast('✅ Turno cerrado');
   renderCaja();
 }
 
-// ===== FECHA DE CAJA (dÃ­a que se estÃ¡ viendo) =====
+// ===== FECHA DE CAJA (día que se está viendo) =====
 let _fechaCaja = null; // null = hoy
 function getFechaCaja() { return _fechaCaja || hoy(); }
 function cambiarFechaCaja(fecha) {
@@ -3164,7 +3164,7 @@ function getMovimientosHoy() {
     if (m.tipo === 'cobro_cxc') return (m.fecha || ref) === ref;
     // Movimientos con fecha propia (registrados al entregar): usar esa fecha
     if (m.fecha) return m.fecha === ref;
-    // Compatibilidad: movimientos viejos sin fecha propia â†’ usar fecha del pedido
+    // Compatibilidad: movimientos viejos sin fecha propia → usar fecha del pedido
     const p = pedidos.find(x => x.id === m.pedidoId);
     return p && p.fecha === ref;
   });
@@ -3177,7 +3177,7 @@ function _setTipoMovExtra(tipo) {
     const chip = document.getElementById('chip-mov-'+t);
     if (chip) chip.classList.toggle('active', t === tipo);
   });
-  // La categorÃ­a solo aplica a gastos y retiros (que van al ER); entrada no necesita categorÃ­a de gasto
+  // La categoría solo aplica a gastos y retiros (que van al ER); entrada no necesita categoría de gasto
   const catWrap = document.getElementById('mov-extra-cat-wrap');
   if (catWrap) catWrap.style.display = (tipo === 'entrada') ? 'none' : 'block';
 }
@@ -3197,11 +3197,11 @@ function guardarMovimientoExtra() {
   const metodo = document.getElementById('mov-extra-metodo').value;
   const categoria = document.getElementById('mov-extra-categoria').value;
   if (!concepto) { toast('Ingresa un concepto', 'error'); return; }
-  if (monto <= 0) { toast('Ingresa un monto vÃ¡lido', 'error'); return; }
+  if (monto <= 0) { toast('Ingresa un monto válido', 'error'); return; }
 
   const esEntrada = _tipoMovExtra === 'entrada';
   const tipoMov = esEntrada ? 'mov_extra_entrada' : 'mov_extra_salida';
-  const etiqueta = _tipoMovExtra === 'gasto' ? 'ðŸ’¸ Gasto' : _tipoMovExtra === 'retiro' ? 'ðŸ§ Retiro' : 'ðŸ’µ Entrada';
+  const etiqueta = _tipoMovExtra === 'gasto' ? '💸 Gasto' : _tipoMovExtra === 'retiro' ? '🏧 Retiro' : '💵 Entrada';
 
   // Registrar en caja/movimientos
   movCaja.push({
@@ -3233,13 +3233,13 @@ function guardarMovimientoExtra() {
 
 function renderCaja() {
   const hoyStr = hoy();
-  // Inicializar el selector de fecha si estÃ¡ vacÃ­o
+  // Inicializar el selector de fecha si está vacío
   const fechaInp = document.getElementById('caja-fecha-sel');
   if (fechaInp && !fechaInp.value) fechaInp.value = getFechaCaja();
   const estado = getCajaHoy();
   const movHoy = getMovimientosHoy();
-  // Caja del dÃ­a: SOLO movimientos en efectivo (las transferencias no entran a caja fÃ­sica)
-  // Las ventas solo cuentan cuando el pedido estÃ¡ ENTREGADO
+  // Caja del día: SOLO movimientos en efectivo (las transferencias no entran a caja física)
+  // Las ventas solo cuentan cuando el pedido está ENTREGADO
   const ventasTodas = movHoy.filter(m => {
     if (m.tipo === 'cobro_cxc') return true; // cobros de CxC siempre cuentan
     if (m.tipo === 'venta' || !m.tipo) {
@@ -3251,7 +3251,7 @@ function renderCaja() {
   const ventas = ventasTodas.filter(m => m.metodo === 'Efectivo');
   const enviosGasto = movHoy.filter(m => (m.tipo === 'envio_salida' || m.tipo === 'envio_gratis' || m.tipo === 'envio_absorbido') && (m.metodo === 'Efectivo' || !m.metodo));
   const totalVentas = ventas.reduce((s,m) => s + m.monto, 0);
-  // Todas las salidas de envÃ­o restan de caja fÃ­sica: pagar repartidor, envÃ­o gratis, y tarifa absorbida
+  // Todas las salidas de envío restan de caja física: pagar repartidor, envío gratis, y tarifa absorbida
   const enviosQueRestan = enviosGasto.filter(m => m.tipo === 'envio_salida' || m.tipo === 'envio_gratis' || m.tipo === 'envio_absorbido');
   const totalEnvios = enviosQueRestan.reduce((s,m) => s + m.monto, 0);
   const efectivoCobrado = ventas.reduce((s,m)=>s+m.monto,0);
@@ -3259,15 +3259,15 @@ function renderCaja() {
   const movExtraEfectivo = movHoy.filter(m => (m.tipo === 'mov_extra_salida' || m.tipo === 'mov_extra_entrada') && m.metodo === 'Efectivo');
   const extraSalidas = movExtraEfectivo.filter(m => m.tipo === 'mov_extra_salida').reduce((s,m)=>s+m.monto,0);
   const extraEntradas = movExtraEfectivo.filter(m => m.tipo === 'mov_extra_entrada').reduce((s,m)=>s+m.monto,0);
-  const digital = 0; // no se muestra en caja fÃ­sica
+  const digital = 0; // no se muestra en caja física
   const saldoEfectivoFinal = estado.saldoInicial + efectivoCobrado - totalEnvios - extraSalidas + extraEntradas;
 
-  // BotÃ³n topbar
+  // Botón topbar
   const btn = document.getElementById('btn-apertura-corte');
   if (btn) {
-    if (!estado.abierta) { btn.textContent = 'ðŸ”“ Abrir caja'; btn.className = 'btn btn-primary btn-sm'; }
-    else if (estado.cerrada) { btn.textContent = 'ðŸ”’ Turno cerrado'; btn.className = 'btn btn-secondary btn-sm'; btn.disabled = true; }
-    else { btn.textContent = 'ðŸ”’ Cerrar turno'; btn.className = 'btn btn-danger btn-sm'; btn.disabled = false; }
+    if (!estado.abierta) { btn.textContent = '🔓 Abrir caja'; btn.className = 'btn btn-primary btn-sm'; }
+    else if (estado.cerrada) { btn.textContent = '🔒 Turno cerrado'; btn.className = 'btn btn-secondary btn-sm'; btn.disabled = true; }
+    else { btn.textContent = '🔒 Cerrar turno'; btn.className = 'btn btn-danger btn-sm'; btn.disabled = false; }
   }
 
   // Banner caja cerrada
@@ -3280,9 +3280,9 @@ function renderCaja() {
   if (estado.abierta) {
     document.getElementById('caja-saldo-inicial-display').textContent = fmt(estado.saldoInicial);
     document.getElementById('caja-saldo-final-display').textContent = fmt(saldoEfectivoFinal);
-    document.getElementById('caja-hora-apertura').textContent = `Apertura: ${estado.horaApertura}${estado.cerrada ? ' Â· Cierre: '+estado.horaCierre : ''}`;
+    document.getElementById('caja-hora-apertura').textContent = `Apertura: ${estado.horaApertura}${estado.cerrada ? ' · Cierre: '+estado.horaCierre : ''}`;
     const badge = document.getElementById('caja-estado-badge');
-    if (badge) { badge.textContent = estado.cerrada ? 'ðŸ”’ Cerrada' : 'ðŸŸ¢ Abierta'; badge.className = 'badge ' + (estado.cerrada ? 'badge-red' : 'badge-green'); }
+    if (badge) { badge.textContent = estado.cerrada ? '🔒 Cerrada' : '🟢 Abierta'; badge.className = 'badge ' + (estado.cerrada ? 'badge-red' : 'badge-green'); }
   }
 
   // KPIs
@@ -3291,7 +3291,7 @@ function renderCaja() {
   document.getElementById('caja-digital').textContent = fmt(digital);
   document.getElementById('caja-envios-total').textContent = fmt(totalEnvios);
   document.getElementById('caja-efectivo-detalle').textContent =
-    `${fmt(estado.saldoInicial)} inicial + ${fmt(efectivoCobrado)} cobrado âˆ’ ${fmt(totalEnvios)} envÃ­os`;
+    `${fmt(estado.saldoInicial)} inicial + ${fmt(efectivoCobrado)} cobrado − ${fmt(totalEnvios)} envíos`;
 
   // Tabla de movimientos
   const tbody = document.getElementById('tabla-caja');
@@ -3299,27 +3299,27 @@ function renderCaja() {
   const todosMovs = [...ventas, ...enviosGasto, ...movExtraEfec].sort((a,b) => (a.hora||'').localeCompare(b.hora||''));
   tbody.innerHTML = todosMovs.map(m => {
     const p = pedidos.find(x => x.id === m.pedidoId);
-    // Salida real de efectivo: pagar envÃ­o al repartidor, envÃ­o gratis, o tarifa absorbida (excedente que sale de nuestra caja)
+    // Salida real de efectivo: pagar envío al repartidor, envío gratis, o tarifa absorbida (excedente que sale de nuestra caja)
     const esSalida = m.tipo === 'envio_salida' || m.tipo === 'envio_gratis' || m.tipo === 'envio_absorbido' || m.tipo === 'mov_extra_salida';
     const pedidoCliente = p ? p.cliente : '';
-    let conceptoLabel = 'ðŸ’° Venta';
-    if (m.tipo === 'envio_gratis') conceptoLabel = 'ðŸ›µ EnvÃ­o absorbido' + (pedidoCliente ? ' â€” '+pedidoCliente : '');
-    else if (m.tipo === 'envio_salida') conceptoLabel = 'ðŸ›µ Pagar envÃ­o' + (pedidoCliente ? ' â€” '+pedidoCliente : '');
-    else if (m.tipo === 'envio_absorbido') conceptoLabel = 'ðŸŒ§ Tarifa absorbida' + (pedidoCliente ? ' â€” '+pedidoCliente : '');
-    else if (m.tipo === 'mov_extra_salida') conceptoLabel = (m.estado||'ðŸ’¸ Gasto') + ' â€” ' + (m.concepto||'');
-    else if (m.tipo === 'mov_extra_entrada') conceptoLabel = 'ðŸ’µ Entrada â€” ' + (m.concepto||'');
+    let conceptoLabel = '💰 Venta';
+    if (m.tipo === 'envio_gratis') conceptoLabel = '🛵 Envío absorbido' + (pedidoCliente ? ' — '+pedidoCliente : '');
+    else if (m.tipo === 'envio_salida') conceptoLabel = '🛵 Pagar envío' + (pedidoCliente ? ' — '+pedidoCliente : '');
+    else if (m.tipo === 'envio_absorbido') conceptoLabel = '🌧 Tarifa absorbida' + (pedidoCliente ? ' — '+pedidoCliente : '');
+    else if (m.tipo === 'mov_extra_salida') conceptoLabel = (m.estado||'💸 Gasto') + ' — ' + (m.concepto||'');
+    else if (m.tipo === 'mov_extra_entrada') conceptoLabel = '💵 Entrada — ' + (m.concepto||'');
     const badgeClass = esSalida ? 'badge-red' : 'badge-green';
-    // Color del nÃºmero: rojo si sale de caja efectivo (incluye tarifa absorbida)
+    // Color del número: rojo si sale de caja efectivo (incluye tarifa absorbida)
     const colorNum = esSalida ? 'highlight-red' : 'highlight-green';
-    const signo = esSalida ? 'âˆ’' : '';
+    const signo = esSalida ? '−' : '';
     return `<tr style="${esSalida?'background:var(--red-dim)':''}">
-      <td class="font-mono text-sm">${m.hora||'â€”'}</td>
+      <td class="font-mono text-sm">${m.hora||'—'}</td>
       <td class="font-mono text-xs text-dim">#${(m.pedidoId||'').slice(-4).toUpperCase()}</td>
-      <td>${m.cliente||'â€”'}</td>
-      <td><span class="badge badge-gray">${m.metodo||'â€”'}</span></td>
+      <td>${m.cliente||'—'}</td>
+      <td><span class="badge badge-gray">${m.metodo||'—'}</span></td>
       <td><span class="badge ${badgeClass}" style="font-size:10px">${conceptoLabel}</span></td>
       <td class="${colorNum} font-mono">${signo}${fmt(m.monto)}</td>
-      <td><span class="badge badge-gray" style="font-size:10px">${p?.estado||m.estado||'â€”'}</span></td>
+      <td><span class="badge badge-gray" style="font-size:10px">${p?.estado||m.estado||'—'}</span></td>
     </tr>`;
   }).join('') || '<tr><td colspan="7" style="text-align:center;padding:32px;color:var(--text3)">Sin movimientos en efectivo hoy</td></tr>';
 }
@@ -3330,7 +3330,7 @@ function confirmarCorte() { confirmarCierre(); }
 function exportarCaja() {
   const hoyStr = hoy();
   const movHoy = getMovimientosHoy();
-  const csv = ['Hora,Pedido,Cliente,MÃ©todo,Concepto,Monto,Estado'].concat(
+  const csv = ['Hora,Pedido,Cliente,Método,Concepto,Monto,Estado'].concat(
     movHoy.map(m => { const p=pedidos.find(x=>x.id===m.pedidoId); return `${m.hora||''},#${(m.pedidoId||'').slice(-4).toUpperCase()},${m.cliente||''},${m.metodo||''},${m.tipo||'venta'},${m.monto||0},${p?.estado||''}`;})
   ).join('\n');
   const blob = new Blob([csv], { type: 'text/csv' });
@@ -3343,19 +3343,19 @@ function exportarCaja() {
 // ========== PROVEEDORES ==========
 function renderProveedores() {
   const grid = document.getElementById('proveedores-grid');
-  const catEmoji = { 'Carnes y proteÃ­nas':'ðŸ¥©','Verduras y frutas':'ðŸ¥¦','Granos y cereales':'ðŸŒ¾','LÃ¡cteos':'ðŸ¥›','Condimentos':'ðŸ§‚','Bebidas':'ðŸ¥¤','Empaques':'ðŸ“¦','Otro':'ðŸ“‹' };
+  const catEmoji = { 'Carnes y proteínas':'🥩','Verduras y frutas':'🥦','Granos y cereales':'🌾','Lácteos':'🥛','Condimentos':'🧂','Bebidas':'🥤','Empaques':'📦','Otro':'📋' };
   grid.innerHTML = proveedores.map(p => `
     <div class="card" style="padding:16px">
       <div class="flex justify-between items-center mb-8">
-        <span class="badge badge-gray">${catEmoji[p.categoria]||'ðŸ“‹'} ${p.categoria}</span>
-        <button class="btn btn-danger btn-sm" onclick="eliminarProveedor('${p.id}')">ðŸ—‘</button>
+        <span class="badge badge-gray">${catEmoji[p.categoria]||'📋'} ${p.categoria}</span>
+        <button class="btn btn-danger btn-sm" onclick="eliminarProveedor('${p.id}')">🗑</button>
       </div>
       <div style="font-size:16px;font-weight:600;margin-bottom:4px">${p.nombre}</div>
-      ${p.contacto ? `<div style="font-size:12px;color:var(--text3);margin-bottom:2px">ðŸ‘¤ ${p.contacto}</div>` : ''}
-      ${p.tel ? `<div style="font-size:12px;color:var(--blue);margin-bottom:8px">ðŸ“ž ${p.tel}</div>` : ''}
-      ${p.dias ? `<div class="badge badge-green" style="margin-bottom:8px">ðŸ“… ${p.dias}</div>` : ''}
+      ${p.contacto ? `<div style="font-size:12px;color:var(--text3);margin-bottom:2px">👤 ${p.contacto}</div>` : ''}
+      ${p.tel ? `<div style="font-size:12px;color:var(--blue);margin-bottom:8px">📞 ${p.tel}</div>` : ''}
+      ${p.dias ? `<div class="badge badge-green" style="margin-bottom:8px">📅 ${p.dias}</div>` : ''}
       ${p.notas ? `<div style="font-size:12px;color:var(--text2);background:var(--bg3);border-radius:6px;padding:8px;margin-top:8px">${p.notas}</div>` : ''}
-    </div>`).join('') || '<div class="empty" style="grid-column:1/-1"><div class="empty-icon">ðŸš›</div><div class="empty-title">Sin proveedores</div></div>';
+    </div>`).join('') || '<div class="empty" style="grid-column:1/-1"><div class="empty-icon">🚛</div><div class="empty-title">Sin proveedores</div></div>';
 }
 
 function openNuevoProveedor() {
@@ -3421,23 +3421,23 @@ function renderCXP() {
   document.getElementById('cxp-porvencer').textContent = porVencer;
   document.getElementById('cxp-ok').textContent = ok;
 
-  const tipoEmoji = { proveedor:'ðŸš›', servicio:'ðŸ¢', otro:'ðŸ“‹' };
+  const tipoEmoji = { proveedor:'🚛', servicio:'🏢', otro:'📋' };
   const tbody = document.getElementById('tabla-cxp');
   tbody.innerHTML = lista.map(c => {
     const badge = c.estado === 'pagada' ? 'badge-green' : c.estado === 'vencida' ? 'badge-red' : 'badge-amber';
     const txt = c.estado === 'pagada' ? 'Pagada' : c.estado === 'vencida' ? 'Vencida' : 'Pendiente';
     return `<tr>
-      <td><span class="badge badge-gray">${tipoEmoji[c.tipo]||'ðŸ“‹'} ${c.tipo||'proveedor'}</span></td>
-      <td style="font-weight:500">${c.acreedor||c.proveedor||'â€”'}</td>
+      <td><span class="badge badge-gray">${tipoEmoji[c.tipo]||'📋'} ${c.tipo||'proveedor'}</span></td>
+      <td style="font-weight:500">${c.acreedor||c.proveedor||'—'}</td>
       <td>${c.concepto}</td>
       <td class="highlight-red font-mono">${fmt(c.monto)}</td>
-      <td class="text-dim">${c.vencimiento ? fmtFecha(c.vencimiento) : 'â€”'}</td>
+      <td class="text-dim">${c.vencimiento ? fmtFecha(c.vencimiento) : '—'}</td>
       <td><span class="badge ${badge}">${txt}</span></td>
-      <td><span class="badge badge-gray" style="font-size:10px">${c.estado==='pagada'?(c.metodoPagoRealizado||c.metodoPago||'â€”'):(c.metodoPago||'Efectivo')}</span></td>
-      <td class="text-dim text-sm">${c.notas||'â€”'}</td>
+      <td><span class="badge badge-gray" style="font-size:10px">${c.estado==='pagada'?(c.metodoPagoRealizado||c.metodoPago||'—'):(c.metodoPago||'Efectivo')}</span></td>
+      <td class="text-dim text-sm">${c.notas||'—'}</td>
       <td>
         <div class="flex gap-6">
-          ${c.estado !== 'pagada' ? `<button class="btn btn-secondary btn-sm" onclick="marcarPagada('${c.id}')">âœ“ Pagar</button>` : ''}
+          ${c.estado !== 'pagada' ? `<button class="btn btn-secondary btn-sm" onclick="marcarPagada('${c.id}')">✓ Pagar</button>` : ''}
         </div>
       </td>
     </tr>`;
@@ -3485,7 +3485,7 @@ function guardarCuenta() {
 function marcarPagada(id) {
   const c = cxp.find(x => x.id === id);
   if (!c) return;
-  // Mostrar mini modal de confirmaciÃ³n con mÃ©todo de pago
+  // Mostrar mini modal de confirmación con método de pago
   const metodo = c.metodoPago || 'Efectivo';
   document.getElementById('pagar-cxp-id').value = id;
   document.getElementById('pagar-cxp-info').innerHTML = `
@@ -3518,7 +3518,7 @@ function confirmarPagoCXP() {
   closeModal('modal-pagar-cxp');
   renderCXP();
   renderEstadosFinancieros();
-  toast(`CxP pagada con ${metodo} â€” ${fmt(c.monto)}`);
+  toast(`CxP pagada con ${metodo} — ${fmt(c.monto)}`);
 }
 
 function eliminarCuenta(id) {
@@ -3539,7 +3539,7 @@ function renderCXC() {
   document.getElementById('cxc-porvencer').textContent = porVencer;
   document.getElementById('cxc-ok').textContent = ok;
 
-  // Resumen por cliente (agrupado) â€” usa saldo pendiente
+  // Resumen por cliente (agrupado) — usa saldo pendiente
   const porCliente = {};
   pendientes.forEach(c => {
     if (!porCliente[c.clienteNombre]) porCliente[c.clienteNombre] = { total:0, cuentas:0, vencidas:0 };
@@ -3550,14 +3550,14 @@ function renderCXC() {
   const resumenEl = document.getElementById('cxc-resumen-clientes');
   const clientesPendientes = Object.entries(porCliente);
   if (clientesPendientes.length === 0) {
-    resumenEl.innerHTML = '<div class="empty" style="padding:24px"><div class="empty-icon">âœ…</div><div class="empty-title">Sin cuentas pendientes</div></div>';
+    resumenEl.innerHTML = '<div class="empty" style="padding:24px"><div class="empty-icon">✅</div><div class="empty-title">Sin cuentas pendientes</div></div>';
   } else {
     resumenEl.innerHTML = clientesPendientes.map(([nombre, data]) => `
       <div class="flex items-center gap-12" style="padding:10px 0;border-bottom:1px solid var(--border);">
         <div class="avatar" style="background:var(--blue-dim);color:var(--blue)">${nombre[0]}</div>
         <div style="flex:1">
           <div style="font-size:13px;font-weight:500">${nombre}</div>
-          <div style="font-size:11px;color:var(--text3)">${data.cuentas} cargo${data.cuentas>1?'s':''}${data.vencidas>0?` Â· <span style="color:var(--red)">${data.vencidas} vencida${data.vencidas>1?'s':''}</span>`:''}</div>
+          <div style="font-size:11px;color:var(--text3)">${data.cuentas} cargo${data.cuentas>1?'s':''}${data.vencidas>0?` · <span style="color:var(--red)">${data.vencidas} vencida${data.vencidas>1?'s':''}</span>`:''}</div>
         </div>
         <div style="text-align:right">
           <div style="font-size:15px;font-weight:600;color:var(--blue)">${fmt(data.total)}</div>
@@ -3579,13 +3579,13 @@ function renderCXC() {
       <td>${c.concepto}${tieneAbonos ? `<div style="font-size:10px;color:var(--green)">Abonado: ${fmt(abonado)}</div>` : ''}</td>
       <td class="font-mono" style="color:var(--blue)">${fmt(c.monto)}${tieneAbonos ? `<div style="font-size:10px;color:var(--amber)">Saldo: ${fmt(saldo)}</div>` : ''}</td>
       <td class="text-dim">${fmtFecha(c.fecha)}</td>
-      <td class="text-dim">${c.vencimiento?fmtFecha(c.vencimiento):'â€”'}</td>
+      <td class="text-dim">${c.vencimiento?fmtFecha(c.vencimiento):'—'}</td>
       <td><span class="badge ${badge}">${txt}</span></td>
-      <td><span class="badge badge-gray" style="font-size:10px">${c.metodoCobro || (c.estado==='cobrada' ? 'âœ“ cobrada' : 'â€”')}</span></td>
+      <td><span class="badge badge-gray" style="font-size:10px">${c.metodoCobro || (c.estado==='cobrada' ? '✓ cobrada' : '—')}</span></td>
       <td>
         <div class="flex gap-6">
-          ${c.estado!=='cobrada'?`<button class="btn btn-secondary btn-sm" onclick="openCobrarCxC('${c.id}')">ðŸ’µ Abonar / cobrar</button>`:'<span class="badge badge-green" style="font-size:10px">âœ“ Liquidada</span>'}
-          <button class="btn btn-danger btn-sm" onclick="eliminarCxC('${c.id}')">ðŸ—‘</button>
+          ${c.estado!=='cobrada'?`<button class="btn btn-secondary btn-sm" onclick="openCobrarCxC('${c.id}')">💵 Abonar / cobrar</button>`:'<span class="badge badge-green" style="font-size:10px">✓ Liquidada</span>'}
+          <button class="btn btn-danger btn-sm" onclick="eliminarCxC('${c.id}')">🗑</button>
         </div>
       </td>
     </tr>`;
@@ -3637,7 +3637,7 @@ function openCobrarCxC(id) {
   document.getElementById('cobrar-cxc-id').value = id;
   const saldo = _saldoCxC(c);
   const abonado = (c.abonos || []).reduce((s,a) => s + a.monto, 0);
-  document.getElementById('cobrar-cxc-titulo').textContent = 'âœ“ Registrar cobro / abono';
+  document.getElementById('cobrar-cxc-titulo').textContent = '✓ Registrar cobro / abono';
   document.getElementById('cobrar-cxc-info').innerHTML = `
     <div class="flex justify-between mb-4">
       <span style="font-weight:600">${c.clienteNombre}</span>
@@ -3657,7 +3657,7 @@ function openCobrarCxC(id) {
   if (c.abonos && c.abonos.length) {
     abonosEl.innerHTML = `<div style="font-size:11px;font-weight:600;color:var(--text3);margin-bottom:4px">ABONOS REGISTRADOS</div>` +
       c.abonos.map(a => `<div class="flex justify-between" style="font-size:11px;padding:3px 0;border-bottom:1px solid var(--border)">
-        <span>${fmtFecha(a.fecha)} Â· ${a.metodo}</span>
+        <span>${fmtFecha(a.fecha)} · ${a.metodo}</span>
         <span class="font-mono" style="color:var(--green)">${fmt(a.monto)}</span>
       </div>`).join('');
   } else {
@@ -3680,11 +3680,11 @@ function _previewAbono() {
   if (!previewEl) return;
   const nuevoSaldo = Math.max(0, saldo - monto);
   if (monto <= 0) {
-    previewEl.innerHTML = 'â„¹ Ingresa el monto del abono.';
+    previewEl.innerHTML = 'ℹ Ingresa el monto del abono.';
   } else if (nuevoSaldo === 0) {
-    previewEl.innerHTML = `âœ… Con este abono la cuenta queda <strong>liquidada</strong>.`;
+    previewEl.innerHTML = `✅ Con este abono la cuenta queda <strong>liquidada</strong>.`;
   } else {
-    previewEl.innerHTML = `ðŸ“Š Tras este abono quedarÃ¡ un saldo pendiente de <strong>${fmt(nuevoSaldo)}</strong>.`;
+    previewEl.innerHTML = `📊 Tras este abono quedará un saldo pendiente de <strong>${fmt(nuevoSaldo)}</strong>.`;
   }
 }
 
@@ -3707,11 +3707,11 @@ function confirmarCobrarCxC() {
   movCaja.push({
     hora: hora(), cxcId: id, pedidoId: c.pedidoId || '',
     cliente: c.clienteNombre, metodo, monto,
-    tipo: 'cobro_cxc', concepto: c.concepto + ((_saldoCxC(c) > 0) ? ' (abono)' : ' (liquidaciÃ³n)'),
+    tipo: 'cobro_cxc', concepto: c.concepto + ((_saldoCxC(c) > 0) ? ' (abono)' : ' (liquidación)'),
     estado: 'Cobrado', fecha,
   });
 
-  // Actualizar estado segÃºn saldo restante
+  // Actualizar estado según saldo restante
   const nuevoSaldo = _saldoCxC(c);
   if (nuevoSaldo === 0) {
     c.estado = 'cobrada';
@@ -3724,7 +3724,7 @@ function confirmarCobrarCxC() {
 
   save();
   closeModal('modal-cobrar-cxc');
-  toast(nuevoSaldo === 0 ? `Cuenta liquidada â€” ${metodo}` : `Abono de ${fmt(monto)} registrado Â· saldo ${fmt(nuevoSaldo)}`);
+  toast(nuevoSaldo === 0 ? `Cuenta liquidada — ${metodo}` : `Abono de ${fmt(monto)} registrado · saldo ${fmt(nuevoSaldo)}`);
   renderCXC();
   renderDashboard();
 }
@@ -3744,15 +3744,15 @@ function renderTablaClientes(lista) {
   tbody.innerHTML = lista.map(c => `
     <tr>
       <td style="font-weight:500">${c.nombre}</td>
-      <td class="font-mono text-sm">${c.tel||'â€”'}</td>
+      <td class="font-mono text-sm">${c.tel||'—'}</td>
       <td><span class="badge badge-gray">${c.canal}</span></td>
-      <td>${c.tieneDieta ? '<span class="badge badge-purple">ðŸ“‹ SÃ­</span>' : '<span class="badge badge-gray">No</span>'}</td>
+      <td>${c.tieneDieta ? '<span class="badge badge-purple">📋 Sí</span>' : '<span class="badge badge-gray">No</span>'}</td>
       <td class="font-mono">${c.pedidos||0}</td>
-      <td class="text-dim">${c.ultimoPedido ? fmtFecha(c.ultimoPedido) : 'â€”'}</td>
+      <td class="text-dim">${c.ultimoPedido ? fmtFecha(c.ultimoPedido) : '—'}</td>
       <td>
         <div class="flex gap-6">
-          <button class="btn btn-secondary btn-sm" onclick="openEditarCliente('${c.id}')">âœï¸ Editar</button>
-          <button class="btn btn-danger btn-sm" onclick="eliminarCliente('${c.id}')">ðŸ—‘</button>
+          <button class="btn btn-secondary btn-sm" onclick="openEditarCliente('${c.id}')">✏️ Editar</button>
+          <button class="btn btn-danger btn-sm" onclick="eliminarCliente('${c.id}')">🗑</button>
         </div>
       </td>
     </tr>`).join('') || '<tr><td colspan="7" style="text-align:center;padding:32px;color:var(--text3)">Sin clientes registrados</td></tr>';
@@ -3763,33 +3763,33 @@ function buscarCliente(q) {
 }
 
 // ===== DIRECCIONES DE CLIENTE =====
-let _cliDirecciones = []; // buffer de ediciÃ³n
+let _cliDirecciones = []; // buffer de edición
 
 function _cliRenderDirecciones() {
   const cont = document.getElementById('cli-direcciones-lista');
   if (!cont) return;
   if (!_cliDirecciones.length) {
-    cont.innerHTML = '<div style="font-size:12px;color:var(--text3);text-align:center;padding:14px;border:1px dashed var(--border);border-radius:8px">Sin direcciones. Agrega una para precargar el envÃ­o en sus pedidos.</div>';
+    cont.innerHTML = '<div style="font-size:12px;color:var(--text3);text-align:center;padding:14px;border:1px dashed var(--border);border-radius:8px">Sin direcciones. Agrega una para precargar el envío en sus pedidos.</div>';
     return;
   }
   cont.innerHTML = _cliDirecciones.map((d, i) => `
     <div class="card card-sm mb-6" style="${d.principal?'border-color:rgba(46,204,113,0.4)':''}">
       <div class="flex items-center gap-8 mb-6">
         <button class="btn btn-secondary btn-sm" style="padding:2px 7px;font-size:13px;${d.principal?'color:var(--amber)':'color:var(--text3)'}"
-                onclick="_cliSetPrincipal(${i})" title="Marcar como principal">${d.principal?'â˜…':'â˜†'}</button>
+                onclick="_cliSetPrincipal(${i})" title="Marcar como principal">${d.principal?'★':'☆'}</button>
         <input class="form-input" style="flex:0 0 130px;font-size:12px;padding:5px 8px" placeholder="Casa, Oficina..."
                value="${(d.nombre||'').replace(/"/g,'&quot;')}" oninput="_cliDirecciones[${i}].nombre=this.value">
-        <input class="form-input" style="flex:1;font-size:12px;padding:5px 8px" placeholder="DirecciÃ³n / referencia"
+        <input class="form-input" style="flex:1;font-size:12px;padding:5px 8px" placeholder="Dirección / referencia"
                value="${(d.direccion||'').replace(/"/g,'&quot;')}" oninput="_cliDirecciones[${i}].direccion=this.value">
         <div style="display:flex;align-items:center;gap:3px">
           <span style="font-size:11px;color:var(--text3)">$</span>
           <input class="form-input" type="number" step="0.01" min="0" style="width:75px;font-size:12px;padding:5px 6px;text-align:right"
                  placeholder="0.00" value="${d.costoEnvio||0}" oninput="_cliDirecciones[${i}].costoEnvio=parseFloat(this.value)||0">
         </div>
-        <button class="btn btn-danger btn-sm" style="padding:3px 7px" onclick="_cliBorrarDireccion(${i})">ðŸ—‘</button>
+        <button class="btn btn-danger btn-sm" style="padding:3px 7px" onclick="_cliBorrarDireccion(${i})">🗑</button>
       </div>
       <div class="flex items-center gap-6">
-        <span style="font-size:11px;color:var(--text3);min-width:74px">ðŸ“ Maps:</span>
+        <span style="font-size:11px;color:var(--text3);min-width:74px">📍 Maps:</span>
         <input class="form-input" style="flex:1;font-size:11px;padding:4px 8px" placeholder="Pega el link de Google Maps (opcional)"
                value="${(d.maps||'').replace(/"/g,'&quot;')}" oninput="_cliDirecciones[${i}].maps=this.value">
         ${d.maps ? `<a href="${d.maps}" target="_blank" class="btn btn-secondary btn-sm" style="padding:3px 8px;font-size:11px;text-decoration:none">Abrir</a>` : ''}
@@ -3852,7 +3852,7 @@ function guardarCliente() {
   const nombre = document.getElementById('cli-nombre').value.trim();
   if (!nombre) { toast('Ingresa el nombre del cliente', 'error'); return; }
   const editId = document.getElementById('cli-edit-id').value;
-  // Limpiar direcciones vacÃ­as
+  // Limpiar direcciones vacías
   const dirs = _cliDirecciones.filter(d => (d.nombre||'').trim() || (d.direccion||'').trim() || d.costoEnvio > 0);
   if (dirs.length && !dirs.some(d => d.principal)) dirs[0].principal = true;
 
@@ -3908,7 +3908,7 @@ function renderCompras() {
   document.getElementById('compras-pendientes').textContent = pendientes;
   document.getElementById('compras-recibidas').textContent = recibidas;
 
-  // Sugerencias: ingredientes bajo mÃ­nimo
+  // Sugerencias: ingredientes bajo mínimo
   const bajos = inventario.filter(i => i.stock <= i.minimo);
   const sugEl = document.getElementById('compras-sugerencias');
   if (bajos.length === 0) {
@@ -3919,7 +3919,7 @@ function renderCompras() {
       <div class="flex items-center gap-12" style="padding:8px 0;border-bottom:1px solid var(--border)">
         <span class="dot ${i.stock===0?'dot-red':'dot-amber'}"></span>
         <span style="flex:1;font-size:13px">${i.nombre}</span>
-        <span style="font-size:12px;color:var(--text3)">${i.stock} / mÃ­n ${i.minimo} ${i.unidad}</span>
+        <span style="font-size:12px;color:var(--text3)">${i.stock} / mín ${i.minimo} ${i.unidad}</span>
         <span class="badge ${i.stock===0?'badge-red':'badge-amber'}">${i.stock===0?'Agotado':'Stock bajo'}</span>
       </div>`).join('');
   }
@@ -3928,26 +3928,26 @@ function renderCompras() {
   const tbody = document.getElementById('tabla-compras');
   tbody.innerHTML = [...compras].reverse().map(c => {
     const badge = c.estado==='recibida' ? 'badge-green' : 'badge-amber';
-    const txt = c.estado==='recibida' ? 'âœ… Recibida' : 'â³ Pendiente';
+    const txt = c.estado==='recibida' ? '✅ Recibida' : '⏳ Pendiente';
     return `<tr>
       <td class="text-dim">${fmtFecha(c.fecha)}</td>
-      <td>${c.proveedor||'â€”'}</td>
+      <td>${c.proveedor||'—'}</td>
       <td style="font-size:12px;color:var(--text2)">${c.lineas.slice(0,2).map(l=>l.nombre).join(', ')}${c.lineas.length>2?` +${c.lineas.length-2}`:''}</td>
       <td class="highlight-green font-mono">${fmt(c.total)}</td>
       <td><span class="badge ${badge}">${txt}</span></td>
-      <td class="text-dim text-sm">${c.notas||'â€”'}</td>
+      <td class="text-dim text-sm">${c.notas||'—'}</td>
       <td>
         <div class="flex gap-6">
-          ${c.estado==='pendiente'?`<button class="btn btn-secondary btn-sm" onclick="recibirCompra('${c.id}')">âœ“ Recibir</button>`:''}
+          ${c.estado==='pendiente'?`<button class="btn btn-secondary btn-sm" onclick="recibirCompra('${c.id}')">✓ Recibir</button>`:''}
           <button class="btn btn-secondary btn-sm" onclick="verDetalleCompra('${c.id}')">Ver</button>
-          <button class="btn btn-secondary btn-sm" onclick="openEditarCompra('${c.id}')">âœï¸</button>
+          <button class="btn btn-secondary btn-sm" onclick="openEditarCompra('${c.id}')">✏️</button>
         </div>
       </td>
     </tr>`;
   }).join('') || '<tr><td colspan="7" style="text-align:center;padding:32px;color:var(--text3)">Sin compras registradas</td></tr>';
 }
 
-// ---- LÃ­neas de compra ----
+// ---- Líneas de compra ----
 function openEditarCompra(id) {
   const c = compras.find(x => x.id === id);
   if (!c) return;
@@ -4011,7 +4011,7 @@ function renderLineasCompra() {
              placeholder="0.00" value="${l.costoUnit||''}"
              onchange="actualizarLineaCompra(${idx},'costoUnit',parseFloat(this.value)||0)">
       <span class="font-mono" style="font-size:12px;color:var(--green);padding-left:8px">${fmt(sub)}</span>
-      <button onclick="eliminarLineaCompra(${idx})" style="background:none;border:none;color:var(--red);cursor:pointer;font-size:16px;padding:0 4px;">Ã—</button>
+      <button onclick="eliminarLineaCompra(${idx})" style="background:none;border:none;color:var(--red);cursor:pointer;font-size:16px;padding:0 4px;">×</button>
     </div>`;
   }).join('');
   recalcularTotalCompra();
@@ -4096,13 +4096,13 @@ function guardarCompra() {
   const proveedor = document.getElementById('compra-proveedor').value;
   const fechaCompra = document.getElementById('compra-fecha').value || hoy();
 
-  // Si estÃ¡ recibida, actualizar inventario
+  // Si está recibida, actualizar inventario
   if (estado === 'recibida') {
     lineasValidas.forEach(l => {
       const ing = inventario.find(i=>i.id===l.ingId);
       if (ing) {
         ing.stock = +(ing.stock + l.cantidad).toFixed(3);
-        // Actualizar costo: usar presentaciÃ³n predeterminada si existe, si no usar el costo capturado
+        // Actualizar costo: usar presentación predeterminada si existe, si no usar el costo capturado
         const presDefault = presentaciones.find(p=>p.ingId===l.ingId && p.esDefault);
         if (presDefault) {
           ing.costo = presDefault.costoUnit;
@@ -4133,7 +4133,7 @@ function guardarCompra() {
 
   save();
   closeModal('modal-compra');
-  toast(`Compra registrada${estado==='recibida'?' â€” inventario actualizado':' â€” pendiente de recibir'}`);
+  toast(`Compra registrada${estado==='recibida'?' — inventario actualizado':' — pendiente de recibir'}`);
   renderCompras();
   renderInventario();
 }
@@ -4151,7 +4151,7 @@ function recibirCompra(id) {
     }
   });
   save();
-  toast('Compra recibida â€” inventario actualizado âœ…');
+  toast('Compra recibida — inventario actualizado ✅');
   renderCompras();
   renderInventario();
 }
@@ -4161,7 +4161,7 @@ function generarOrdenSugerida() {
   if (bajos.length===0) { toast('No hay ingredientes por reponer'); return; }
   lineasCompraActual = bajos.map(i=>({ ingId:i.id, nombre:i.nombre, cantidad: Math.max(i.minimo*2-i.stock, i.minimo), costoUnit:i.costo }));
   document.getElementById('compra-fecha').value = hoy();
-  document.getElementById('compra-notas').value = 'Orden generada automÃ¡ticamente por stock bajo';
+  document.getElementById('compra-notas').value = 'Orden generada automáticamente por stock bajo';
   renderLineasCompra();
   openModal('modal-compra');
 }
@@ -4172,7 +4172,7 @@ function verDetalleCompra(id) {
   document.getElementById('detalle-compra-body').innerHTML = `
     <div class="grid grid-2 mb-16" style="font-size:13px">
       <div><span class="text-dim">Fecha:</span> <strong>${fmtFecha(c.fecha)}</strong></div>
-      <div><span class="text-dim">Proveedor:</span> ${c.proveedor||'â€”'}</div>
+      <div><span class="text-dim">Proveedor:</span> ${c.proveedor||'—'}</div>
       <div><span class="text-dim">Estado:</span> <span class="badge ${c.estado==='recibida'?'badge-green':'badge-amber'}">${c.estado==='recibida'?'Recibida':'Pendiente'}</span></div>
       <div><span class="text-dim">Total:</span> <strong class="highlight-green">${fmt(c.total)}</strong></div>
     </div>
@@ -4191,10 +4191,10 @@ function verDetalleCompra(id) {
           </div>`).join('')}
       </div>
     </div>
-    ${c.notas?`<div class="card card-sm" style="background:var(--bg3);font-size:12px">ðŸ“ ${c.notas}</div>`:''}`;
+    ${c.notas?`<div class="card card-sm" style="background:var(--bg3);font-size:12px">📝 ${c.notas}</div>`:''}`;
   document.getElementById('detalle-compra-footer').innerHTML =
     `<button class="btn btn-secondary" onclick="closeModal('modal-detalle-compra')">Cerrar</button>
-     ${c.estado==='pendiente'?`<button class="btn btn-primary" onclick="recibirCompra('${c.id}');closeModal('modal-detalle-compra')">âœ“ Marcar como recibida</button>`:''}`;
+     ${c.estado==='pendiente'?`<button class="btn btn-primary" onclick="recibirCompra('${c.id}');closeModal('modal-detalle-compra')">✓ Marcar como recibida</button>`:''}`;
   openModal('modal-detalle-compra');
 }
 
@@ -4258,7 +4258,7 @@ function renderReportes() {
   const conDesc = lista.filter(p => p.descuento > 0).length;
   const totalDescuentos = lista.reduce((s,p) => s + (p.descuento||0), 0);
 
-  // ===== Resumen de platillos: vendidos vs cortesÃ­a =====
+  // ===== Resumen de platillos: vendidos vs cortesía =====
   const _costoDeItem = (item) => {
     const plat = menu.find(m => m.nombre === (item.nombre||item) || m.id === item.id);
     if (plat) return plat.costo || 0;
@@ -4287,14 +4287,14 @@ function renderReportes() {
   setTxt('rep-plat-total', platVendidos + platCortesia);
   setTxt('rep-plat-total-det', `en ${totalPedidos} pedido${totalPedidos!==1?'s':''}`);
   setTxt('rep-plat-vendidos', platVendidos);
-  setTxt('rep-plat-vendidos-det', `${fmt(ingresosVendidos)} en ingresos Â· ${pedVendidos} pedidos`);
+  setTxt('rep-plat-vendidos-det', `${fmt(ingresosVendidos)} en ingresos · ${pedVendidos} pedidos`);
   setTxt('rep-plat-cortesia', platCortesia);
-  setTxt('rep-plat-cortesia-det', `${fmt(costoCortesia)} de costo Â· ${pedCortesia} pedidos`);
+  setTxt('rep-plat-cortesia-det', `${fmt(costoCortesia)} de costo · ${pedCortesia} pedidos`);
 
   // KPIs
   document.getElementById('rep-kpis').innerHTML = `
     <div class="card card-sm" style="border-color:rgba(46,204,113,0.2)">
-      <div class="card-title">Ventas perÃ­odo</div>
+      <div class="card-title">Ventas período</div>
       <div class="metric-big highlight-green" style="font-size:22px">${fmt(totalVentas)}</div>
     </div>
     <div class="card card-sm">
@@ -4311,7 +4311,7 @@ function renderReportes() {
       <div style="font-size:11px;color:var(--text3)">${conDesc} pedidos</div>
     </div>
     <div class="card card-sm" style="border-color:rgba(52,152,219,0.2)">
-      <div class="card-title">Clientes Ãºnicos</div>
+      <div class="card-title">Clientes únicos</div>
       <div class="metric-big" style="color:var(--blue);font-size:22px">${new Set(lista.map(p=>p.clienteId||p.cliente)).size}</div>
     </div>`;
 
@@ -4324,7 +4324,7 @@ function renderReportes() {
 
 // ---- TAB VENTAS ----
 function renderTabVentas(lista) {
-  // Agrupar por dÃ­a
+  // Agrupar por día
   const porDia = {};
   lista.forEach(p => {
     if (!porDia[p.fecha]) porDia[p.fecha] = { pedidos:0, ventas:0, canales:{}, descuentos:0 };
@@ -4336,7 +4336,7 @@ function renderTabVentas(lista) {
   const dias = Object.keys(porDia).sort();
   const maxVenta = Math.max(...dias.map(d=>porDia[d].ventas), 1);
 
-  // GrÃ¡fica de barras SVG
+  // Gráfica de barras SVG
   const W = 100, barW = dias.length > 0 ? Math.max(8, Math.min(40, Math.floor(700/dias.length)-4)) : 20;
   const grafH = 140;
   const bars = dias.map((dia, i) => {
@@ -4352,7 +4352,7 @@ function renderTabVentas(lista) {
   }).join('');
   const svgW = Math.max(400, 40 + dias.length*(barW+4));
   document.getElementById('rep-grafica-ventas').innerHTML = dias.length === 0
-    ? '<div class="empty" style="padding:24px"><div class="empty-text">Sin datos en este perÃ­odo</div></div>'
+    ? '<div class="empty" style="padding:24px"><div class="empty-text">Sin datos en este período</div></div>'
     : `<div style="overflow-x:auto"><svg width="${svgW}" height="${grafH+30}" style="display:block">
         ${bars}
         ${dias.map((dia,i) => {
@@ -4369,29 +4369,29 @@ function renderTabVentas(lista) {
   const canales = {};
   lista.forEach(p => canales[p.canal] = (canales[p.canal]||0) + (p.subtotal||p.total||0));
   const totalCanal = Object.values(canales).reduce((s,v)=>s+v,0)||1;
-  const canalEmoji = {WhatsApp:'ðŸ’¬',Presencial:'ðŸ ',Instagram:'ðŸ“¸',Facebook:'ðŸ‘¥','TelÃ©fono':'ðŸ“ž'};
+  const canalEmoji = {WhatsApp:'💬',Presencial:'🏠',Instagram:'📸',Facebook:'👥','Teléfono':'📞'};
   document.getElementById('rep-canales').innerHTML = Object.entries(canales).sort((a,b)=>b[1]-a[1]).map(([c,v])=>`
     <div style="margin-bottom:14px">
       <div class="flex justify-between mb-4">
-        <span style="font-size:13px">${canalEmoji[c]||'ðŸ“±'} ${c}</span>
-        <span class="font-mono text-sm">${fmt(v)} Â· ${Math.round(v/totalCanal*100)}%</span>
+        <span style="font-size:13px">${canalEmoji[c]||'📱'} ${c}</span>
+        <span class="font-mono text-sm">${fmt(v)} · ${Math.round(v/totalCanal*100)}%</span>
       </div>
       <div class="stat-bar"><div class="stat-bar-fill" style="width:${v/totalCanal*100}%;background:var(--blue)"></div></div>
     </div>`).join('') || '<div class="empty" style="padding:16px"><div class="empty-text">Sin datos</div></div>';
 
-  // Tabla dÃ­as
+  // Tabla días
   document.getElementById('rep-tabla-ventas').innerHTML = dias.reverse().map(dia => {
     const d = porDia[dia];
-    const canalTop = Object.entries(d.canales).sort((a,b)=>b[1]-a[1])[0]?.[0]||'â€”';
+    const canalTop = Object.entries(d.canales).sort((a,b)=>b[1]-a[1])[0]?.[0]||'—';
     return `<tr>
       <td>${new Date(dia+'T12:00:00').toLocaleDateString('es-MX',{weekday:'short',day:'2-digit',month:'short',year:'numeric'})}</td>
       <td class="font-mono">${d.pedidos}</td>
       <td class="highlight-green font-mono">${fmt(d.ventas)}</td>
       <td class="font-mono">${fmt(d.pedidos?d.ventas/d.pedidos:0)}</td>
-      <td class="font-mono ${d.descuentos>0?'highlight-amber':''}">${d.descuentos>0?fmt(d.descuentos):'â€”'}</td>
+      <td class="font-mono ${d.descuentos>0?'highlight-amber':''}">${d.descuentos>0?fmt(d.descuentos):'—'}</td>
       <td><span class="badge badge-gray">${canalTop}</span></td>
     </tr>`;
-  }).join('') || '<tr><td colspan="6" style="text-align:center;padding:24px;color:var(--text3)">Sin ventas en este perÃ­odo</td></tr>';
+  }).join('') || '<tr><td colspan="6" style="text-align:center;padding:24px;color:var(--text3)">Sin ventas en este período</td></tr>';
 }
 
 // ---- TAB PLATILLOS ----
@@ -4411,7 +4411,7 @@ function renderTabPlatillos(lista) {
     <div style="margin-bottom:12px">
       <div class="flex justify-between mb-4">
         <span style="font-size:13px"><span style="color:var(--text3);margin-right:6px">${i+1}.</span>${nombre}</span>
-        <span class="font-mono text-sm">${d.ventas} uds Â· ${fmt(d.ingresos)}</span>
+        <span class="font-mono text-sm">${d.ventas} uds · ${fmt(d.ingresos)}</span>
       </div>
       <div class="stat-bar"><div class="stat-bar-fill" style="width:${d.ventas/maxV*100}%"></div></div>
     </div>`).join('') || '<div class="empty" style="padding:16px"><div class="empty-text">Sin datos</div></div>';
@@ -4440,7 +4440,7 @@ function renderTabPlatillos(lista) {
     const datos = conteo[m.nombre];
     const margen = m.precio && m.costo ? ((m.precio-m.costo)/m.precio*100) : 0;
     const foodCost = m.precio ? (m.costo/m.precio*100) : 0;
-    const semaforo = margen>=50?'ðŸŸ¢':margen>=30?'ðŸŸ¡':'ðŸ”´';
+    const semaforo = margen>=50?'🟢':margen>=30?'🟡':'🔴';
     return { ...m, vendidos:datos?.ventas||0, ingresos:datos?.ingresos||0, margen, foodCost, semaforo };
   }).sort((a,b)=>b.vendidos-a.vendidos);
 
@@ -4473,7 +4473,7 @@ function renderTabClientes(lista) {
     <div style="margin-bottom:12px">
       <div class="flex justify-between mb-4">
         <span style="font-size:13px"><span style="color:var(--text3);margin-right:6px">${i+1}.</span>${c.nombre}</span>
-        <span class="font-mono text-sm">${c.pedidos} pedidos Â· ${fmt(c.total)}</span>
+        <span class="font-mono text-sm">${c.pedidos} pedidos · ${fmt(c.total)}</span>
       </div>
       <div class="stat-bar"><div class="stat-bar-fill" style="width:${c.total/maxT*100}%;background:var(--blue)"></div></div>
     </div>`).join('') || '<div class="empty" style="padding:16px"><div class="empty-text">Sin datos</div></div>';
@@ -4482,12 +4482,12 @@ function renderTabClientes(lista) {
   const canalesC = {};
   Object.values(porCliente).forEach(c => canalesC[c.canal]=(canalesC[c.canal]||0)+1);
   const totalCC = Object.values(canalesC).reduce((s,v)=>s+v,0)||1;
-  const canalEmoji = {WhatsApp:'ðŸ’¬',Presencial:'ðŸ ',Instagram:'ðŸ“¸',Facebook:'ðŸ‘¥','TelÃ©fono':'ðŸ“ž'};
+  const canalEmoji = {WhatsApp:'💬',Presencial:'🏠',Instagram:'📸',Facebook:'👥','Teléfono':'📞'};
   document.getElementById('rep-clientes-canal').innerHTML = Object.entries(canalesC).sort((a,b)=>b[1]-a[1]).map(([c,n])=>`
     <div style="margin-bottom:14px">
       <div class="flex justify-between mb-4">
-        <span style="font-size:13px">${canalEmoji[c]||'ðŸ“±'} ${c}</span>
-        <span class="font-mono text-sm">${n} clientes Â· ${Math.round(n/totalCC*100)}%</span>
+        <span style="font-size:13px">${canalEmoji[c]||'📱'} ${c}</span>
+        <span class="font-mono text-sm">${n} clientes · ${Math.round(n/totalCC*100)}%</span>
       </div>
       <div class="stat-bar"><div class="stat-bar-fill" style="width:${n/totalCC*100}%;background:var(--purple)"></div></div>
     </div>`).join('');
@@ -4501,14 +4501,14 @@ function renderTabClientes(lista) {
       <td class="font-mono">${fmt(c.pedidos?c.total/c.pedidos:0)}</td>
       <td class="text-dim">${fmtFecha(c.ultimo)}</td>
       <td><span class="badge badge-gray">${c.canal}</span></td>
-      <td>${cli?.tieneDieta?'<span class="badge badge-purple">ðŸ“‹ SÃ­</span>':'â€”'}</td>
+      <td>${cli?.tieneDieta?'<span class="badge badge-purple">📋 Sí</span>':'—'}</td>
     </tr>`;
   }).join('') || '<tr><td colspan="7" style="text-align:center;padding:24px;color:var(--text3)">Sin datos</td></tr>';
 }
 
 // ---- TAB INVENTARIO/CONSUMO ----
 function renderTabInventario(lista) {
-  // Consumo estimado por ingrediente (de recetas Ã— unidades vendidas)
+  // Consumo estimado por ingrediente (de recetas × unidades vendidas)
   const consumo = {};
   lista.forEach(p => p.items.forEach(it => {
     const platillo = menu.find(m=>m.nombre===(it.nombre||it));
@@ -4529,12 +4529,12 @@ function renderTabInventario(lista) {
     <div style="margin-bottom:12px">
       <div class="flex justify-between mb-4">
         <span style="font-size:13px">${nombre}</span>
-        <span class="font-mono text-sm">${d.total.toFixed(2)} ${d.unidad} Â· ${fmt(d.costo)}</span>
+        <span class="font-mono text-sm">${d.total.toFixed(2)} ${d.unidad} · ${fmt(d.costo)}</span>
       </div>
       <div class="stat-bar"><div class="stat-bar-fill" style="width:${d.total/maxI*100}%;background:var(--amber)"></div></div>
     </div>`).join('') || '<div class="empty" style="padding:16px"><div class="empty-text">Agrega recetas a tus platillos para ver el consumo</div></div>';
 
-  // Valor inventario por categorÃ­a
+  // Valor inventario por categoría
   const valCat = {};
   inventario.forEach(i => {
     if (!valCat[i.categoria]) valCat[i.categoria] = 0;
@@ -4555,7 +4555,7 @@ function renderTabInventario(lista) {
         <div class="stat-bar"><div class="stat-bar-fill" style="width:${totalVal?val/totalVal*100:0}%;background:var(--amber)"></div></div>
       </div>`).join('')}`;
 
-  // Tabla compras del perÃ­odo
+  // Tabla compras del período
   const dias = getPeriodoDias();
   const desde = new Date(Date.now()-dias*24*60*60*1000);
   const comprasPeriodo = compras.filter(c=>new Date(c.fecha+'T12:00:00')>=desde);
@@ -4563,12 +4563,12 @@ function renderTabInventario(lista) {
     const itemsTexto = c.lineas.slice(0,2).map(l=>l.nombre).join(', ') + (c.lineas.length>2?' +' + (c.lineas.length-2) : '');
     return `<tr>
     <td class="text-dim">${fmtFecha(c.fecha)}</td>
-    <td>${c.proveedor||'â€”'}</td>
+    <td>${c.proveedor||'—'}</td>
     <td style="font-size:12px;color:var(--text2)">${itemsTexto}</td>
     <td class="highlight-green font-mono">${fmt(c.total)}</td>
     <td><span class="badge ${c.estado==='recibida'?'badge-green':'badge-amber'}">${c.estado==='recibida'?'Recibida':'Pendiente'}</span></td>
   </tr>`;
-  }).join('') || '<tr><td colspan="5" style="text-align:center;padding:24px;color:var(--text3)">Sin compras en este perÃ­odo</td></tr>';
+  }).join('') || '<tr><td colspan="5" style="text-align:center;padding:24px;color:var(--text3)">Sin compras en este período</td></tr>';
 }
 
 // ---- TAB FINANZAS ----
@@ -4590,7 +4590,7 @@ function renderTabFinanzas(lista) {
       ${[
         ['Ingresos por ventas', ventas, 'var(--green)', true],
         ['Descuentos otorgados', -descuentos, 'var(--amber)', false],
-        ['Costo de compras (perÃ­odo)', -costoCompras, 'var(--red)', false],
+        ['Costo de compras (período)', -costoCompras, 'var(--red)', false],
         ['Utilidad bruta estimada', utilidad, utilidad>=0?'var(--green)':'var(--red)', true],
       ].map(([label,val,color,bold])=>`
         <div class="flex justify-between items-center" style="padding:8px 0;border-bottom:1px solid var(--border)">
@@ -4617,9 +4617,9 @@ function renderTabFinanzas(lista) {
     <div class="flex justify-between items-center" style="padding:9px 0;border-bottom:1px solid var(--border)">
       <span style="font-size:13px">${prov}</span>
       <span class="font-mono highlight-red">${fmt(monto)}</span>
-    </div>`).join('') || '<div class="empty" style="padding:16px"><div class="empty-text">Sin cuentas pendientes ðŸŽ‰</div></div>';
+    </div>`).join('') || '<div class="empty" style="padding:16px"><div class="empty-text">Sin cuentas pendientes 🎉</div></div>';
 
-  // Comparativo: perÃ­odo actual vs anterior
+  // Comparativo: período actual vs anterior
   const diasComp = diasP === 36500 ? 30 : diasP;
   const desdeAnterior = new Date(Date.now()-(diasComp*2)*24*60*60*1000);
   const desdeActual = new Date(Date.now()-diasComp*24*60*60*1000);
@@ -4632,14 +4632,14 @@ function renderTabFinanzas(lista) {
   document.getElementById('rep-comparativo').innerHTML = `
     <div class="grid grid-2" style="gap:14px">
       <div style="text-align:center;padding:20px;background:var(--bg3);border-radius:var(--radius)">
-        <div style="font-size:11px;color:var(--text3);margin-bottom:6px">PERÃODO ANTERIOR (${diasComp} dÃ­as)</div>
+        <div style="font-size:11px;color:var(--text3);margin-bottom:6px">PERÍODO ANTERIOR (${diasComp} días)</div>
         <div style="font-size:26px;font-weight:700;font-family:'DM Mono',monospace;color:var(--text2)">${fmt(vAnt)}</div>
         <div style="font-size:12px;color:var(--text3);margin-top:4px">${anterior.length} pedidos</div>
       </div>
       <div style="text-align:center;padding:20px;background:var(--bg3);border-radius:var(--radius);border:1px solid rgba(46,204,113,0.2)">
-        <div style="font-size:11px;color:var(--green);font-weight:600;margin-bottom:6px">PERÃODO ACTUAL (${diasComp} dÃ­as)</div>
+        <div style="font-size:11px;color:var(--green);font-weight:600;margin-bottom:6px">PERÍODO ACTUAL (${diasComp} días)</div>
         <div style="font-size:26px;font-weight:700;font-family:'DM Mono',monospace;color:var(--green)">${fmt(vAct)}</div>
-        <div style="font-size:12px;color:var(--text3);margin-top:4px">${actual.length} pedidos Â· <span style="color:${color};font-weight:600">${diff>=0?'+':''}${Math.round(diff)}% vs anterior</span></div>
+        <div style="font-size:12px;color:var(--text3);margin-top:4px">${actual.length} pedidos · <span style="color:${color};font-weight:600">${diff>=0?'+':''}${Math.round(diff)}% vs anterior</span></div>
       </div>
     </div>`;
 }
@@ -4657,7 +4657,7 @@ function exportarReporteCSV() {
     p.subtotal||p.total||0,
     p.descuento||0,
     p.total||0,
-    p.pago||'â€”',
+    p.pago||'—',
     p.estado
   ]));
   const csv = filas.map(r=>r.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
@@ -4666,7 +4666,7 @@ function exportarReporteCSV() {
   a.href = URL.createObjectURL(blob);
   a.download = `fitgo_reporte_${hoy()}.csv`;
   a.click();
-  toast(`CSV exportado â€” ${lista.length} pedidos`);
+  toast(`CSV exportado — ${lista.length} pedidos`);
 }
 
 // ========== GASTOS FIJOS ==========
@@ -4723,8 +4723,8 @@ function renderEstadosFinancieros() {
 
   const { desde, hasta } = getEFPeriodo();
 
-  // Filtrar datos del perÃ­odo
-  // Los pedidos se filtran por su fecha efectiva (entrega si existe, si no la de creaciÃ³n)
+  // Filtrar datos del período
+  // Los pedidos se filtran por su fecha efectiva (entrega si existe, si no la de creación)
   // para que coincidan con la fecha de sus gastos/movimientos financieros.
   const _fechaEfectiva = p => p.fechaEntrega || p.fecha;
   const pedEF = pedidos.filter(p => p.estado!=='Cancelado' && _fechaEfectiva(p)>=desde && _fechaEfectiva(p)<=hasta);
@@ -4733,34 +4733,34 @@ function renderEstadosFinancieros() {
   const cxpEF = cxp.filter(c => c.vencimiento>=desde && c.vencimiento<=hasta);
   const cxcEF = cxc.filter(c => c.fecha>=desde && c.fecha<=hasta);
 
-  // EnvÃ­os gratis: ya estÃ¡n en gastos[] con categoria 'Gastos de Venta'
+  // Envíos gratis: ya están en gastos[] con categoria 'Gastos de Venta'
   // No leer de movCaja para evitar doble conteo
-  const totalEnviosGratis = 0; // Fuente Ãºnica: gastos[]
+  const totalEnviosGratis = 0; // Fuente única: gastos[]
 
-  // EnvÃ­os pagados al repartidor en efectivo (solo afectan caja efectivo, NO banco)
+  // Envíos pagados al repartidor en efectivo (solo afectan caja efectivo, NO banco)
   const enviosSalidaMov = movCaja.filter(m=>{const p=pedidos.find(x=>x.id===m.pedidoId);return m.tipo==='envio_salida'&&p&&p.fecha>=desde&&p.fecha<=hasta;});
   const totalEnviosSalida = 0; // envio_salida es siempre en efectivo, no afecta saldo banco
 
-  // Ingresos â€” las CORTESÃAS no generan ingreso (producto regalado), pero sÃ­ cuestan producir
+  // Ingresos — las CORTESÍAS no generan ingreso (producto regalado), pero sí cuestan producir
   const pedFacturables = pedEF.filter(p => !p.esCortesia);
   const ingresos = pedFacturables.reduce((s,p)=>s+(p.subtotal||p.total||0),0);
   const descuentos = pedFacturables.reduce((s,p)=>s+(p.descuento||0),0);
   const ingresosNetos = ingresos - descuentos;
 
-  // Ingresos por mÃ©todo (sin cortesÃ­as)
+  // Ingresos por método (sin cortesías)
   const ingresosPorMetodo = {};
   pedFacturables.forEach(p => { const m = p.pago||'Otro'; ingresosPorMetodo[m]=(ingresosPorMetodo[m]||0)+(p.subtotal||p.total||0); });
 
-  // Costo de ventas = costo de PRODUCCIÃ“N de los platillos entregados en el perÃ­odo
+  // Costo de ventas = costo de PRODUCCIÓN de los platillos entregados en el período
   const pedEntregados = pedEF.filter(p => p.estado === 'Entregado');
   let costVentas = 0;
   pedEntregados.forEach(p => {
     (p.items || []).forEach(item => {
       let costoUnit = 0;
-      // Platillo de menÃº: usar su costo guardado
+      // Platillo de menú: usar su costo guardado
       const plat = menu.find(m => m.nombre === (item.nombre||item) || m.id === item.id);
       if (plat) costoUnit = plat.costo || 0;
-      // Platillo de dieta: buscar costo en la cotizaciÃ³n
+      // Platillo de dieta: buscar costo en la cotización
       else if (item.esDieta && item.dietaId) {
         const dieta = dietas.find(d => d.id === item.dietaId);
         const pc = dieta?.cotizacion?.platillos?.find(x => x.nombre === item.nombre);
@@ -4771,10 +4771,10 @@ function renderEstadosFinancieros() {
   });
   const utilidadBruta = ingresosNetos - costVentas;
 
-  // Gastos de venta: envÃ­os absorbidos + merma. 
-  // NOTA: el costo de producciÃ³n de las cortesÃ­as ya estÃ¡ contado en costVentas (arriba),
-  // por eso se excluye aquÃ­ para no duplicarlo.
-  const CATS_GASTO_VENTA = ['Gastos de Venta', 'Gasto de envÃ­o', 'Merma'];
+  // Gastos de venta: envíos absorbidos + merma. 
+  // NOTA: el costo de producción de las cortesías ya está contado en costVentas (arriba),
+  // por eso se excluye aquí para no duplicarlo.
+  const CATS_GASTO_VENTA = ['Gastos de Venta', 'Gasto de envío', 'Merma'];
   const gastosVentaDetalle = {};
   const gastosOpDetalle = {};
   gastEF.forEach(g => {
@@ -4791,16 +4791,16 @@ function renderEstadosFinancieros() {
   const totalGastosOperativos = gastosOp + totalGastosVenta; // Gastos de venta es subcuenta de operativos
   const utilidadOp = utilidadBruta - totalGastosOperativos;
 
-  // â”€â”€ SALDO BANCO â”€â”€
-  // Entradas banco: transferencias/tarjeta cobradas en el perÃ­odo
+  // ── SALDO BANCO ──
+  // Entradas banco: transferencias/tarjeta cobradas en el período
   const movPeriodo = movCaja.filter(m=>{const p=pedidos.find(x=>x.id===m.pedidoId);return p&&p.fecha>=desde&&p.fecha<=hasta;});
-  // Banco: usar misma funciÃ³n central que renderBancos
+  // Banco: usar misma función central que renderBancos
   const _movsBanco = _calcularMovsBanco(desde, hasta);
   const entradasBanco = _movsBanco.filter(m=>m.tipo!=='cxp').reduce((s,m)=>s+m.entrada,0);
   const cxpPagadasTransf = _movsBanco.filter(m=>m.tipo==='cxp').reduce((s,m)=>s+m.salida,0);
   const saldoBanco = entradasBanco - cxpPagadasTransf;
 
-  // Flujo â€” efectivo cobrado NETO (resta envÃ­os absorbidos/gratis que salen de caja, igual que la Caja del dÃ­a)
+  // Flujo — efectivo cobrado NETO (resta envíos absorbidos/gratis que salen de caja, igual que la Caja del día)
   const cobradoEfectivoBruto = movPeriodo.filter(m=>(m.tipo==='venta'||!m.tipo)&&m.metodo==='Efectivo').reduce((s,m)=>s+m.monto,0);
   const enviosSalenDeCaja = movPeriodo.filter(m=>(m.tipo==='envio_salida'||m.tipo==='envio_gratis'||m.tipo==='envio_absorbido')&&(m.metodo==='Efectivo'||!m.metodo)).reduce((s,m)=>s+m.monto,0);
   const cobradoEfectivo = cobradoEfectivoBruto - enviosSalenDeCaja;
@@ -4817,16 +4817,16 @@ function renderEstadosFinancieros() {
   const totalActivos = valorInventario + cxcPendTotal + cobradoEfectivo + entradasBanco;
   const capital = totalActivos - cxpPendTotal;
 
-  const labelPeriodo = `${fmtFecha(desde)} â€“ ${fmtFecha(hasta)}`;
+  const labelPeriodo = `${fmtFecha(desde)} – ${fmtFecha(hasta)}`;
 
-  // â”€â”€ Helper: fila simple â”€â”€
+  // ── Helper: fila simple ──
   const filaER = (label, val, bold, color, indent) =>
     `<div class="flex justify-between" style="padding:7px 0;border-bottom:1px solid var(--border);${indent?'padding-left:14px':''}">
       <span style="font-size:${bold?'13.5':'12.5'}px;${bold?'font-weight:600':'color:var(--text2)'}${indent?';color:var(--text2)':''}">${label}</span>
       <span class="font-mono" style="font-size:13px;${bold?'font-weight:700':''}${color?';color:'+color:''}">${val>=0?fmt(val):'-'+fmt(Math.abs(val))}</span>
     </div>`;
 
-  // â”€â”€ Helper: bloque expandible â”€â”€
+  // ── Helper: bloque expandible ──
   let desgloseCont = 0;
   const bloqueDesglose = (titulo, total, detalles, colorTitulo) => {
     const id = 'desglose-' + (desgloseCont++);
@@ -4835,7 +4835,7 @@ function renderEstadosFinancieros() {
     <div>
       <div class="flex justify-between items-center" style="padding:7px 0;border-bottom:1px solid var(--border);cursor:${hayDetalle?'pointer':'default'}" onclick="${hayDetalle?`toggleDesglose('${id}')`:''}" >
         <span style="font-size:12.5px;color:var(--text2);display:flex;align-items:center;gap:6px">
-          ${hayDetalle?`<span id="${id}-icon" style="font-size:10px;color:var(--text3)">â–¶</span>`:''}
+          ${hayDetalle?`<span id="${id}-icon" style="font-size:10px;color:var(--text3)">▶</span>`:''}
           ${titulo}
         </span>
         <span class="font-mono" style="font-size:13px;${colorTitulo?'color:'+colorTitulo:''}">${fmt(total)}</span>
@@ -4850,9 +4850,9 @@ function renderEstadosFinancieros() {
     </div>`;
   };
 
-  // â”€â”€ ESTADO DE RESULTADOS â”€â”€
+  // ── ESTADO DE RESULTADOS ──
   document.getElementById('ef-resultados').innerHTML = `
-    <div style="font-size:11px;color:var(--text3);margin-bottom:12px">ðŸ“… ${labelPeriodo}</div>
+    <div style="font-size:11px;color:var(--text3);margin-bottom:12px">📅 ${labelPeriodo}</div>
 
     <div style="font-size:11px;font-weight:700;color:var(--green);padding:4px 0;margin-bottom:2px">INGRESOS</div>
     ${bloqueDesglose('Ingresos por ventas', ingresos, ingresosPorMetodo, 'var(--green)')}
@@ -4868,23 +4868,23 @@ function renderEstadosFinancieros() {
 
     <div style="font-size:11px;font-weight:700;color:var(--red);padding:4px 0;margin-bottom:2px">GASTOS OPERATIVOS</div>
     ${bloqueDesglose('Gastos generales', gastosOp, gastosOpDetalle, 'var(--red)')}
-    ${bloqueDesglose('Gastos de venta (envÃ­os, merma, cortesÃ­as)', totalGastosVenta, gastosVentaDetalle, 'var(--amber)')}
+    ${bloqueDesglose('Gastos de venta (envíos, merma, cortesías)', totalGastosVenta, gastosVentaDetalle, 'var(--amber)')}
     ${filaER('= Total gastos operativos', totalGastosOperativos, true, 'var(--red)')}
     <div style="height:8px"></div>
 
     <div style="padding:10px;background:${utilidadOp>=0?'var(--green-dim)':'var(--red-dim)'};border-radius:6px;margin-top:4px">
       <div class="flex justify-between">
         <span style="font-weight:700">UTILIDAD OPERATIVA</span>
-        <span class="font-mono" style="font-weight:700;font-size:16px;color:${utilidadOp>=0?'var(--green)':'var(--red)'}">${fmt(Math.abs(utilidadOp))} ${utilidadOp<0?'âš ':''}</span>
+        <span class="font-mono" style="font-weight:700;font-size:16px;color:${utilidadOp>=0?'var(--green)':'var(--red)'}">${fmt(Math.abs(utilidadOp))} ${utilidadOp<0?'⚠':''}</span>
       </div>
       <div style="font-size:11px;color:var(--text3);margin-top:4px">Margen: ${ingresosNetos?Math.round(utilidadOp/ingresosNetos*100):0}%</div>
     </div>
 
   `;
 
-  // â”€â”€ BALANCE GENERAL â”€â”€
+  // ── BALANCE GENERAL ──
   document.getElementById('ef-balance').innerHTML = `
-    <div style="font-size:11px;color:var(--text3);margin-bottom:12px">ðŸ“… Al ${fmtFecha(hasta)}</div>
+    <div style="font-size:11px;color:var(--text3);margin-bottom:12px">📅 Al ${fmtFecha(hasta)}</div>
     <div style="font-size:11px;font-weight:700;color:var(--blue);margin-bottom:6px;padding:4px 0">ACTIVOS</div>
     ${filaER('Efectivo en caja', cobradoEfectivo, false, 'var(--green)')}
     ${filaER('Saldo banco', entradasBanco - cxpPagadasTransf, false, 'var(--blue)')}
@@ -4901,12 +4901,12 @@ function renderEstadosFinancieros() {
         <span style="font-weight:700">CAPITAL / PATRIMONIO</span>
         <span class="font-mono" style="font-weight:700;font-size:16px;color:${capital>=0?'var(--green)':'var(--red)'}">${fmt(Math.abs(capital))}</span>
       </div>
-      <div style="font-size:11px;color:var(--text3);margin-top:4px">Activos âˆ’ Pasivos</div>
+      <div style="font-size:11px;color:var(--text3);margin-top:4px">Activos − Pasivos</div>
     </div>`;
 
-  // â”€â”€ FLUJO DE EFECTIVO â”€â”€
+  // ── FLUJO DE EFECTIVO ──
   document.getElementById('ef-flujo').innerHTML = `
-    <div style="font-size:11px;color:var(--text3);margin-bottom:12px">ðŸ“… ${labelPeriodo}</div>
+    <div style="font-size:11px;color:var(--text3);margin-bottom:12px">📅 ${labelPeriodo}</div>
     <div style="font-size:11px;font-weight:700;color:var(--green);margin-bottom:6px">ENTRADAS</div>
     ${filaER('Cobros en efectivo', cobradoEfectivo, false, 'var(--green)')}
     ${filaER('Cobros banco (transf/tarjeta)', entradasBanco, false, 'var(--blue)')}
@@ -4922,21 +4922,21 @@ function renderEstadosFinancieros() {
     <div style="padding:10px;background:${flujoNeto>=0?'var(--green-dim)':'var(--red-dim)'};border-radius:6px;margin-top:4px">
       <div class="flex justify-between">
         <span style="font-weight:700">FLUJO NETO</span>
-        <span class="font-mono" style="font-weight:700;font-size:16px;color:${flujoNeto>=0?'var(--green)':'var(--red)'}">${fmt(Math.abs(flujoNeto))} ${flujoNeto<0?'âš ':''}</span>
+        <span class="font-mono" style="font-weight:700;font-size:16px;color:${flujoNeto>=0?'var(--green)':'var(--red)'}">${fmt(Math.abs(flujoNeto))} ${flujoNeto<0?'⚠':''}</span>
       </div>
-      <div style="font-size:11px;color:var(--text3);margin-top:4px">${flujoNeto>=0?'Flujo positivo âœ…':'Flujo negativo âš '}</div>
+      <div style="font-size:11px;color:var(--text3);margin-top:4px">${flujoNeto>=0?'Flujo positivo ✅':'Flujo negativo ⚠'}</div>
     </div>`;
 
-  // â”€â”€ TABLA GASTOS â”€â”€
+  // ── TABLA GASTOS ──
   const tbody = document.getElementById('ef-tabla-gastos');
-  const recLabel = {no:'Ãšnico',mensual:'Mensual',semanal:'Semanal'};
+  const recLabel = {no:'Único',mensual:'Mensual',semanal:'Semanal'};
   tbody.innerHTML = gastos.sort((a,b)=>b.fecha.localeCompare(a.fecha)).map(g=>`<tr>
     <td style="font-weight:500">${g.concepto}</td>
     <td><span class="badge badge-gray">${g.categoria}</span></td>
     <td class="highlight-red font-mono">${fmt(g.monto)}</td>
     <td class="text-dim">${fmtFecha(g.fecha)}</td>
-    <td><span class="badge ${g.recurrente!=='no'?'badge-amber':'badge-gray'}">${recLabel[g.recurrente]||'â€”'}</span></td>
-    <td><button class="btn btn-danger btn-sm" onclick="eliminarGasto('${g.id}')">ðŸ—‘</button></td>
+    <td><span class="badge ${g.recurrente!=='no'?'badge-amber':'badge-gray'}">${recLabel[g.recurrente]||'—'}</span></td>
+    <td><button class="btn btn-danger btn-sm" onclick="eliminarGasto('${g.id}')">🗑</button></td>
   </tr>`).join('') || '<tr><td colspan="6" style="text-align:center;padding:24px;color:var(--text3)">Sin gastos registrados</td></tr>';
 }
 
@@ -4946,13 +4946,13 @@ function toggleDesglose(id) {
   if (!el) return;
   const open = el.style.display !== 'none';
   el.style.display = open ? 'none' : 'block';
-  if (icon) icon.textContent = open ? 'â–¶' : 'â–¼';
+  if (icon) icon.textContent = open ? '▶' : '▼';
 }
 
 function exportarEstadosCSV() {
   const { desde, hasta } = getEFPeriodo();
   const gastEF = gastos.filter(g=>g.fecha>=desde&&g.fecha<=hasta);
-  const filas = [['Tipo','Concepto','CategorÃ­a','Monto','Fecha']];
+  const filas = [['Tipo','Concepto','Categoría','Monto','Fecha']];
   const pedEF = pedidos.filter(p=>p.estado!=='Cancelado'&&p.fecha>=desde&&p.fecha<=hasta);
   pedEF.forEach(p=>filas.push(['Ingreso',`Pedido #${p.id.slice(-4).toUpperCase()} - ${p.cliente}`,'Ventas',p.subtotal||p.total||0,p.fecha]));
   gastEF.forEach(g=>filas.push(['Gasto',g.concepto,g.categoria,g.monto,g.fecha]));
@@ -4982,10 +4982,10 @@ const PERMISOS_DEFAULT = {
 let permisosCaja = DB.get('permisosCaja') || { ...PERMISOS_DEFAULT };
 
 const MODULOS_LABELS = {
-  pedidos:'ðŸ§¾ Pedidos', menu:'ðŸ¥™ MenÃº', dietas:'ðŸ“‹ Dietas',
-  inventario:'ðŸ“¦ Inventario', caja:'ðŸ’° Caja del dÃ­a', proveedores:'ðŸš› Proveedores',
-  cxp:'ðŸ“¤ Cuentas por pagar', cxc:'ðŸ“¥ Cuentas por cobrar', compras:'ðŸ›’ Compras',
-  clientes:'ðŸ‘¤ Clientes', reportes:'ðŸ“ˆ Reportes', importar:'ðŸ“¥ Carga masiva'
+  pedidos:'🧾 Pedidos', menu:'🥙 Menú', dietas:'📋 Dietas',
+  inventario:'📦 Inventario', caja:'💰 Caja del día', proveedores:'🚛 Proveedores',
+  cxp:'📤 Cuentas por pagar', cxc:'📥 Cuentas por cobrar', compras:'🛒 Compras',
+  clientes:'👤 Clientes', reportes:'📈 Reportes', importar:'📥 Carga masiva'
 };
 
 function doLogin() {
@@ -5016,10 +5016,10 @@ function doLogout() {
 function aplicarPermisos() {
   if (!sesionActual) return;
   const isAdmin = sesionActual.rol === 'admin';
-  // SecciÃ³n admin siempre visible solo para admin
+  // Sección admin siempre visible solo para admin
   document.getElementById('nav-admin-section').style.display = isAdmin ? 'block' : 'none';
   if (isAdmin) return; // Admin ve todo
-  // Caja: ocultar nav items segÃºn permisos
+  // Caja: ocultar nav items según permisos
   const navMap = {
     pedidos:'nav-item', menu:'nav-item', dietas:'nav-item', inventario:'nav-item',
     caja:'nav-item', proveedores:'nav-item', cxp:'nav-item', cxc:'nav-item',
@@ -5033,7 +5033,7 @@ function aplicarPermisos() {
   });
 }
 
-// ---- GestiÃ³n de usuarios ----
+// ---- Gestión de usuarios ----
 let usrRolActual = 'admin';
 let usrEditId = null;
 
@@ -5045,14 +5045,14 @@ function renderUsuarios() {
       <div style="flex:1">
         <div style="font-size:13px;font-weight:500">${u.nombre} <span style="font-size:11px;color:var(--text3)">@${u.user}</span></div>
         <div style="font-size:11px;color:${u.rol==='admin'?'var(--green)':'var(--blue)'}">
-          ${u.rol==='admin'?'ðŸ‘‘ Administrador':'ðŸ§¾ Caja / Operador'}
+          ${u.rol==='admin'?'👑 Administrador':'🧾 Caja / Operador'}
         </div>
       </div>
       <div class="flex gap-6">
         <button class="btn btn-secondary btn-sm" onclick="toggleUsuario('${u.id}')" style="color:${u.activo?'var(--green)':'var(--red)'}">
-          ${u.activo?'âœ“ Activo':'âœ— Inactivo'}
+          ${u.activo?'✓ Activo':'✗ Inactivo'}
         </button>
-        ${u.id!=='u1'?`<button class="btn btn-danger btn-sm" onclick="eliminarUsuario('${u.id}')">ðŸ—‘</button>`:''}
+        ${u.id!=='u1'?`<button class="btn btn-danger btn-sm" onclick="eliminarUsuario('${u.id}')">🗑</button>`:''}
       </div>
     </div>`).join('');
 
@@ -5119,7 +5119,7 @@ function eliminarUsuario(id) {
 }
 
 // ========== IMPORTAR (XLSX/CSV) ==========
-// Usar SheetJS via CDN (se carga dinÃ¡micamente)
+// Usar SheetJS via CDN (se carga dinámicamente)
 async function cargarSheetJS() {
   if (window.XLSX) return;
   await new Promise((res,rej)=>{
@@ -5133,14 +5133,14 @@ async function cargarSheetJS() {
 async function importarArchivo(input, tipo) {
   const file = input.files[0]; if (!file) return;
   const resEl = document.getElementById('res-'+tipo);
-  resEl.innerHTML = '<span style="color:var(--text3)">â³ Leyendo archivo...</span>';
+  resEl.innerHTML = '<span style="color:var(--text3)">⏳ Leyendo archivo...</span>';
   try {
     await cargarSheetJS();
     const data = await file.arrayBuffer();
     const wb = XLSX.read(data, {type:'array'});
     const ws = wb.Sheets[wb.SheetNames[0]];
     const rows = XLSX.utils.sheet_to_json(ws, {defval:''});
-    if (!rows.length) { resEl.innerHTML='<span style="color:var(--amber)">âš  El archivo estÃ¡ vacÃ­o</span>'; return; }
+    if (!rows.length) { resEl.innerHTML='<span style="color:var(--amber)">⚠ El archivo está vacío</span>'; return; }
     let count = 0;
     if (tipo==='clientes') count = importarClientes(rows);
     else if (tipo==='insumos') count = importarInsumos(rows);
@@ -5150,17 +5150,17 @@ async function importarArchivo(input, tipo) {
     else if (tipo==='ventas') count = importarVentas(rows);
     else if (tipo==='platillos_personalizados') { importarPlatillosPersonalizados(rows); count = rows.length; }
     save();
-    resEl.innerHTML=`<span style="color:var(--green)">âœ… ${count} registros importados correctamente</span>`;
+    resEl.innerHTML=`<span style="color:var(--green)">✅ ${count} registros importados correctamente</span>`;
     toast(`${count} ${tipo} importados`);
   } catch(e) {
-    resEl.innerHTML=`<span style="color:var(--red)">âŒ Error: ${e.message}</span>`;
+    resEl.innerHTML=`<span style="color:var(--red)">❌ Error: ${e.message}</span>`;
     toast('Error al leer el archivo','error');
   }
   input.value='';
 }
 
 function normalizar(obj, campos) {
-  // Buscar columna ignorando mayÃºsculas/tildes
+  // Buscar columna ignorando mayúsculas/tildes
   const keys = Object.keys(obj);
   const find = (nombre) => {
     const n = nombre.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
@@ -5227,7 +5227,7 @@ function importarRecetas(rows) {
 
 function importarRecetasInsumos(rows) {
   // Cada fila: platillo, insumo, cantidad, unidad
-  // Agrupa por platillo y construye la receta con costos automÃ¡ticos
+  // Agrupa por platillo y construye la receta con costos automáticos
   let platillosActualizados = new Set();
   let advertencias = [];
 
@@ -5241,7 +5241,7 @@ function importarRecetasInsumos(rows) {
   });
 
   Object.entries(grupos).forEach(([nombrePlatillo, lineas]) => {
-    // Buscar o crear el platillo en el menÃº
+    // Buscar o crear el platillo en el menú
     let platillo = menu.find(m => m.nombre.toLowerCase() === nombrePlatillo.toLowerCase());
     if (!platillo) {
       platillo = { id:uid(), nombre:nombrePlatillo, categoria:'Comida', precio:0, costo:0, calorias:0, desc:'', etiquetas:[], disponible:true, receta:[] };
@@ -5280,7 +5280,7 @@ function importarRecetasInsumos(rows) {
 
   // Mostrar advertencias si hubo insumos no encontrados
   if (advertencias.length) {
-    setTimeout(() => toast(`âš  Insumos no encontrados en inventario: ${[...new Set(advertencias)].join(', ')}. Verifica los nombres.`, 'error'), 800);
+    setTimeout(() => toast(`⚠ Insumos no encontrados en inventario: ${[...new Set(advertencias)].join(', ')}. Verifica los nombres.`, 'error'), 800);
   }
 
   return platillosActualizados.size;
@@ -5312,7 +5312,7 @@ function importarPlatillosPersonalizados(rows) {
   });
   save();
   const el = document.getElementById('res-platillos_personalizados');
-  if (el) el.innerHTML = `<div style="color:var(--green);font-size:12px;margin-top:8px">âœ“ ${importados} platillo(s) personalizados importados</div>`;
+  if (el) el.innerHTML = `<div style="color:var(--green);font-size:12px;margin-top:8px">✓ ${importados} platillo(s) personalizados importados</div>`;
   toast(`${importados} platillos personalizados importados`);
 }
 
@@ -5341,20 +5341,20 @@ function importarVentas(rows) {
 
 function descargarPlantillas() {
   const plantillas = {
-    'clientes': [['nombre','telefono','canal','notas'],['MarÃ­a GonzÃ¡lez','999-123-4567','WhatsApp','Sin lactosa']],
-    'insumos': [['nombre','categoria','stock','minimo','unidad','costo'],['Pechuga de pollo','ProteÃ­nas','10','5','kg','95']],
-    'proveedores': [['nombre','contacto','telefono','categoria','dias','notas'],['Carnes Don Pepe','JosÃ© PÃ©rez','999-500-0001','Carnes y proteÃ­nas','Lunes, Jueves','Pago semanal']],
+    'clientes': [['nombre','telefono','canal','notas'],['María González','999-123-4567','WhatsApp','Sin lactosa']],
+    'insumos': [['nombre','categoria','stock','minimo','unidad','costo'],['Pechuga de pollo','Proteínas','10','5','kg','95']],
+    'proveedores': [['nombre','contacto','telefono','categoria','dias','notas'],['Carnes Don Pepe','José Pérez','999-500-0001','Carnes y proteínas','Lunes, Jueves','Pago semanal']],
     'recetas': [['nombre','categoria','precio','costo','calorias','descripcion'],['Bowl de pollo','Comida','145','52','480','Pollo a la plancha con quinoa']],
     'recetas_insumos': [
       ['platillo','insumo','cantidad','unidad'],
       ['Bowl de pollo','Pechuga de pollo','0.2','kg'],
       ['Bowl de pollo','Quinoa','0.08','kg'],
       ['Bowl de pollo','Espinacas','0.05','kg'],
-      ['Wrap de atÃºn','AtÃºn en agua','0.1','kg'],
-      ['Wrap de atÃºn','Tortilla integral','1','pza'],
+      ['Wrap de atún','Atún en agua','0.1','kg'],
+      ['Wrap de atún','Tortilla integral','1','pza'],
     ],
-    'ventas': [['fecha','cliente','platillo','cantidad','total','canal','pago'],['2024-01-15','MarÃ­a GonzÃ¡lez','Bowl de pollo','1','145','WhatsApp','Efectivo']],
-    'platillos_personalizados': [['nombre','cliente','tiempo_comida','precio_venta','notas'],['Bowl proteico','MarÃ­a GonzÃ¡lez','Comida','145','Sin gluten']],
+    'ventas': [['fecha','cliente','platillo','cantidad','total','canal','pago'],['2024-01-15','María González','Bowl de pollo','1','145','WhatsApp','Efectivo']],
+    'platillos_personalizados': [['nombre','cliente','tiempo_comida','precio_venta','notas'],['Bowl proteico','María González','Comida','145','Sin gluten']],
   };
   Object.entries(plantillas).forEach(([nombre, datos]) => {
     const csv = datos.map(r=>r.map(v=>`"${v}"`).join(',')).join('\n');
@@ -5367,7 +5367,7 @@ function descargarPlantillas() {
   toast('7 plantillas descargadas');
 }
 
-function renderImportar() {} // pÃ¡gina estÃ¡tica, no necesita render dinÃ¡mico
+function renderImportar() {} // página estática, no necesita render dinámico
 
 // ========== BUSCADOR PLATILLOS MODAL ==========
 let menuItemsData = []; // cache de items generados para el selector
@@ -5407,17 +5407,17 @@ function onChangeFechaPedido(val) {
   const title = document.getElementById('pedido-modal-title');
   const sub   = document.getElementById('pedido-modal-sub');
   if (!val || val === hoyStr) {
-    if (badge) { badge.textContent = 'ðŸ“… Hoy'; badge.className = 'badge badge-green'; }
+    if (badge) { badge.textContent = '📅 Hoy'; badge.className = 'badge badge-green'; }
     if (hint)  hint.textContent = 'Registro normal';
     if (title) title.textContent = 'Nuevo Pedido';
-    if (sub)   sub.textContent = 'Pedido del dÃ­a de hoy';
+    if (sub)   sub.textContent = 'Pedido del día de hoy';
   } else if (val < hoyStr) {
-    if (badge) { badge.textContent = 'ðŸ“‹ Pasado'; badge.className = 'badge badge-amber'; }
+    if (badge) { badge.textContent = '📋 Pasado'; badge.className = 'badge badge-amber'; }
     if (hint)  hint.textContent = 'Registrando pedido de fecha anterior';
     if (title) title.textContent = 'Registrar Pedido Anterior';
     if (sub)   sub.textContent = `Fecha: ${fmtFecha(val)}`;
   } else {
-    if (badge) { badge.textContent = 'ðŸ—“ Agendado'; badge.className = 'badge badge-blue'; }
+    if (badge) { badge.textContent = '🗓 Agendado'; badge.className = 'badge badge-blue'; }
     if (hint)  hint.textContent = 'Pedido agendado a futuro';
     if (title) title.textContent = 'Agendar Pedido';
     if (sub)   sub.textContent = `Para: ${fmtFecha(val)}`;
@@ -5425,7 +5425,7 @@ function onChangeFechaPedido(val) {
 }
 
 function openNuevoPedidoFecha(fecha) {
-  // Al elegir un dÃ­a en el calendario, ese dÃ­a se vuelve el "dÃ­a de trabajo"
+  // Al elegir un día en el calendario, ese día se vuelve el "día de trabajo"
   if (fecha) {
     _diaTrabajo = fecha;
     const inp = document.getElementById('dia-trabajo');
@@ -5443,7 +5443,7 @@ function toggleVistaCal() {
   const calEl = document.getElementById('vista-calendario');
   const btn = document.getElementById('btn-vista-cal');
   if (calEl) calEl.style.display = vistaCalActiva ? 'block' : 'none';
-  if (btn) { btn.textContent = vistaCalActiva ? 'âœ• Cerrar calendario' : 'ðŸ“… Calendario'; btn.className = vistaCalActiva ? 'btn btn-secondary btn-sm' : 'btn btn-secondary btn-sm'; }
+  if (btn) { btn.textContent = vistaCalActiva ? '✕ Cerrar calendario' : '📅 Calendario'; btn.className = vistaCalActiva ? 'btn btn-secondary btn-sm' : 'btn btn-secondary btn-sm'; }
   if (vistaCalActiva) renderCalendario();
 }
 
@@ -5453,7 +5453,7 @@ function navCalendario(delta) {
 }
 
 function renderCalendario() {
-  const aÃ±o = calMesActual.getFullYear();
+  const año = calMesActual.getFullYear();
   const mes = calMesActual.getMonth();
   const titulo = calMesActual.toLocaleDateString('es-MX', { month:'long', year:'numeric' });
   const tituloEl = document.getElementById('cal-titulo-mes');
@@ -5467,19 +5467,19 @@ function renderCalendario() {
     porFecha[p.fecha].total += (p.total || 0);
   });
 
-  const primerDia = new Date(aÃ±o, mes, 1).getDay(); // 0=Dom
-  const diasMes = new Date(aÃ±o, mes+1, 0).getDate();
+  const primerDia = new Date(año, mes, 1).getDay(); // 0=Dom
+  const diasMes = new Date(año, mes+1, 0).getDate();
   const hoyStr = hoy();
 
   const grid = document.getElementById('cal-grid');
   if (!grid) return;
 
   let celdas = [];
-  // Celdas vacÃ­as al inicio
+  // Celdas vacías al inicio
   for (let i = 0; i < primerDia; i++) celdas.push(`<div></div>`);
-  // DÃ­as del mes
+  // Días del mes
   for (let d = 1; d <= diasMes; d++) {
-    const fechaStr = `${aÃ±o}-${String(mes+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const fechaStr = `${año}-${String(mes+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
     const data = porFecha[fechaStr];
     const esHoy = fechaStr === hoyStr;
     const esSel = fechaStr === calFechaSeleccionada;
@@ -5489,11 +5489,11 @@ function renderCalendario() {
     celdas.push(`
       <div onclick="seleccionarDiaCal('${fechaStr}')" style="min-height:62px;border:1px solid ${borderColor};border-radius:8px;padding:7px 8px;cursor:pointer;background:${bg};transition:all 0.1s"
            onmouseover="this.style.borderColor='var(--border2)'" onmouseout="this.style.borderColor='${borderColor}'">
-        <div style="font-size:12px;font-weight:${esHoy?'700':'500'};color:${esHoy?'var(--green)':esFuturo?'var(--text3)':'var(--text)'};margin-bottom:4px">${d}${esHoy?' â—':''}</div>
+        <div style="font-size:12px;font-weight:${esHoy?'700':'500'};color:${esHoy?'var(--green)':esFuturo?'var(--text3)':'var(--text)'};margin-bottom:4px">${d}${esHoy?' ●':''}</div>
         ${data ? `
           <div style="font-size:10px;font-weight:600;color:var(--green)">${data.count} ped.</div>
           <div style="font-size:10px;color:var(--text3)">${fmt(data.total).replace('MX$','$')}</div>
-        ` : esFuturo ? '' : `<div style="font-size:10px;color:var(--text3)">â€”</div>`}
+        ` : esFuturo ? '' : `<div style="font-size:10px;color:var(--text3)">—</div>`}
       </div>`);
   }
   grid.innerHTML = celdas.join('');
@@ -5501,7 +5501,7 @@ function renderCalendario() {
 
 function seleccionarDiaCal(fecha) {
   calFechaSeleccionada = fecha;
-  renderCalendario(); // re-render para marcar selecciÃ³n
+  renderCalendario(); // re-render para marcar selección
   const detalle = document.getElementById('cal-detalle-dia');
   const titulo = document.getElementById('cal-detalle-titulo');
   const lista = document.getElementById('cal-detalle-lista');
@@ -5524,19 +5524,19 @@ function seleccionarDiaCal(fecha) {
       </div>
       <div style="font-size:12px;color:var(--text2);margin-top:4px">${(p.items||[]).slice(0,3).map(i=>i.nombre||i).join(', ')}</div>
       <div class="flex justify-between mt-4">
-        <span style="font-size:11px;color:var(--text3)">${p.horaStr||''} Â· ${p.canal}</span>
+        <span style="font-size:11px;color:var(--text3)">${p.horaStr||''} · ${p.canal}</span>
         <span class="font-mono highlight-green" style="font-size:13px">${fmt(p.total)}</span>
       </div>
     </div>`).join('') + '</div>';
 }
 
-// ========== CATEGORÃAS ==========
+// ========== CATEGORÍAS ==========
 let categModalTipo = 'insumos';
 
 function openGestionCategorias(tipo) {
   categModalTipo = tipo;
   document.getElementById('categ-modal-title').textContent =
-    tipo === 'insumos' ? 'CategorÃ­as de Insumos' : 'CategorÃ­as del MenÃº';
+    tipo === 'insumos' ? 'Categorías de Insumos' : 'Categorías del Menú';
   document.getElementById('nueva-categ-input').value = '';
   renderListaCategorias();
   openModal('modal-categorias');
@@ -5547,21 +5547,21 @@ function renderListaCategorias() {
   document.getElementById('lista-categorias').innerHTML = lista.map((c, i) => `
     <div class="flex items-center justify-between" style="padding:9px 0;border-bottom:1px solid var(--border)">
       <span style="font-size:13px">${c}</span>
-      <button class="btn btn-danger btn-sm" onclick="eliminarCategoria(${i})">ðŸ—‘</button>
-    </div>`).join('') || '<div style="text-align:center;padding:24px;color:var(--text3);font-size:13px">Sin categorÃ­as</div>';
+      <button class="btn btn-danger btn-sm" onclick="eliminarCategoria(${i})">🗑</button>
+    </div>`).join('') || '<div style="text-align:center;padding:24px;color:var(--text3);font-size:13px">Sin categorías</div>';
 }
 
 function agregarCategoria() {
   const val = document.getElementById('nueva-categ-input').value.trim();
   if (!val) return;
   const lista = categModalTipo === 'insumos' ? categoriasInsumos : categoriasMenu;
-  if (lista.includes(val)) { toast('Esa categorÃ­a ya existe', 'error'); return; }
+  if (lista.includes(val)) { toast('Esa categoría ya existe', 'error'); return; }
   lista.push(val);
   save();
   document.getElementById('nueva-categ-input').value = '';
   renderListaCategorias();
   actualizarSelectsCategorias();
-  toast(`CategorÃ­a "${val}" agregada`);
+  toast(`Categoría "${val}" agregada`);
 }
 
 function eliminarCategoria(idx) {
@@ -5571,7 +5571,7 @@ function eliminarCategoria(idx) {
   save();
   renderListaCategorias();
   actualizarSelectsCategorias();
-  toast(`CategorÃ­a "${nombre}" eliminada`);
+  toast(`Categoría "${nombre}" eliminada`);
 }
 
 function actualizarSelectsCategorias() {
@@ -5585,10 +5585,10 @@ function actualizarSelectsCategorias() {
   const filtroIng = document.getElementById('filtro-categ-ing');
   if (filtroIng) {
     const sel = filtroIng.value;
-    filtroIng.innerHTML = '<option value="">Todas las categorÃ­as</option>' +
+    filtroIng.innerHTML = '<option value="">Todas las categorías</option>' +
       categoriasInsumos.map(c => `<option ${c===sel?'selected':''}>${c}</option>`).join('');
   }
-  // Actualizar chips del menÃº
+  // Actualizar chips del menú
   const chipsWrap = document.getElementById('menu-categ-chips');
   if (chipsWrap) {
     const active = document.querySelector('#menu-categ-chips .chip.active')?.textContent || 'Todas';
@@ -5633,13 +5633,13 @@ function renderGridPreparados(lista) {
         <span style="font-size:11px;color:var(--text3);font-family:'DM Mono',monospace">${p.rendimiento} ${p.unidad}</span>
       </div>
       <div style="font-size:15px;font-weight:600;margin-bottom:4px">${p.nombre}</div>
-      ${p.desc ? `<div style="font-size:12px;color:var(--text3);margin-bottom:10px;line-height:1.5">${p.desc.substring(0,80)}${p.desc.length>80?'â€¦':''}</div>` : ''}
+      ${p.desc ? `<div style="font-size:12px;color:var(--text3);margin-bottom:10px;line-height:1.5">${p.desc.substring(0,80)}${p.desc.length>80?'…':''}</div>` : ''}
       <div style="font-size:12px;color:var(--text2);margin-bottom:10px">
         ${(p.lineas||[]).length} insumo${(p.lineas||[]).length!==1?'s':''}:
         ${(p.lineas||[]).slice(0,3).map(l => {
           const ing = inventario.find(i => i.id === l.ingId);
           return ing ? `<span style="color:var(--text3)">${ing.nombre}</span>` : '';
-        }).filter(Boolean).join(', ')}${(p.lineas||[]).length>3?'â€¦':''}
+        }).filter(Boolean).join(', ')}${(p.lineas||[]).length>3?'…':''}
       </div>
       <hr class="divider">
       <div class="flex justify-between items-center mb-12">
@@ -5653,12 +5653,12 @@ function renderGridPreparados(lista) {
         </div>
       </div>
       <div class="flex gap-6">
-        <button class="btn btn-primary btn-sm flex-1" onclick="openEjecutarProduccion('${p.id}')">â–¶ Ejecutar producciÃ³n</button>
-        <button class="btn btn-secondary btn-sm" onclick="editarPreparado('${p.id}')">âœ</button>
-        <button class="btn btn-danger btn-sm" onclick="eliminarPreparado('${p.id}')">ðŸ—‘</button>
+        <button class="btn btn-primary btn-sm flex-1" onclick="openEjecutarProduccion('${p.id}')">▶ Ejecutar producción</button>
+        <button class="btn btn-secondary btn-sm" onclick="editarPreparado('${p.id}')">✏</button>
+        <button class="btn btn-danger btn-sm" onclick="eliminarPreparado('${p.id}')">🗑</button>
       </div>
     </div>`;
-  }).join('') || '<div class="empty" style="grid-column:1/-1"><div class="empty-icon">ðŸ§ª</div><div class="empty-title">Sin preparados registrados</div><div class="empty-text">Crea tu primera receta de salsa o base</div></div>';
+  }).join('') || '<div class="empty" style="grid-column:1/-1"><div class="empty-icon">🧪</div><div class="empty-title">Sin preparados registrados</div><div class="empty-text">Crea tu primera receta de salsa o base</div></div>';
 }
 
 function renderHistorialProd() {
@@ -5676,7 +5676,7 @@ function renderHistorialProd() {
 function openNuevoPreparado() {
   preparadoEditId = null;
   lineasPreparadoActual = [];
-  document.getElementById('preparado-modal-title').textContent = 'Nueva ProducciÃ³n';
+  document.getElementById('preparado-modal-title').textContent = 'Nueva Producción';
   ['prep-nombre','prep-rendimiento','prep-desc'].forEach(id => document.getElementById(id).value = '');
   renderLineasPreparado();
   openModal('modal-preparado');
@@ -5731,7 +5731,7 @@ function renderLineasPreparado() {
              placeholder="0" value="${linea.cantidad||''}"
              onchange="actualizarLineaPrep(${idx},'cantidad',parseFloat(this.value)||0)">
       <span class="font-mono" style="font-size:12px;color:var(--purple);padding-left:8px">${fmt(costoLinea)}</span>
-      <button onclick="eliminarLineaPrep(${idx})" style="background:none;border:none;color:var(--red);cursor:pointer;font-size:16px;padding:0 4px">Ã—</button>
+      <button onclick="eliminarLineaPrep(${idx})" style="background:none;border:none;color:var(--red);cursor:pointer;font-size:16px;padding:0 4px">×</button>
     </div>`;
   }).join('');
   calcularCostoPreparado();
@@ -5788,11 +5788,11 @@ function guardarPreparado() {
   }
   save();
   closeModal('modal-preparado');
-  toast(`Preparado "${nombre}" guardado â€” costo/u: ${fmt(costoUnit)}/${unidad}`);
+  toast(`Preparado "${nombre}" guardado — costo/u: ${fmt(costoUnit)}/${unidad}`);
   renderProducciones();
 }
 
-// --- Ejecutar producciÃ³n ---
+// --- Ejecutar producción ---
 let cantidadEjecucion = 1;
 
 function openEjecutarProduccion(id) {
@@ -5804,22 +5804,22 @@ function openEjecutarProduccion(id) {
   // Verificar stock disponible
   const advertencias = p.lineas.map(l => {
     const ing = inventario.find(i => i.id === l.ingId);
-    if (!ing) return `<div style="color:var(--red);font-size:12px">âš  Insumo "${l.nombre||l.ingId}" no encontrado en inventario</div>`;
+    if (!ing) return `<div style="color:var(--red);font-size:12px">⚠ Insumo "${l.nombre||l.ingId}" no encontrado en inventario</div>`;
     const disponible = ing.stock;
     const necesita = l.cantidad * 1;
-    if (disponible < necesita) return `<div style="color:var(--amber);font-size:12px">âš  ${ing.nombre}: necesitas ${necesita} ${ing.unidad}, tienes ${disponible}</div>`;
+    if (disponible < necesita) return `<div style="color:var(--amber);font-size:12px">⚠ ${ing.nombre}: necesitas ${necesita} ${ing.unidad}, tienes ${disponible}</div>`;
     return null;
   }).filter(Boolean);
 
   document.getElementById('ejecutar-prod-body').innerHTML = `
     <div style="margin-bottom:16px">
       <div style="font-size:16px;font-weight:600;margin-bottom:4px">${p.nombre}</div>
-      <div style="font-size:12px;color:var(--text3)">Rendimiento base: ${p.rendimiento} ${p.unidad} Â· Costo: ${fmt(p.costoTotal)}</div>
+      <div style="font-size:12px;color:var(--text3)">Rendimiento base: ${p.rendimiento} ${p.unidad} · Costo: ${fmt(p.costoTotal)}</div>
     </div>
     <div class="form-group">
-      <label class="form-label">Â¿CuÃ¡ntas veces producir? (multiplicador de la receta)</label>
+      <label class="form-label">¿Cuántas veces producir? (multiplicador de la receta)</label>
       <div class="num-input">
-        <button class="num-btn" onclick="cambiarCantEjec(-1)">âˆ’</button>
+        <button class="num-btn" onclick="cambiarCantEjec(-1)">−</button>
         <span class="num-val" id="cant-ejec-val">1</span>
         <button class="num-btn" onclick="cambiarCantEjec(1)">+</button>
       </div>
@@ -5827,7 +5827,7 @@ function openEjecutarProduccion(id) {
     <div class="card card-sm mt-12" id="resumen-ejecucion" style="background:var(--bg3)"></div>
     ${advertencias.length ? `<div class="card card-sm mt-8" style="background:var(--amber-dim);border-color:rgba(255,122,0,0.2)">${advertencias.join('')}</div>` : ''}
     <div class="card card-sm mt-8" style="background:var(--purple-dim);border-color:rgba(155,89,182,0.2);font-size:12px;color:var(--text2)">
-      âœ… Al confirmar: se descontarÃ¡n los insumos del inventario y se agregarÃ¡ <strong style="color:var(--green)">${p.nombre}</strong> como insumo disponible.
+      ✅ Al confirmar: se descontarán los insumos del inventario y se agregará <strong style="color:var(--green)">${p.nombre}</strong> como insumo disponible.
     </div>`;
   actualizarResumenEjec(p);
   openModal('modal-ejecutar-prod');
@@ -5855,13 +5855,13 @@ function actualizarResumenEjec(p) {
       const necesita = l.cantidad * n;
       const ok = ing && ing.stock >= necesita;
       return `<div class="flex justify-between" style="font-size:12px;padding:3px 0">
-        <span>${ing?.nombre||'â€”'}</span>
-        <span style="font-family:'DM Mono',monospace;color:${ok?'var(--text)':'var(--red)'}">${necesita} ${ing?.unidad||''} ${ok?'':'âš '}</span>
+        <span>${ing?.nombre||'—'}</span>
+        <span style="font-family:'DM Mono',monospace;color:${ok?'var(--text)':'var(--red)'}">${necesita} ${ing?.unidad||''} ${ok?'':'⚠'}</span>
       </div>`;
     }).join('')}
     <hr style="border:none;border-top:1px solid var(--border);margin:8px 0">
     <div class="flex justify-between" style="font-size:13px;font-weight:600">
-      <span>ProducirÃ¡s:</span>
+      <span>Producirás:</span>
       <span style="color:var(--green);font-family:'DM Mono',monospace">${cantProducida} ${p.unidad} de ${p.nombre}</span>
     </div>
     <div class="flex justify-between" style="font-size:12px;margin-top:4px">
@@ -5910,7 +5910,7 @@ function confirmarEjecucion() {
       proveedor: '',
       _esPreparado: true,
     });
-    // Asegurar que "Preparados" exista en categorÃ­as de insumos
+    // Asegurar que "Preparados" exista en categorías de insumos
     if (!categoriasInsumos.includes('Preparados')) {
       categoriasInsumos.push('Preparados');
     }
@@ -5930,7 +5930,7 @@ function confirmarEjecucion() {
 
   save();
   closeModal('modal-ejecutar-prod');
-  toast(`âœ… ${cantProducida} ${p.unidad} de "${p.nombre}" producidos y agregados al inventario`);
+  toast(`✅ ${cantProducida} ${p.unidad} de "${p.nombre}" producidos y agregados al inventario`);
   renderProducciones();
 }
 
@@ -5938,7 +5938,7 @@ function confirmarEjecucion() {
 function renderResumenPlatillos() {
   const diaRef = (typeof getDiaTrabajo === 'function') ? getDiaTrabajo() : hoy();
 
-  // ===== KPIs del dÃ­a (sobre TODOS los pedidos del dÃ­a, sin filtro de estado) =====
+  // ===== KPIs del día (sobre TODOS los pedidos del día, sin filtro de estado) =====
   const pedDia = pedidos.filter(p => p.fecha === diaRef && p.estado !== 'Cancelado');
   const _nPlat = p => (p.items||[]).reduce((s,it)=>s+(it.cantidad||1),0);
   const pedVend = pedDia.filter(p => !p.esCortesia);
@@ -5950,7 +5950,7 @@ function renderResumenPlatillos() {
 
   const setK = (id,v) => { const el=document.getElementById(id); if(el) el.textContent=v; };
   setK('ped-kpi-platillos', platVend + platCort);
-  setK('ped-kpi-platillos-det', `${platVend} vendidos Â· ${platCort} cortesÃ­a`);
+  setK('ped-kpi-platillos-det', `${platVend} vendidos · ${platCort} cortesía`);
   setK('ped-kpi-pedidos', pedDia.length);
   setK('ped-kpi-pedidos-det', `${entregados.length} entregado${entregados.length!==1?'s':''}`);
   setK('ped-kpi-cortesias', pedCort.length);
@@ -5960,7 +5960,7 @@ function renderResumenPlatillos() {
   const filtroEl = document.getElementById('resumen-estado-filtro');
   const filtro = filtroEl ? filtroEl.value : '';
   let pedidosBase = pedidos.filter(p => p.fecha === diaRef && p.estado !== 'Cancelado');
-  if (filtro === 'activos') pedidosBase = pedidosBase.filter(p => ['Nuevo','En preparaciÃ³n','Listo'].includes(p.estado));
+  if (filtro === 'activos') pedidosBase = pedidosBase.filter(p => ['Nuevo','En preparación','Listo'].includes(p.estado));
   else if (filtro) pedidosBase = pedidosBase.filter(p => p.estado === filtro);
 
   const conteo = {};
@@ -5974,7 +5974,7 @@ function renderResumenPlatillos() {
   const max = sorted[0]?.[1] || 1;
   const totalPlatillos = sorted.reduce((s,[,cnt])=>s+cnt,0);
   const totalEl = document.getElementById('resumen-total-platillos');
-  if (totalEl) totalEl.textContent = totalPlatillos > 0 ? `Â· ${totalPlatillos} platillos en ${pedidosBase.length} pedidos` : '';
+  if (totalEl) totalEl.textContent = totalPlatillos > 0 ? `· ${totalPlatillos} platillos en ${pedidosBase.length} pedidos` : '';
   const grid = document.getElementById('resumen-platillos-grid');
   if (!grid) return;
   if (sorted.length === 0) {
@@ -5994,7 +5994,7 @@ function renderResumenPlatillos() {
     </div>`).join('');
 }
 
-// ========== ELIMINACIÃ“N DE PEDIDOS ==========
+// ========== ELIMINACIÓN DE PEDIDOS ==========
 let historialEliminaciones = DB.get('historialEliminaciones') || [];
 let historialMerma = DB.get('historialMerma') || [];
 let pedidoEliminarId = null;
@@ -6033,7 +6033,7 @@ function renderTablaPedidosAdmin() {
       <td style="font-size:12px;color:var(--text2)">${(p.items||[]).slice(0,3).map(i=>i.nombre||i).join(', ')}${(p.items||[]).length>3?` +${(p.items||[]).length-3}`:''}</td>
       <td class="font-mono highlight-green">${fmt(p.total)}</td>
       <td><span class="badge ${estadoBadge(p.estado)}">${p.estado}</span></td>
-      <td><button class="btn btn-danger btn-sm" onclick="openEliminarPedido('${p.id}')">ðŸ—‘ Eliminar</button></td>
+      <td><button class="btn btn-danger btn-sm" onclick="openEliminarPedido('${p.id}')">🗑 Eliminar</button></td>
     </tr>`).join('') || '<tr><td colspan="7" style="text-align:center;padding:32px;color:var(--text3)">Sin pedidos con esos filtros</td></tr>';
 }
 
@@ -6046,8 +6046,8 @@ function openEliminarPedido(id) {
       <strong>#${id.slice(-4).toUpperCase()}</strong>
       <span class="badge ${estadoBadge(p.estado)}">${p.estado}</span>
     </div>
-    <div style="font-size:13px;margin-bottom:4px">ðŸ‘¤ ${p.cliente} Â· ${p.canal} Â· ${fmtFecha(p.fecha)}</div>
-    <div style="font-size:12px;color:var(--text2)">${(p.items||[]).map(i=>`${i.nombre||i} Ã—${i.cantidad||1}`).join(', ')}</div>
+    <div style="font-size:13px;margin-bottom:4px">👤 ${p.cliente} · ${p.canal} · ${fmtFecha(p.fecha)}</div>
+    <div style="font-size:12px;color:var(--text2)">${(p.items||[]).map(i=>`${i.nombre||i} ×${i.cantidad||1}`).join(', ')}</div>
     <div style="font-size:14px;font-weight:600;color:var(--green);margin-top:8px">${fmt(p.total)}</div>`;
   document.getElementById('eliminar-motivo').value = '';
   document.getElementById('eliminar-notas').value = '';
@@ -6060,7 +6060,7 @@ function openEliminarPedido(id) {
 
 function confirmarEliminarPedido() {
   const motivo = document.getElementById('eliminar-motivo').value;
-  if (!motivo) { toast('Selecciona un motivo de eliminaciÃ³n', 'error'); return; }
+  if (!motivo) { toast('Selecciona un motivo de eliminación', 'error'); return; }
   const motivoFinal = motivo === 'Otro' ? (document.getElementById('eliminar-otro-texto').value || 'Otro') : motivo;
   const p = pedidos.find(x => x.id === pedidoEliminarId);
   if (!p) return;
@@ -6082,7 +6082,7 @@ function confirmarEliminarPedido() {
   });
 
   // Revertir todos los efectos del pedido (insumos, gastos, movCaja, CxC)
-  // "Error al capturar" â†’ devolver insumos sin registrar merma
+  // "Error al capturar" → devolver insumos sin registrar merma
   const sinMerma = (motivoFinal === 'Error al capturar');
   _reversarPedido(p, p.estado, sinMerma);
 
@@ -6090,7 +6090,7 @@ function confirmarEliminarPedido() {
   DB.set('historialEliminaciones', historialEliminaciones);
   save();
   closeModal('modal-eliminar-pedido');
-  toast(`Pedido #${pedidoEliminarId.slice(-4).toUpperCase()} eliminado â€” Motivo: ${motivoFinal}`);
+  toast(`Pedido #${pedidoEliminarId.slice(-4).toUpperCase()} eliminado — Motivo: ${motivoFinal}`);
   renderEliminacion();
   renderDashboard();
 }
@@ -6126,12 +6126,12 @@ function renderAlertas() {
 
   if (listaAgotados) {
     listaAgotados.innerHTML = agotados.length === 0
-      ? '<div style="text-align:center;padding:16px;color:var(--text3);font-size:12px">âœ… NingÃºn ingrediente agotado</div>'
+      ? '<div style="text-align:center;padding:16px;color:var(--text3);font-size:12px">✅ Ningún ingrediente agotado</div>'
       : agotados.map(i => `
         <div class="flex items-center justify-between" style="padding:8px 0;border-bottom:1px solid var(--border)">
           <div>
             <div style="font-size:13px;font-weight:500">${i.nombre}</div>
-            <div style="font-size:11px;color:var(--text3)">${i.categoria} Â· MÃ­n: ${i.minimo} ${i.unidad}</div>
+            <div style="font-size:11px;color:var(--text3)">${i.categoria} · Mín: ${i.minimo} ${i.unidad}</div>
           </div>
           <div class="flex gap-6 items-center">
             <span class="badge badge-red">0 ${i.unidad}</span>
@@ -6142,14 +6142,14 @@ function renderAlertas() {
 
   if (listaBajo) {
     listaBajo.innerHTML = bajo.length === 0
-      ? '<div style="text-align:center;padding:16px;color:var(--text3);font-size:12px">âœ… Stock en buen nivel</div>'
+      ? '<div style="text-align:center;padding:16px;color:var(--text3);font-size:12px">✅ Stock en buen nivel</div>'
       : bajo.map(i => {
           const pct = Math.round((i.stock / i.minimo) * 100);
           return `
           <div class="flex items-center justify-between" style="padding:8px 0;border-bottom:1px solid var(--border)">
             <div style="flex:1">
               <div style="font-size:13px;font-weight:500">${i.nombre}</div>
-              <div style="font-size:11px;color:var(--text3);margin-bottom:4px">${i.categoria} Â· MÃ­n: ${i.minimo} ${i.unidad}</div>
+              <div style="font-size:11px;color:var(--text3);margin-bottom:4px">${i.categoria} · Mín: ${i.minimo} ${i.unidad}</div>
               <div style="height:3px;background:var(--bg4);border-radius:2px;width:80px">
                 <div style="height:100%;width:${Math.min(pct,100)}%;background:var(--amber);border-radius:2px"></div>
               </div>
@@ -6161,7 +6161,7 @@ function renderAlertas() {
           </div>`}).join('');
   }
 
-  // Tabla de configuraciÃ³n
+  // Tabla de configuración
   renderTablaConfigAlertas(inventario);
 }
 
@@ -6224,13 +6224,13 @@ function guardarConfigAlertasGlobal() {
   inventario.forEach(i => { i.notifEn = i.minimo * umbral; });
   save();
   closeModal('modal-config-alertas');
-  toast(`Umbral global actualizado: ${umbral}Ã— el mÃ­nimo`);
+  toast(`Umbral global actualizado: ${umbral}× el mínimo`);
   renderAlertas();
 }
 
 // ========== BANCOS ==========
-// ========== FUNCIÃ“N CENTRAL DE MOVIMIENTOS BANCO ==========
-// Fuente Ãºnica usada por renderBancos Y renderEstadosFinancieros
+// ========== FUNCIÓN CENTRAL DE MOVIMIENTOS BANCO ==========
+// Fuente única usada por renderBancos Y renderEstadosFinancieros
 function _calcularMovsBanco(desde, hasta) {
   const esMetodoBanco = m => {
     const met = (m||'').toLowerCase();
@@ -6239,21 +6239,21 @@ function _calcularMovsBanco(desde, hasta) {
   const movs = [];
 
   // ENTRADAS: pedidos cobrados inmediatamente con transferencia/tarjeta
-  // Solo cuentan cuando el pedido estÃ¡ ENTREGADO
+  // Solo cuentan cuando el pedido está ENTREGADO
   pedidos.forEach(p => {
     if (p.estado === 'Cancelado' || p.esCortesia) return;
     if (p.estado !== 'Entregado') return;
     if (p.pago === 'Pendiente' || !p.fecha) return;
     if (p.fecha < desde || p.fecha > hasta) return;
     if (!esMetodoBanco(p.pago)) return;
-    // monto = total cliente (comida + envÃ­o si transferencia)
+    // monto = total cliente (comida + envío si transferencia)
     const monto = p.modoEnvio === 'transferencia'
       ? (p.subtotal||0) - (p.descuento||0) + (p.costoEnvio||0)
       : (p.total || (p.subtotal||0) - (p.descuento||0));
     if (monto > 0)
       movs.push({
         fecha: p.fecha, hora: p.hora||p.horaStr||'00:00',
-        concepto: `Venta â€” ${p.cliente||''}`,
+        concepto: `Venta — ${p.cliente||''}`,
         ref: `#${p.id.slice(-4).toUpperCase()}`,
         tipo: 'venta', entrada: monto, salida: 0
       });
@@ -6269,8 +6269,8 @@ function _calcularMovsBanco(desde, hasta) {
         if (fecha < desde || fecha > hasta) return;
         if (!esMetodoBanco(a.metodo||'')) return;
         movs.push({
-          fecha, hora: a.hora || 'â€”',
-          concepto: `Abono CxC â€” ${c.clienteNombre||''}`,
+          fecha, hora: a.hora || '—',
+          concepto: `Abono CxC — ${c.clienteNombre||''}`,
           ref: c.concepto||'',
           tipo: 'cobro_cxc', entrada: a.monto||0, salida: 0
         });
@@ -6281,8 +6281,8 @@ function _calcularMovsBanco(desde, hasta) {
       if (fecha < desde || fecha > hasta) return;
       if (!esMetodoBanco(c.metodoCobro||'')) return;
       movs.push({
-        fecha, hora: 'â€”',
-        concepto: `Cobro CxC â€” ${c.clienteNombre||''}`,
+        fecha, hora: '—',
+        concepto: `Cobro CxC — ${c.clienteNombre||''}`,
         ref: c.concepto||'',
         tipo: 'cobro_cxc', entrada: c.monto||0, salida: 0
       });
@@ -6296,8 +6296,8 @@ function _calcularMovsBanco(desde, hasta) {
     if (fecha < desde || fecha > hasta) return;
     if (!esMetodoBanco(c.metodoPagoRealizado||'')) return;
     movs.push({
-      fecha, hora: 'â€”',
-      concepto: `CxP â€” ${c.concepto||''}`,
+      fecha, hora: '—',
+      concepto: `CxP — ${c.concepto||''}`,
       ref: c.acreedor||c.proveedor||'',
       tipo: 'cxp', entrada: 0, salida: c.monto||0
     });
@@ -6311,8 +6311,8 @@ function _calcularMovsBanco(desde, hasta) {
     if (fecha < desde || fecha > hasta) return;
     const esSalida = m.tipo === 'mov_extra_salida';
     movs.push({
-      fecha, hora: m.hora || 'â€”',
-      concepto: (esSalida ? (m.estado||'Gasto') : 'Entrada') + ` â€” ${m.concepto||''}`,
+      fecha, hora: m.hora || '—',
+      concepto: (esSalida ? (m.estado||'Gasto') : 'Entrada') + ` — ${m.concepto||''}`,
       ref: 'Movimiento extra',
       tipo: esSalida ? 'cxp' : 'venta',
       entrada: esSalida ? 0 : m.monto,
@@ -6367,23 +6367,23 @@ function renderBancos() {
   // Tabla
   const tbody = document.getElementById('tabla-bancos');
   const tipoBadge = { venta:'badge-blue', cobro_cxc:'badge-green', cxp:'badge-red' };
-  const tipoLabel = { venta:'ðŸ’³ Venta', cobro_cxc:'ðŸ“¥ Cobro CxC', cxp:'ðŸ“¤ CxP' };
+  const tipoLabel = { venta:'💳 Venta', cobro_cxc:'📥 Cobro CxC', cxp:'📤 CxP' };
   // Fila de saldo inicial como base
   let filaInicial = '';
   if (saldoInicial !== 0) {
     filaInicial = `<tr style="background:var(--bg3)">
-      <td class="font-mono text-sm">â€”</td>
-      <td class="font-mono text-sm text-dim">â€”</td>
-      <td style="font-size:13px;font-weight:600">âš™ Saldo inicial</td>
+      <td class="font-mono text-sm">—</td>
+      <td class="font-mono text-sm text-dim">—</td>
+      <td style="font-size:13px;font-weight:600">⚙ Saldo inicial</td>
       <td style="font-size:12px;color:var(--text3)">Punto de partida</td>
       <td><span class="badge badge-gray" style="font-size:10px">Inicial</span></td>
-      <td class="font-mono highlight-green">${saldoInicial>0?fmt(saldoInicial):'â€”'}</td>
-      <td class="font-mono highlight-red">${saldoInicial<0?fmt(Math.abs(saldoInicial)):'â€”'}</td>
+      <td class="font-mono highlight-green">${saldoInicial>0?fmt(saldoInicial):'—'}</td>
+      <td class="font-mono highlight-red">${saldoInicial<0?fmt(Math.abs(saldoInicial)):'—'}</td>
       <td class="font-mono" style="color:var(--blue);font-weight:600">${fmt(saldoInicial)}</td>
     </tr>`;
   }
   if (!movs.length && !filaInicial) {
-    tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:32px;color:var(--text3)">Sin movimientos bancarios en este perÃ­odo</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:32px;color:var(--text3)">Sin movimientos bancarios en este período</td></tr>';
     return;
   }
   // Recalcular saldo acumulado partiendo del saldo inicial
@@ -6396,8 +6396,8 @@ function renderBancos() {
       <td style="font-size:13px">${m.concepto}</td>
       <td style="font-size:12px;color:var(--text3)">${m.ref}</td>
       <td><span class="badge ${tipoBadge[m.tipo]||'badge-gray'}" style="font-size:10px">${tipoLabel[m.tipo]||m.tipo}</span></td>
-      <td class="font-mono highlight-green">${m.entrada>0?fmt(m.entrada):'â€”'}</td>
-      <td class="font-mono highlight-red">${m.salida>0?fmt(m.salida):'â€”'}</td>
+      <td class="font-mono highlight-green">${m.entrada>0?fmt(m.entrada):'—'}</td>
+      <td class="font-mono highlight-red">${m.salida>0?fmt(m.salida):'—'}</td>
       <td class="font-mono" style="color:${acum>=0?'var(--blue)':'var(--red)'};font-weight:600">${fmt(acum)}</td>
     </tr>`;
   }).join('');
@@ -6413,7 +6413,7 @@ function exportarBancos() {
   });
   const csv = rows.map(r=>r.map(v=>'"'+v+'"').join(',')).join('\n');
 
-  const blob = new Blob(['ï»¿'+csv],{type:'text/csv;charset=utf-8'});
+  const blob = new Blob(['﻿'+csv],{type:'text/csv;charset=utf-8'});
   const a=document.createElement('a');a.href=URL.createObjectURL(blob);
   a.download=`bancos_${hoy()}.csv`;a.click();
   toast('Exportado');
@@ -6445,7 +6445,7 @@ function confirmarMerma() {
   const notas = document.getElementById('merma-notas').value;
   const ing = inventario.find(i => i.id === ingId);
   if (!ing) { toast('Selecciona un ingrediente', 'error'); return; }
-  if (cant <= 0) { toast('Ingresa una cantidad vÃ¡lida', 'error'); return; }
+  if (cant <= 0) { toast('Ingresa una cantidad válida', 'error'); return; }
   const costoMerma = ing.costo * cant;
   ing.stock = Math.max(0, Math.round((ing.stock - cant) * 1000) / 1000);
   historialMerma.push({
@@ -6463,7 +6463,7 @@ function confirmarMerma() {
   renderInventario();
 }
 
-// ========== CONTRASTE INVENTARIO FÃSICO ==========
+// ========== CONTRASTE INVENTARIO FÍSICO ==========
 let _contrasteTmp = {};
 function openContrasteInventario() {
   _contrasteTmp = {};
@@ -6471,14 +6471,14 @@ function openContrasteInventario() {
   tabla.innerHTML = `
     <div style="overflow-x:auto">
     <table>
-      <thead><tr><th>Ingrediente</th><th>TeÃ³rico (sistema)</th><th>FÃ­sico (ingresas tÃº)</th><th>Diferencia</th></tr></thead>
+      <thead><tr><th>Ingrediente</th><th>Teórico (sistema)</th><th>Físico (ingresas tú)</th><th>Diferencia</th></tr></thead>
       <tbody>
         ${inventario.map(i => `
           <tr>
             <td style="font-weight:500">${i.nombre} <span style="color:var(--text3);font-size:11px">(${i.unidad})</span></td>
             <td class="font-mono" style="color:var(--green)">${i.stock}</td>
             <td><input type="number" class="form-input" style="width:90px;padding:5px 8px;font-size:12px" placeholder="${i.stock}" oninput="actualizarContraste('${i.id}',this.value)" step="0.001" min="0"></td>
-            <td id="diff-${i.id}" class="font-mono" style="color:var(--text3)">â€”</td>
+            <td id="diff-${i.id}" class="font-mono" style="color:var(--text3)">—</td>
           </tr>`).join('')}
       </tbody>
     </table></div>`;
@@ -6489,7 +6489,7 @@ function actualizarContraste(id, val) {
   const ing = inventario.find(i => i.id === id);
   if (!ing) return;
   const fisico = parseFloat(val);
-  if (isNaN(fisico)) { _contrasteTmp[id] = null; document.getElementById('diff-'+id).textContent = 'â€”'; document.getElementById('diff-'+id).style.color = 'var(--text3)'; return; }
+  if (isNaN(fisico)) { _contrasteTmp[id] = null; document.getElementById('diff-'+id).textContent = '—'; document.getElementById('diff-'+id).style.color = 'var(--text3)'; return; }
   const diff = fisico - ing.stock;
   _contrasteTmp[id] = fisico;
   const el = document.getElementById('diff-'+id);
@@ -6506,10 +6506,10 @@ function aplicarContrasteInventario() {
     const diff = fisico - ing.stock;
     if (Math.abs(diff) > 0.001) {
       if (diff < 0) {
-        // Diferencia negativa â†’ merma
+        // Diferencia negativa → merma
         const costoMerma = Math.abs(diff) * ing.costo;
-        historialMerma.push({ id: uid(), fecha: hoy(), hora: hora(), ingredienteId: id, ingredienteNombre: ing.nombre, cantidad: Math.abs(diff), unidad: ing.unidad, costo: costoMerma, motivo: 'Ajuste contraste fÃ­sico', tipo: 'contraste' });
-        if (costoMerma > 0) gastos.push({ id: uid(), concepto: `Merma contraste: ${ing.nombre}`, categoria: 'Merma', monto: costoMerma, fecha: hoy(), recurrente: 'no', notas: 'Ajuste inventario fÃ­sico vs teÃ³rico' });
+        historialMerma.push({ id: uid(), fecha: hoy(), hora: hora(), ingredienteId: id, ingredienteNombre: ing.nombre, cantidad: Math.abs(diff), unidad: ing.unidad, costo: costoMerma, motivo: 'Ajuste contraste físico', tipo: 'contraste' });
+        if (costoMerma > 0) gastos.push({ id: uid(), concepto: `Merma contraste: ${ing.nombre}`, categoria: 'Merma', monto: costoMerma, fecha: hoy(), recurrente: 'no', notas: 'Ajuste inventario físico vs teórico' });
       }
       ing.stock = Math.round(fisico * 1000) / 1000;
       ajustados++;
@@ -6521,10 +6521,10 @@ function aplicarContrasteInventario() {
   renderInventario();
 }
 
-// ========== REQUISICIÃ“N ==========
+// ========== REQUISICIÓN ==========
 let _requisicionItems = [];
 function openRequisicion() {
-  // Calcular consumo promedio basado en pedidos de los Ãºltimos 30 dÃ­as
+  // Calcular consumo promedio basado en pedidos de los últimos 30 días
   const hace30 = new Date(); hace30.setDate(hace30.getDate() - 30);
   const pedidosRecientes = pedidos.filter(p => p.estado !== 'Cancelado' && new Date(p.fecha) >= hace30);
   const consumo = {};
@@ -6549,7 +6549,7 @@ function openRequisicion() {
   tabla.innerHTML = `
     <div style="overflow-x:auto">
     <table>
-      <thead><tr><th>Ingrediente</th><th>Stock actual</th><th>MÃ­nimo</th><th>Consumo 30d</th><th>Sugerido</th><th>Cantidad a pedir</th></tr></thead>
+      <thead><tr><th>Ingrediente</th><th>Stock actual</th><th>Mínimo</th><th>Consumo 30d</th><th>Sugerido</th><th>Cantidad a pedir</th></tr></thead>
       <tbody id="req-tbody">
         ${_requisicionItems.map((r,i) => `
           <tr>
@@ -6562,27 +6562,27 @@ function openRequisicion() {
           </tr>`).join('')}
       </tbody>
     </table></div>`;
-  if (_requisicionItems.length === 0) tabla.innerHTML = '<div class="empty"><div class="empty-icon">âœ…</div><div class="empty-title">No se requieren compras</div><div class="empty-text">El inventario cubre el consumo histÃ³rico</div></div>';
+  if (_requisicionItems.length === 0) tabla.innerHTML = '<div class="empty"><div class="empty-icon">✅</div><div class="empty-title">No se requieren compras</div><div class="empty-text">El inventario cubre el consumo histórico</div></div>';
   openModal('modal-requisicion');
 }
 
 function exportarRequisicion() {
-  const rows = [['Ingrediente','Unidad','Stock actual','MÃ­nimo','Consumo 30d','Cantidad a pedir']];
+  const rows = [['Ingrediente','Unidad','Stock actual','Mínimo','Consumo 30d','Cantidad a pedir']];
   _requisicionItems.forEach(r => {
     rows.push([r.nombre, r.unidad, r.stockActual, r.minimo, r.consumo30, r.manual !== null ? r.manual : r.sugerido]);
   });
   const csv = rows.map(r => r.map(v => '"' + v + '"').join(',')).join('\n');
 
-  const blob = new Blob(['ï»¿'+csv], { type:'text/csv;charset=utf-8' });
+  const blob = new Blob(['﻿'+csv], { type:'text/csv;charset=utf-8' });
   const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
   a.download = `requisicion_${hoy()}.csv`; a.click();
-  toast('RequisiciÃ³n exportada');
+  toast('Requisición exportada');
 }
 
 // ========== PRESENTACIONES ==========
 let presentaciones = DB.get('presentaciones') || [];
 
-// Guardar presentaciones en save() â€” integrado directamente arriba
+// Guardar presentaciones en save() — integrado directamente arriba
 
 function switchInvTab(el, tab) {
   document.querySelectorAll('#page-inventario .tab').forEach(t => t.classList.remove('active'));
@@ -6604,7 +6604,7 @@ function renderPresentaciones(lista) {
     const ing = inventario.find(i => i.id === p.ingId);
     const costoUnit = p.cantidad > 0 ? p.costoPres / p.cantidad : 0;
     return `<tr>
-      <td style="font-weight:500">${ing?.nombre || 'â€”'}</td>
+      <td style="font-weight:500">${ing?.nombre || '—'}</td>
       <td>${p.nombre}</td>
       <td class="font-mono">${p.cantidad}</td>
       <td class="text-dim">${p.unidad}</td>
@@ -6612,10 +6612,10 @@ function renderPresentaciones(lista) {
       <td class="font-mono highlight-green">${fmt(costoUnit)}<span style="font-size:10px;color:var(--text3)"> / ${p.unidad}</span></td>
       <td>
         ${p.esDefault
-          ? '<span class="badge badge-green">âœ“ Predeterminada</span>'
+          ? '<span class="badge badge-green">✓ Predeterminada</span>'
           : `<button class="btn btn-secondary btn-sm" onclick="setDefaultPres('${p.id}','${p.ingId}')">Usar como default</button>`}
       </td>
-      <td><button class="btn btn-danger btn-sm" onclick="eliminarPresentacion('${p.id}')">ðŸ—‘</button></td>
+      <td><button class="btn btn-danger btn-sm" onclick="eliminarPresentacion('${p.id}')">🗑</button></td>
     </tr>`;
   }).join('') || '<tr><td colspan="8" style="text-align:center;padding:32px;color:var(--text3)">Sin presentaciones registradas</td></tr>';
 }
@@ -6630,12 +6630,12 @@ function buscarPresentacion(q) {
 }
 
 function openNuevaPresentacion(ingId) {
-  document.getElementById('pres-modal-title').textContent = 'Nueva PresentaciÃ³n';
+  document.getElementById('pres-modal-title').textContent = 'Nueva Presentación';
   document.getElementById('pres-nombre').value = '';
   document.getElementById('pres-cantidad').value = '';
   document.getElementById('pres-costo').value = '';
   document.getElementById('pres-costo-unit').textContent = '$0.00';
-  document.getElementById('pres-costo-formula').textContent = 'â€”';
+  document.getElementById('pres-costo-formula').textContent = '—';
   document.getElementById('pres-default').value = 'true';
   const sel = document.getElementById('pres-insumo');
   sel.innerHTML = '<option value="">Seleccionar insumo...</option>' +
@@ -6657,7 +6657,7 @@ function calcularCostoUnitario() {
   const costoUnit = cantidad > 0 ? costo / cantidad : 0;
   document.getElementById('pres-costo-unit').textContent = fmt(costoUnit);
   document.getElementById('pres-costo-formula').textContent =
-    cantidad > 0 ? `${fmt(costo)} Ã· ${cantidad} ${unidad} = ${fmt(costoUnit)} por ${unidad}` : 'â€”';
+    cantidad > 0 ? `${fmt(costo)} ÷ ${cantidad} ${unidad} = ${fmt(costoUnit)} por ${unidad}` : '—';
 }
 
 function guardarPresentacion() {
@@ -6669,15 +6669,15 @@ function guardarPresentacion() {
   const esDefault = document.getElementById('pres-default').value === 'true';
 
   if (!ingId) { toast('Selecciona un insumo', 'error'); return; }
-  if (!nombre) { toast('Ingresa el nombre de la presentaciÃ³n', 'error'); return; }
+  if (!nombre) { toast('Ingresa el nombre de la presentación', 'error'); return; }
   if (!cantidad || !costoPres) { toast('Ingresa cantidad y costo', 'error'); return; }
 
   const costoUnit = costoPres / cantidad;
 
-  // Si es default, marcar las demÃ¡s de este insumo como no default
+  // Si es default, marcar las demás de este insumo como no default
   if (esDefault) {
     presentaciones.forEach(p => { if (p.ingId === ingId) p.esDefault = false; });
-    // Actualizar costo del ingrediente automÃ¡ticamente
+    // Actualizar costo del ingrediente automáticamente
     const ing = inventario.find(i => i.id === ingId);
     if (ing) {
       ing.costo = costoUnit;
@@ -6688,39 +6688,39 @@ function guardarPresentacion() {
   presentaciones.push({ id: uid(), ingId, nombre, cantidad, unidad, costoPres, costoUnit, esDefault });
   save();
   closeModal('modal-presentacion');
-  toast(`PresentaciÃ³n guardada â€” costo unitario: ${fmt(costoUnit)}/${unidad}${esDefault ? ' (actualizado en insumo)' : ''}`);
+  toast(`Presentación guardada — costo unitario: ${fmt(costoUnit)}/${unidad}${esDefault ? ' (actualizado en insumo)' : ''}`);
   renderPresentaciones(presentaciones);
   renderInventario();
 }
 
 function setDefaultPres(presId, ingId) {
-  // Quitar default de las demÃ¡s del mismo insumo
+  // Quitar default de las demás del mismo insumo
   presentaciones.forEach(p => { if (p.ingId === ingId) p.esDefault = false; });
   const p = presentaciones.find(x => x.id === presId);
   if (p) {
     p.esDefault = true;
-    // Actualizar costo del insumo automÃ¡ticamente
+    // Actualizar costo del insumo automáticamente
     const ing = inventario.find(i => i.id === ingId);
     if (ing) { ing.costo = p.costoUnit; ing.unidad = p.unidad; }
   }
   save();
   renderPresentaciones(presentaciones);
   renderInventario();
-  toast('PresentaciÃ³n predeterminada actualizada â€” costo del insumo actualizado âœ…');
+  toast('Presentación predeterminada actualizada — costo del insumo actualizado ✅');
 }
 
 function eliminarPresentacion(id) {
   presentaciones = presentaciones.filter(p => p.id !== id);
   save();
   renderPresentaciones(presentaciones);
-  toast('PresentaciÃ³n eliminada');
+  toast('Presentación eliminada');
 }
 
 // ========== INIT ==========
 seedData();
 DB.set('usuarios', usuarios); // persist default users if first time
 
-// Restaurar sesiÃ³n o mostrar login
+// Restaurar sesión o mostrar login
 const sesionGuardada = DB.get('sesion');
 if (sesionGuardada) {
   const u = usuarios.find(x=>x.id===sesionGuardada.id && x.activo);
