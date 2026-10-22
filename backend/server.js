@@ -178,10 +178,6 @@ app.post('/api/notificar-clientes', async (req, res) => {
     res.json({ sent, failed, total: destinatarios.length, results });
 });
 
-// Fallback a index.html para soportar rutas dinámicas en el frontend estático
-app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, '../frontend/public/index.html'));
-});
 
 // ==========================================
 // FUNCIÓN COMPARTIDA: ENVIAR MENSAJES WA
@@ -280,7 +276,11 @@ app.post('/api/programar-envio', async (req, res) => {
 // ==========================================
 // 5. ENDPOINT GET: REVISAR Y EJECUTAR JOBS (cron-job.org llama aquí cada 5 min)
 // ==========================================
-app.get('/api/check-jobs', async (req, res) => {
+let checkingJobs = false;
+async function checkJobs(req, res) {
+    if (checkingJobs) return res.status(204).end();
+    checkingJobs = true;
+    res.status(204).end();
     const FIREBASE_URL = process.env.FIREBASE_DATABASE_URL || 'https://fitngo-erp-default-rtdb.firebaseio.com';
     const axios = require('axios');
 
@@ -289,7 +289,7 @@ app.get('/api/check-jobs', async (req, res) => {
         const jobs = response.data;
 
         if (!jobs || typeof jobs !== 'object') {
-            return res.json({ checked: 0, executed: 0 });
+            return;
         }
 
         const ahora = Date.now();
@@ -297,7 +297,6 @@ app.get('/api/check-jobs', async (req, res) => {
 
         console.log(`🔍 Check-jobs: ${pendingJobs.length} jobs listos para ejecutar`);
 
-        let executed = 0;
         for (const job of pendingJobs) {
             try {
                 // Marcar como "running" para evitar ejecuciones dobles
@@ -315,7 +314,6 @@ app.get('/api/check-jobs', async (req, res) => {
                     failed
                 });
                 console.log(`✅ Job ${job.id} ejecutado: ${sent} enviados, ${failed} fallaron`);
-                executed++;
             } catch (err) {
                 await axios.patch(`${FIREBASE_URL}/fitgo_erp/scheduled_jobs/${job.id}.json`, {
                     status: 'error',
@@ -325,11 +323,17 @@ app.get('/api/check-jobs', async (req, res) => {
             }
         }
 
-        res.json({ checked: pendingJobs.length, executed });
     } catch (error) {
         console.error('❌ Error en check-jobs:', error.message);
-        res.status(500).json({ error: error.message });
     }
+}
+app.get('/api/check-jobs', checkJobs);
+
+
+
+// Serve the frontend only after API routes have had the chance to respond.
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, '../frontend/public/index.html'));
 });
 
 app.listen(port, () => {
