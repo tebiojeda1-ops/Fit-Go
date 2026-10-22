@@ -325,6 +325,8 @@ async function checkJobs(req, res) {
 
     } catch (error) {
         console.error('❌ Error en check-jobs:', error.message);
+    } finally {
+        checkingJobs = false;
     }
 }
 app.get('/api/check-jobs', checkJobs);
