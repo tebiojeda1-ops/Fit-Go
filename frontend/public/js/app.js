@@ -168,6 +168,7 @@ let descuentoTipoActual = 'ninguno';
 let cxpTipoActual = 'proveedor';
 let cxpCategoriaFiltro = 'todas';
 let cxpEstadoFiltro = '';
+let cxpPagadorFiltro = '';
 let modoPagoActual = 'inmediato';
 let lineasCompraActual = [];
 
@@ -3995,6 +3996,7 @@ function filtrarCxp(el, cat) {
   renderCXP();
 }
 function filtrarCxpEstado(val) { cxpEstadoFiltro = val; renderCXP(); }
+function filtrarCxpPagador(val) { cxpPagadorFiltro = val; renderCXP(); }
 
 function setCxpTipo(el, tipo) {
   cxpTipoActual = tipo;
@@ -4008,6 +4010,14 @@ function renderCXP() {
   let lista = cxp;
   if (cxpCategoriaFiltro !== 'todas') lista = lista.filter(c => c.tipo === cxpCategoriaFiltro);
   if (cxpEstadoFiltro) lista = lista.filter(c => c.estado === cxpEstadoFiltro);
+  const pagadorFiltroEl=document.getElementById('cxp-pagador-filtro');
+  const pagadoresCxP=Array.from(new Set(cxp.map(c=>String(c.pagadoPor||'').trim()).filter(Boolean))).sort((a,b)=>a.localeCompare(b,'es'));
+  if(pagadorFiltroEl){
+    if(cxpPagadorFiltro && !pagadoresCxP.some(p=>normalizarTextoCompraExcel(p)===normalizarTextoCompraExcel(cxpPagadorFiltro)))cxpPagadorFiltro='';
+    pagadorFiltroEl.innerHTML='<option value="">Todos los que pagaron</option>'+pagadoresCxP.map(p=>'<option value="'+p.replace(/&/g,'&amp;').replace(/"/g,'&quot;')+'">'+p.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')+'</option>').join('');
+    pagadorFiltroEl.value=pagadoresCxP.find(p=>normalizarTextoCompraExcel(p)===normalizarTextoCompraExcel(cxpPagadorFiltro))||'';
+  }
+  if (cxpPagadorFiltro) lista = lista.filter(c => normalizarTextoCompraExcel(c.pagadoPor) === normalizarTextoCompraExcel(cxpPagadorFiltro));
 
   const pendiente = cxp.filter(c => c.estado !== 'pagada');
   const total = pendiente.reduce((s,c) => s+c.monto, 0);
@@ -4027,6 +4037,7 @@ function renderCXP() {
     return `<tr>
       <td><span class="badge badge-gray">${tipoEmoji[c.tipo]||'📋'} ${c.tipo||'proveedor'}</span></td>
       <td style="font-weight:500">${c.acreedor||c.proveedor||'—'}</td>
+      <td>${c.pagadoPor||'—'}</td>
       <td>${c.concepto}</td>
       <td class="highlight-red font-mono">${fmt(c.monto)}</td>
       <td class="text-dim">${c.vencimiento ? fmtFecha(c.vencimiento) : '—'}</td>
@@ -4039,7 +4050,7 @@ function renderCXP() {
         </div>
       </td>
     </tr>`;
-  }).join('') || '<tr><td colspan="8" style="text-align:center;padding:32px;color:var(--text3)">Sin cuentas registradas</td></tr>';
+  }).join('') || '<tr><td colspan="10" style="text-align:center;padding:32px;color:var(--text3)">Sin cuentas registradas</td></tr>';
 }
 
 function openNuevaCuenta() {
@@ -4683,7 +4694,7 @@ async function previsualizarComprasExcel(input) {
       if(!(item.precio>=0))errores.push('precio inválido');
       if(errores.length){comprasExcelErrores.push({filaExcel,errores:errores.join(', ')});return;}
       item.importKey=claveImportacionCompraExcel(item);
-      if(compras.some(c=>c.importKey===item.importKey)){comprasExcelErrores.push({filaExcel,errores:'ya se importó anteriormente; se omitirá'});return;}
+      if(compras.some(c=>c.importKey===item.importKey||(Array.isArray(c.importKeys)&&c.importKeys.includes(item.importKey)))){comprasExcelErrores.push({filaExcel,errores:'ya se importó anteriormente; se omitirá'});return;}
       comprasExcelPendientes.push(item);
     });
     if(!comprasExcelPendientes.length){toast('No hay filas nuevas válidas para importar','error');input.value='';return;}
@@ -4701,14 +4712,15 @@ function renderPrevisualizacionComprasExcel() {
   if(!tbody)return;
   const modo=document.getElementById('compras-excel-modo-precio').value;
   const e=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-  const cxpCount=comprasExcelPendientes.filter(x=>!esPagoFitGoCompraExcel(x.pagador)).length;
+  const grupos=agruparComprasExcel(comprasExcelPendientes);
+  const cxpCount=cantidadCxPComprasExcel(comprasExcelPendientes);
   const total=comprasExcelPendientes.reduce((sum,x)=>sum+(modo==='total'?x.precio:x.cantidad*x.precio),0);
-  document.getElementById('compras-excel-resumen').innerHTML='<b>'+comprasExcelPendientes.length+'</b> compras · <b>'+cxpCount+'</b> cuentas por pagar · <b>'+fmt(total)+'</b> en total · Estado: <b>recibida</b>.';
+  document.getElementById('compras-excel-resumen').innerHTML='<b>'+comprasExcelPendientes.length+'</b> renglones · <b>'+grupos.length+'</b> compras agrupadas · <b>'+cxpCount+'</b> cuentas por pagar · <b>'+fmt(total)+'</b> en total · Estado: <b>recibida</b>.';
   tbody.innerHTML=comprasExcelPendientes.slice(0,30).map(x=>`<tr><td>${x.filaExcel}</td><td>${e(fmtFecha(x.fecha))}</td><td>${e(x.nombre)}</td><td>${x.cantidad}</td><td>${e(x.unidad)}</td><td>${fmt(x.precio)}</td><td>${e(x.lugar||'—')}</td><td>${e(x.pagador||'Sin nombre')} · ${esPagoFitGoCompraExcel(x.pagador)?'No, ya se pagó':'Sí, crear CxP'}</td></tr>`).join('');
   if(comprasExcelPendientes.length>30)tbody.innerHTML+='<tr><td colspan="8">… y '+(comprasExcelPendientes.length-30)+' filas más</td></tr>';
   const errores=document.getElementById('compras-excel-errores');
   errores.textContent=comprasExcelErrores.length?'Filas omitidas o duplicadas: '+comprasExcelErrores.slice(0,12).map(x=>'fila '+x.filaExcel+' ('+x.errores+')').join(' · ')+(comprasExcelErrores.length>12?' · …':''):'';
-  document.getElementById('compras-excel-confirmar').textContent='Importar '+comprasExcelPendientes.length+' compras';
+  document.getElementById('compras-excel-confirmar').textContent='Importar '+comprasExcelPendientes.length+' renglones';
 }
 
 function cancelarImportacionComprasExcel() {
@@ -4717,34 +4729,70 @@ function cancelarImportacionComprasExcel() {
   comprasExcelErrores=[];
 }
 
+function agruparComprasExcel(rows) {
+  const grupos=new Map();
+  rows.forEach(row=>{
+    const key=row.fecha+'|'+normalizarTextoCompraExcel(row.lugar);
+    if(!grupos.has(key))grupos.set(key,{fecha:row.fecha,lugar:row.lugar,rows:[]});
+    grupos.get(key).rows.push(row);
+  });
+  return Array.from(grupos.values());
+}
+
+function cantidadCxPComprasExcel(rows) {
+  const grupos=new Set();
+  rows.forEach(row=>{
+    if(esPagoFitGoCompraExcel(row.pagador))return;
+    const compraKey=row.fecha+'|'+normalizarTextoCompraExcel(row.lugar);
+    grupos.add(compraKey+'|'+normalizarTextoCompraExcel(row.pagador));
+  });
+  return grupos.size;
+}
+
 function confirmarImportacionComprasExcel() {
   if(!comprasExcelPendientes.length)return;
   const modo=document.getElementById('compras-excel-modo-precio').value;
-  const totalRows=comprasExcelPendientes.length;
+  const grupos=agruparComprasExcel(comprasExcelPendientes);
+  const filasImportadas=comprasExcelPendientes.length;
   let creados=0,cuentas=0;
-  comprasExcelPendientes.forEach(row=>{
-    const nombreKey=normalizarTextoCompraExcel(row.nombre);
-    const unidadOrigen=unidadCompraExcel(row.unidad);
-    let ing=inventario.find(i=>normalizarTextoCompraExcel(i.nombre)===nombreKey && unidadCompraExcel(i.unidad||'').tipo===unidadOrigen.tipo);
-    if(!ing){
-      const suffix=inventario.some(i=>normalizarTextoCompraExcel(i.nombre)===nombreKey)?' ['+row.unidad+']':'';
-      ing={id:uid(),nombre:row.nombre+suffix,categoria:'Otros',stock:0,minimo:0,unidad:row.unidad,costo:0,proveedor:''};
-      inventario.push(ing);creados++;
-    }
-    const unidadDestino=unidadCompraExcel(ing.unidad||row.unidad);
-    const compatible=unidadDestino.tipo===unidadOrigen.tipo;
-    const cantidad=compatible?row.cantidad*unidadOrigen.factor/unidadDestino.factor:row.cantidad;
-    const totalLinea=modo==='total'?row.precio:row.cantidad*row.precio;
-    const costoUnit=totalLinea/cantidad;
-    ing.stock=Math.round((Number(ing.stock||0)+cantidad)*1000)/1000;
-    if(costoUnit>0)ing.costo=costoUnit;
-    const linea={ingId:ing.id,nombre:row.nombre,cantidad,costoUnit,unidad:ing.unidad||row.unidad};
-    const compra={id:uid(),fecha:row.fecha,proveedor:row.lugar||'Sin proveedor / mercado',pagadoPor:row.pagador||'Sin nombre',lineas:[linea],total:totalLinea,estado:'recibida',notas:'Importada desde '+comprasExcelNombreArchivo,importKey:row.importKey};
+  grupos.forEach(grupo=>{
+    const lineas=[];
+    const cuentasPorPagador=new Map();
+    grupo.rows.forEach(row=>{
+      const nombreKey=normalizarTextoCompraExcel(row.nombre);
+      const unidadOrigen=unidadCompraExcel(row.unidad);
+      let ing=inventario.find(i=>normalizarTextoCompraExcel(i.nombre)===nombreKey && unidadCompraExcel(i.unidad||'').tipo===unidadOrigen.tipo);
+      if(!ing){
+        const suffix=inventario.some(i=>normalizarTextoCompraExcel(i.nombre)===nombreKey)?' ['+row.unidad+']':'';
+        ing={id:uid(),nombre:row.nombre+suffix,categoria:'Otros',stock:0,minimo:0,unidad:row.unidad,costo:0,proveedor:''};
+        inventario.push(ing);creados++;
+      }
+      const unidadDestino=unidadCompraExcel(ing.unidad||row.unidad);
+      const cantidad=unidadDestino.tipo===unidadOrigen.tipo?row.cantidad*unidadOrigen.factor/unidadDestino.factor:row.cantidad;
+      const totalLinea=modo==='total'?row.precio:row.cantidad*row.precio;
+      const costoUnit=totalLinea/cantidad;
+      ing.stock=Math.round((Number(ing.stock||0)+cantidad)*1000)/1000;
+      if(costoUnit>0)ing.costo=costoUnit;
+      lineas.push({ingId:ing.id,nombre:row.nombre,cantidad,costoUnit,unidad:ing.unidad||row.unidad});
+
+      if(!esPagoFitGoCompraExcel(row.pagador)){
+        const pagadorKey=normalizarTextoCompraExcel(row.pagador);
+        if(!cuentasPorPagador.has(pagadorKey))cuentasPorPagador.set(pagadorKey,{pagador:row.pagador,total:0,productos:[]});
+        const cuenta=cuentasPorPagador.get(pagadorKey);
+        cuenta.total+=totalLinea;
+        cuenta.productos.push(row.nombre);
+      }
+    });
+    const total=lineas.reduce((sum,linea)=>sum+linea.cantidad*linea.costoUnit,0);
+    const pagadores=Array.from(new Map(grupo.rows.filter(row=>row.pagador).map(row=>[normalizarTextoCompraExcel(row.pagador),row.pagador])).values());
+    const compra={id:uid(),fecha:grupo.fecha,proveedor:grupo.lugar||'Sin proveedor / mercado',pagadoPor:pagadores.join(', ')||'Sin nombre',lineas,total,estado:'recibida',notas:'Importada desde '+comprasExcelNombreArchivo,importKey:grupo.rows[0].importKey,importKeys:grupo.rows.map(row=>row.importKey)};
     compras.push(compra);
-    if(!esPagoFitGoCompraExcel(row.pagador)){
-      cxp.push({id:uid(),tipo:'proveedor',acreedor:row.lugar||'Proveedor de compra',proveedor:row.lugar||'Sin proveedor',compraId:compra.id,concepto:'Compra de insumos — '+row.nombre+' ('+fmtFecha(row.fecha)+')',monto:totalLinea,vencimiento:row.fecha,fecha:row.fecha,estado:row.fecha<hoy()?'vencida':'pendiente',notas:'Compra ID '+compra.id.slice(-4).toUpperCase()+' · Pagó: '+(row.pagador||'Sin nombre')});
+    cuentasPorPagador.forEach(cuenta=>{
+      const pagador=cuenta.pagador.trim();
+      const productos=Array.from(new Set(cuenta.productos));
+      cxp.push({id:uid(),tipo:'proveedor',acreedor:grupo.lugar||'Proveedor de compra',proveedor:grupo.lugar||'Sin proveedor',pagadoPor:pagador,compraId:compra.id,concepto:'Compra en '+(grupo.lugar||'sin proveedor')+' — '+productos.join(', '),monto:Math.round(cuenta.total*100)/100,vencimiento:grupo.fecha,fecha:grupo.fecha,estado:grupo.fecha<hoy()?'vencida':'pendiente',notas:'Compra ID '+compra.id.slice(-4).toUpperCase()+' · Fecha de compra: '+fmtFecha(grupo.fecha)});
       cuentas++;
-    }
+    });
   });
   save();
   comprasExcelPendientes=[];
@@ -4752,7 +4800,7 @@ function confirmarImportacionComprasExcel() {
   closeModal('modal-importar-compras');
   renderCompras();
   renderInventario();
-  toast(totalRows+' compras importadas · '+cuentas+' cuentas por pagar · '+creados+' insumos nuevos');
+  toast(filasImportadas+' renglones agrupados en '+grupos.length+' compras · '+cuentas+' cuentas por pagar · '+creados+' insumos nuevos');
 }
 
 function actualizarFechaCxpCompra(fecha) {

@@ -999,10 +999,11 @@
             <option value="vencida">Vencidas</option>
             <option value="pagada">Pagadas</option>
           </select>
+            <select class="form-input" id="cxp-pagador-filtro" style="width:190px" onchange="filtrarCxpPagador(this.value)"><option value="">Todos los que pagaron</option></select>
         </div>
         <div class="table-wrap">
           <table>
-            <thead><tr><th>Tipo</th><th>Acreedor</th><th>Concepto</th><th>Monto</th><th>Vencimiento</th><th>Estado</th><th>Método pago</th><th>Notas</th><th></th></tr></thead>
+            <thead><tr><th>Tipo</th><th>Acreedor</th><th>Pagó</th><th>Concepto</th><th>Monto</th><th>Vencimiento</th><th>Estado</th><th>Método pago</th><th>Notas</th><th></th></tr></thead>
             <tbody id="tabla-cxp"></tbody>
           </table>
         </div>
