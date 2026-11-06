@@ -4773,7 +4773,7 @@ function confirmarImportacionComprasExcel() {
       const costoUnit=totalLinea/cantidad;
       ing.stock=Math.round((Number(ing.stock||0)+cantidad)*1000)/1000;
       if(costoUnit>0)ing.costo=costoUnit;
-      lineas.push({ingId:ing.id,nombre:row.nombre,cantidad,costoUnit,unidad:ing.unidad||row.unidad});
+      lineas.push({ingId:ing.id,nombre:row.nombre,cantidad,costoUnit,unidad:ing.unidad||row.unidad,pagador:row.pagador||''});
 
       if(!esPagoFitGoCompraExcel(row.pagador)){
         const pagadorKey=normalizarTextoCompraExcel(row.pagador);
@@ -4987,7 +4987,7 @@ function guardarCompra() {
   if (document.getElementById('compra-genera-cxp').value === 'si') {
     const venc = document.getElementById('compra-cxp-vencimiento').value || fechaCompra;
     cxp.push({
-      id: uid(), tipo: 'proveedor', acreedor: proveedor||'Proveedor de compra',
+      id: uid(), tipo: 'proveedor', acreedor: proveedor||'Proveedor de compra', compraId: compra.id,
       concepto: `Compra de insumos ${fmtFecha(fechaCompra)}`,
       monto: total, vencimiento: venc,
       estado: venc && new Date(venc)<new Date() ? 'vencida' : 'pendiente',
@@ -5030,39 +5030,96 @@ function generarOrdenSugerida() {
   openModal('modal-compra');
 }
 
+function eliminarProductoCompra(compraId, indice) {
+  const c = compras.find(x => x.id === compraId);
+  if (!c || !Array.isArray(c.lineas) || !c.lineas[indice]) return;
+  const linea = c.lineas[indice];
+  const esUltimo = c.lineas.length === 1;
+  const mensaje = '¿Quitar ' + linea.nombre + ' de esta compra?' +
+    (esUltimo
+      ? ' Al ser el último producto, también se eliminará la compra y su CxP.'
+      : ' Se actualizarán el inventario y los importes relacionados.');
+  if (!confirm(mensaje)) return;
+
+  const totalAnterior = Number(c.total) || 0;
+  if (c.estado === 'recibida') {
+    const ing = inventario.find(i => i.id === linea.ingId);
+    if (ing) ing.stock = Math.round((Number(ing.stock || 0) - (Number(linea.cantidad) || 0)) * 1000) / 1000;
+  }
+  c.lineas.splice(indice, 1);
+  c.total = Math.round(c.lineas.reduce((s, l) => s + (Number(l.cantidad) || 0) * (Number(l.costoUnit) || 0), 0) * 100) / 100;
+
+  const claveCuenta = 'Compra ID ' + c.id.slice(-4).toUpperCase();
+  const esCuentaDeCompra = x => x.compraId === c.id || String(x.notas || '').includes(claveCuenta);
+  const cuentas = cxp.filter(esCuentaDeCompra);
+  const conPagador = c.lineas.some(l => Object.prototype.hasOwnProperty.call(l, 'pagador'));
+  if (conPagador) {
+    cuentas.forEach(cuenta => {
+      const pagador = normalizarTextoCompraExcel(cuenta.pagadoPor || '');
+      const lineasPagador = c.lineas.filter(l => normalizarTextoCompraExcel(l.pagador || '') === pagador);
+      const monto = lineasPagador.reduce((s, l) => s + (Number(l.cantidad) || 0) * (Number(l.costoUnit) || 0), 0);
+      if (monto <= 0) {
+        cxp = cxp.filter(x => x.id !== cuenta.id);
+        return;
+      }
+      cuenta.monto = Math.round(monto * 100) / 100;
+      cuenta.concepto = 'Compra en ' + (c.proveedor || 'sin proveedor') + ' — ' + Array.from(new Set(lineasPagador.map(l => l.nombre))).join(', ');
+    });
+  } else if (cuentas.length === 1) {
+    cuentas[0].monto = c.total;
+    cuentas[0].concepto = 'Compra de insumos ' + fmtFecha(c.fecha);
+  } else if (cuentas.length > 1) {
+    const factor = totalAnterior > 0 ? c.total / totalAnterior : 0;
+    cuentas.forEach(cuenta => { cuenta.monto = Math.round((Number(cuenta.monto) || 0) * factor * 100) / 100; });
+  }
+
+  if (!c.lineas.length) {
+    compras = compras.filter(x => x.id !== c.id);
+    cxp = cxp.filter(x => !esCuentaDeCompra(x));
+    closeModal('modal-detalle-compra');
+  } else {
+    verDetalleCompra(c.id);
+  }
+  save();
+  renderCompras();
+  renderInventario();
+  renderCXP();
+  toast(esUltimo ? 'Compra eliminada' : 'Producto quitado de la compra');
+}
+
 function verDetalleCompra(id) {
-  const c = compras.find(x=>x.id===id);
+  const c = compras.find(x => x.id === id);
   if (!c) return;
   document.getElementById('detalle-compra-body').innerHTML = `
     <div class="grid grid-2 mb-16" style="font-size:13px">
       <div><span class="text-dim">Fecha:</span> <strong>${fmtFecha(c.fecha)}</strong></div>
-      <div><span class="text-dim">Proveedor:</span> ${c.proveedor||'—'}</div>
-      <div><span class="text-dim">Pagó:</span> ${c.pagadoPor||'—'}</div>
-      <div><span class="text-dim">Estado:</span> <span class="badge ${c.estado==='recibida'?'badge-green':'badge-amber'}">${c.estado==='recibida'?'Recibida':'Pendiente'}</span></div>
+      <div><span class="text-dim">Proveedor:</span> ${c.proveedor || '—'}</div>
+      <div><span class="text-dim">Pagó:</span> ${c.pagadoPor || '—'}</div>
+      <div><span class="text-dim">Estado:</span> <span class="badge ${c.estado === 'recibida' ? 'badge-green' : 'badge-amber'}">${c.estado === 'recibida' ? 'Recibida' : 'Pendiente'}</span></div>
       <div><span class="text-dim">Total:</span> <strong class="highlight-green">${fmt(c.total)}</strong></div>
     </div>
     <div style="margin-bottom:12px">
       <div class="text-dim mb-8" style="font-size:12px">INGREDIENTES</div>
       <div style="border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden">
-        <div style="display:grid;grid-template-columns:1fr 80px 90px 90px;padding:7px 12px;background:var(--bg3);font-size:11px;color:var(--text3);font-weight:500">
-          <span>INGREDIENTE</span><span>CANT.</span><span>COSTO/U</span><span>SUBTOTAL</span>
+        <div style="display:grid;grid-template-columns:minmax(0,1fr) 68px 78px 86px 70px;padding:7px 12px;background:var(--bg3);font-size:11px;color:var(--text3);font-weight:500">
+          <span>INGREDIENTE</span><span>CANT.</span><span>COSTO/U</span><span>SUBTOTAL</span><span></span>
         </div>
-        ${c.lineas.map(l=>`
-          <div style="display:grid;grid-template-columns:1fr 80px 90px 90px;padding:9px 12px;border-top:1px solid var(--border);font-size:13px">
+        ${c.lineas.map((l, idx) => `
+          <div style="display:grid;grid-template-columns:minmax(0,1fr) 68px 78px 86px 70px;padding:9px 12px;border-top:1px solid var(--border);font-size:13px;align-items:center">
             <span>${l.nombre}</span>
             <span class="font-mono">${l.cantidad}</span>
             <span class="font-mono text-dim">${fmt(l.costoUnit)}</span>
-            <span class="font-mono highlight-green">${fmt(l.cantidad*l.costoUnit)}</span>
+            <span class="font-mono highlight-green">${fmt(l.cantidad * l.costoUnit)}</span>
+            <button class="btn btn-secondary btn-sm" title="Quitar producto" onclick="eliminarProductoCompra('${c.id}', ${idx})">Quitar</button>
           </div>`).join('')}
       </div>
     </div>
-    ${c.notas?`<div class="card card-sm" style="background:var(--bg3);font-size:12px">📝 ${c.notas}</div>`:''}`;
+    ${c.notas ? `<div class="card card-sm" style="background:var(--bg3);font-size:12px">📝 ${c.notas}</div>` : ''}`;
   document.getElementById('detalle-compra-footer').innerHTML =
     `<button class="btn btn-secondary" onclick="closeModal('modal-detalle-compra')">Cerrar</button>
-     ${c.estado==='pendiente'?`<button class="btn btn-primary" onclick="recibirCompra('${c.id}');closeModal('modal-detalle-compra')">✓ Marcar como recibida</button>`:''}`;
+     ${c.estado === 'pendiente' ? `<button class="btn btn-primary" onclick="recibirCompra('${c.id}');closeModal('modal-detalle-compra')">✓ Marcar como recibida</button>` : ''}`;
   openModal('modal-detalle-compra');
 }
-
 // ========== REPORTES ==========
 let repTabActual = 'ventas';
 
