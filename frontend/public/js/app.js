@@ -4017,9 +4017,12 @@ function renderCXP() {
     pagadorFiltroEl.innerHTML='<option value="">Todos los que pagaron</option>'+pagadoresCxP.map(p=>'<option value="'+p.replace(/&/g,'&amp;').replace(/"/g,'&quot;')+'">'+p.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')+'</option>').join('');
     pagadorFiltroEl.value=pagadoresCxP.find(p=>normalizarTextoCompraExcel(p)===normalizarTextoCompraExcel(cxpPagadorFiltro))||'';
   }
+  const pagarConjuntoBtn=document.getElementById('cxp-pagar-conjunto-btn');
+  if(pagarConjuntoBtn){const pendientesDelPagador=cxp.filter(c=>c.estado!=='pagada'&&normalizarTextoCompraExcel(c.pagadoPor||'')===normalizarTextoCompraExcel(cxpPagadorFiltro));pagarConjuntoBtn.style.display=cxpPagadorFiltro&&pendientesDelPagador.length?'inline-flex':'none';}
   if (cxpPagadorFiltro) lista = lista.filter(c => normalizarTextoCompraExcel(c.pagadoPor) === normalizarTextoCompraExcel(cxpPagadorFiltro));
 
-  const pendiente = cxp.filter(c => c.estado !== 'pagada');
+  const pendienteGeneral = cxp.filter(c => c.estado !== 'pagada');
+  const pendiente = cxpPagadorFiltro ? pendienteGeneral.filter(c => normalizarTextoCompraExcel(c.pagadoPor || '') === normalizarTextoCompraExcel(cxpPagadorFiltro)) : pendienteGeneral;
   const total = pendiente.reduce((s,c) => s+c.monto, 0);
   const vencidas = pendiente.filter(c => c.estado === 'vencida').length;
   const porVencer = pendiente.filter(c => c.estado === 'pendiente' && c.vencimiento && new Date(c.vencimiento) <= new Date(Date.now() + 7*24*60*60*1000)).length;
@@ -4052,6 +4055,93 @@ function renderCXP() {
     </tr>`;
   }).join('') || '<tr><td colspan="10" style="text-align:center;padding:32px;color:var(--text3)">Sin cuentas registradas</td></tr>';
 }
+
+function renderCxpPagoConjunto() {
+  const cuentas = cxp.filter(c => c.estado !== 'pagada' && normalizarTextoCompraExcel(c.pagadoPor || '') === normalizarTextoCompraExcel(cxpPagadorFiltro));
+  const total = cuentas.reduce((s, c) => s + (Number(c.monto) || 0), 0);
+  document.getElementById('pagar-cxp-conjunto-pagador').textContent = cxpPagadorFiltro || '—';
+  document.getElementById('pagar-cxp-conjunto-cantidad').textContent = cuentas.length;
+  document.getElementById('pagar-cxp-conjunto-total').textContent = fmt(total);
+  const montoEl = document.getElementById('pagar-cxp-conjunto-monto');
+  montoEl.max = total.toFixed(2);
+  montoEl.value = total.toFixed(2);
+}
+
+function openPagarCxpConjunto() {
+  if (!cxpPagadorFiltro) {
+    toast('Selecciona primero quién pagó', 'error');
+    return;
+  }
+  const cuentas = cxp.filter(c => c.estado !== 'pagada' && normalizarTextoCompraExcel(c.pagadoPor || '') === normalizarTextoCompraExcel(cxpPagadorFiltro));
+  if (!cuentas.length) {
+    toast('No hay cuentas pendientes para este pagador');
+    return;
+  }
+  renderCxpPagoConjunto();
+  document.getElementById('pagar-cxp-conjunto-todo').checked = true;
+  togglePagoCxpConjuntoMonto();
+  document.getElementById('pagar-cxp-conjunto-metodo').value = 'Efectivo';
+  document.getElementById('pagar-cxp-conjunto-fecha').value = hoy();
+  document.getElementById('pagar-cxp-conjunto-banco-aviso').style.display = 'none';
+  openModal('modal-pagar-cxp-conjunto');
+}
+
+function togglePagoCxpConjuntoMonto() {
+  const parcial = !document.getElementById('pagar-cxp-conjunto-todo').checked;
+  document.getElementById('pagar-cxp-conjunto-monto-wrap').style.display = parcial ? 'block' : 'none';
+}
+
+function confirmarPagoCxpConjunto() {
+  const pagador = cxpPagadorFiltro;
+  const cuentas = cxp.filter(c => c.estado !== 'pagada' && normalizarTextoCompraExcel(c.pagadoPor || '') === normalizarTextoCompraExcel(pagador))
+    .sort((a, b) => String(a.vencimiento || a.fecha || '').localeCompare(String(b.vencimiento || b.fecha || '')));
+  const total = cuentas.reduce((s, c) => s + (Number(c.monto) || 0), 0);
+  const todo = document.getElementById('pagar-cxp-conjunto-todo').checked;
+  const montoElegido = todo ? total : Math.round((Number(document.getElementById('pagar-cxp-conjunto-monto').value) || 0) * 100) / 100;
+  const metodo = document.getElementById('pagar-cxp-conjunto-metodo').value;
+  const fecha = document.getElementById('pagar-cxp-conjunto-fecha').value || hoy();
+  if (!cuentas.length || montoElegido <= 0) {
+    toast('Ingresa un monto de pago válido', 'error');
+    return;
+  }
+  if (montoElegido > total + 0.009) {
+    toast('El monto supera el total pendiente de este pagador', 'error');
+    return;
+  }
+
+  let restante = montoElegido;
+  cuentas.forEach(c => {
+    if (restante <= 0) return;
+    const saldoAnterior = Number(c.monto) || 0;
+    const aplicado = Math.min(saldoAnterior, restante);
+    const nuevoSaldo = Math.round((saldoAnterior - aplicado) * 100) / 100;
+    restante = Math.round((restante - aplicado) * 100) / 100;
+    c.historialPagos = Array.isArray(c.historialPagos) ? c.historialPagos : [];
+    c.historialPagos.push({ monto: aplicado, metodo, fecha });
+    c.monto = nuevoSaldo;
+    movCaja.push({
+      hora: hora(), pedidoId: uid(), cliente: c.acreedor || c.proveedor || 'CxP',
+      metodo, monto: aplicado, tipo: 'pago_cxp', concepto: 'Pago de CxP: ' + (c.concepto || 'Cuenta por pagar'),
+      estado: 'Pagado', fecha,
+    });
+    if (nuevoSaldo <= 0) {
+      c.monto = 0;
+      c.estado = 'pagada';
+      c.metodoPagoRealizado = metodo;
+      c.fechaPago = fecha;
+      c._movRegistrado = true;
+    } else {
+      c.estado = c.vencimiento && c.vencimiento < hoy() ? 'vencida' : 'pendiente';
+    }
+  });
+
+  save();
+  closeModal('modal-pagar-cxp-conjunto');
+  renderCXP();
+  renderEstadosFinancieros();
+  toast('Pago conjunto de ' + fmt(montoElegido) + ' para ' + pagador + ' con ' + metodo);
+}
+
 
 function openNuevaCuenta() {
   cxpTipoActual = 'proveedor';

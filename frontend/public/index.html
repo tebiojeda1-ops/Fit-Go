@@ -1000,6 +1000,7 @@
             <option value="pagada">Pagadas</option>
           </select>
             <select class="form-input" id="cxp-pagador-filtro" style="width:190px" onchange="filtrarCxpPagador(this.value)"><option value="">Todos los que pagaron</option></select>
+          <button class="btn btn-primary btn-sm" id="cxp-pagar-conjunto-btn" style="display:none;white-space:nowrap" onclick="openPagarCxpConjunto()">💳 Pagar en conjunto</button>
         </div>
         <div class="table-wrap">
           <table>
@@ -3270,6 +3271,51 @@
   </div>
 </div>
 
+<div class="modal-overlay" id="modal-pagar-cxp-conjunto">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">💳 Pago conjunto de CxP</div>
+      <button class="modal-close" onclick="closeModal('modal-pagar-cxp-conjunto')">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="card card-sm mb-14" style="background:var(--bg3)">
+        <div><strong>Pagador:</strong> <span id="pagar-cxp-conjunto-pagador">—</span></div>
+        <div class="mt-8"><strong>Cuentas pendientes:</strong> <span id="pagar-cxp-conjunto-cantidad">0</span></div>
+        <div class="mt-8"><strong>Total pendiente:</strong> <span class="font-mono highlight-red" id="pagar-cxp-conjunto-total">$0</span></div>
+      </div>
+      <label class="flex items-center gap-8 mb-14" style="cursor:pointer">
+        <input type="checkbox" id="pagar-cxp-conjunto-todo" checked onchange="togglePagoCxpConjuntoMonto()">
+        <span>Pagar todo el total pendiente</span>
+      </label>
+      <div class="form-group" id="pagar-cxp-conjunto-monto-wrap" style="display:none">
+        <label class="form-label">Monto a pagar</label>
+        <input class="form-input" type="number" id="pagar-cxp-conjunto-monto" min="0.01" step="0.01" placeholder="0.00">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Método de pago</label>
+          <select class="form-input" id="pagar-cxp-conjunto-metodo" onchange="document.getElementById('pagar-cxp-conjunto-banco-aviso').style.display=this.value==='Transferencia'||this.value==='Tarjeta'?'block':'none'">
+            <option value="Efectivo">💵 Efectivo</option>
+            <option value="Transferencia">📲 Transferencia / SPEI</option>
+            <option value="Tarjeta">💳 Tarjeta</option>
+            <option value="Cheque">📄 Cheque</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Fecha de pago</label>
+          <input class="form-input" type="date" id="pagar-cxp-conjunto-fecha">
+        </div>
+      </div>
+      <div id="pagar-cxp-conjunto-banco-aviso" style="display:none;font-size:12px;color:var(--blue);background:var(--blue-dim);border-radius:6px;padding:9px 12px;margin-top:4px">
+        El pago se registrará como salida de banco/caja en los reportes.
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('modal-pagar-cxp-conjunto')">Cancelar</button>
+      <button class="btn btn-primary" onclick="confirmarPagoCxpConjunto()">✓ Registrar pago</button>
+    </div>
+  </div>
+</div>
 <!-- Modal Editar Pedido -->
 <div class="modal-overlay" id="modal-editar-pedido">
   <div class="modal">
