@@ -1107,6 +1107,8 @@
       <div class="topbar-title">Compras de Insumos</div>
       <div class="topbar-actions">
         <button class="btn btn-primary btn-sm" onclick="openNuevaCompra()">+ Nueva compra</button>
+        <button class="btn btn-secondary btn-sm" onclick="document.getElementById('compras-excel-input').click()">📥 Importar Excel</button>
+        <input id="compras-excel-input" type="file" accept=".xlsx,.xls,.csv" style="display:none" onchange="previsualizarComprasExcel(this)">
       </div>
     </div>
     <div class="content">
@@ -1144,7 +1146,7 @@
         <div class="section-header"><div class="section-title">Historial de órdenes</div></div>
         <div class="table-wrap">
           <table>
-            <thead><tr><th>Fecha</th><th>Proveedor</th><th>Items</th><th>Total</th><th>Estado</th><th>Notas</th><th></th></tr></thead>
+            <thead><tr><th>Fecha</th><th>Lugar / proveedor</th><th>Pagó</th><th>Items</th><th>Total</th><th>Estado</th><th>Notas</th><th></th></tr></thead>
             <tbody id="tabla-compras"></tbody>
           </table>
         </div>
@@ -2641,6 +2643,33 @@
   </div>
 </div>
 
+<!-- Importación masiva de compras -->
+<div class="modal-overlay" id="modal-importar-compras">
+  <div class="modal modal-lg">
+    <div class="modal-header"><div class="modal-title">📥 Revisar compras del Excel</div><button class="modal-close" onclick="cancelarImportacionComprasExcel()">×</button></div>
+    <div class="modal-body">
+      <div class="card card-sm mb-12" style="background:var(--bg3)">
+        <div style="font-size:12px;font-weight:600;margin-bottom:5px">Archivo: <span id="compras-excel-nombre"></span></div>
+        <div style="font-size:11px;color:var(--text2)">Se leen las columnas A–G desde la fila 8. Cada fila válida se registra como compra recibida y actualiza el inventario.</div>
+      </div>
+      <div class="form-group"><label class="form-label">La columna E, “Precio”, contiene:</label>
+        <select class="form-input" id="compras-excel-modo-precio" onchange="renderPrevisualizacionComprasExcel()">
+          <option value="total">El total pagado por esa fila (cantidad × costo unitario = precio)</option>
+          <option value="unitario">El precio por cada unidad (cantidad × precio = total)</option>
+        </select>
+      </div>
+      <div id="compras-excel-resumen" class="mb-12" style="font-size:12px;color:var(--text2)"></div>
+      <div style="max-height:310px;overflow:auto;border:1px solid var(--border);border-radius:var(--radius-sm)">
+        <table style="min-width:850px"><thead><tr><th>Fila</th><th>Fecha</th><th>Producto</th><th>Cant.</th><th>Unidad</th><th>Precio</th><th>Lugar</th><th>Pagó / registro</th></tr></thead>
+        <tbody id="compras-excel-preview"></tbody></table>
+      </div>
+      <div id="compras-excel-errores" style="margin-top:10px;font-size:11px;color:var(--amber)"></div>
+    </div>
+    <div class="modal-footer"><button class="btn btn-secondary" onclick="cancelarImportacionComprasExcel()">Cancelar</button>
+      <button class="btn btn-primary" id="compras-excel-confirmar" onclick="confirmarImportacionComprasExcel()">Importar compras</button></div>
+  </div>
+</div>
+
 <!-- Modal Nueva Compra -->
 <div class="modal-overlay" id="modal-compra">
   <div class="modal modal-lg">
@@ -2658,7 +2687,7 @@
         </div>
         <div class="form-group">
           <label class="form-label">Fecha de compra</label>
-          <input class="form-input" type="date" id="compra-fecha">
+          <input class="form-input" type="date" id="compra-fecha" onchange="actualizarFechaCxpCompra(this.value)">
         </div>
       </div>
       <!-- Líneas de compra -->
@@ -2695,7 +2724,8 @@
       <!-- Panel CxP de compra -->
       <div id="panel-compra-cxp" style="display:none;background:var(--red-dim);border:1px solid rgba(231,76,60,0.2);border-radius:var(--radius-sm);padding:12px;margin-bottom:12px;">
         <div style="font-size:12px;font-weight:600;color:var(--red);margin-bottom:8px">📤 Se registrará como cuenta por pagar</div>
-        <input class="form-input" id="compra-cxp-vencimiento" type="date" placeholder="Fecha de vencimiento">
+        <label class="form-label">Fecha para la cuenta por pagar (por defecto, fecha de compra)</label>
+        <input class="form-input" id="compra-cxp-vencimiento" type="date" placeholder="Fecha de compra">
       </div>
       <div class="form-group">
         <label class="form-label">Notas</label>

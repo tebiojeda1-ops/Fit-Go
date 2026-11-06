@@ -4589,6 +4589,7 @@ function renderCompras() {
     return `<tr>
       <td class="text-dim">${fmtFecha(c.fecha)}</td>
       <td>${c.proveedor||'—'}</td>
+      <td>${c.pagadoPor||'—'}</td>
       <td style="font-size:12px;color:var(--text2)">${c.lineas.slice(0,2).map(l=>l.nombre).join(', ')}${c.lineas.length>2?` +${c.lineas.length-2}`:''}</td>
       <td class="highlight-green font-mono">${fmt(c.total)}</td>
       <td><span class="badge ${badge}">${txt}</span></td>
@@ -4601,7 +4602,162 @@ function renderCompras() {
         </div>
       </td>
     </tr>`;
-  }).join('') || '<tr><td colspan="7" style="text-align:center;padding:32px;color:var(--text3)">Sin compras registradas</td></tr>';
+  }).join('') || '<tr><td colspan="8" style="text-align:center;padding:32px;color:var(--text3)">Sin compras registradas</td></tr>';
+}
+
+// ---- Importación masiva de compras desde Excel/CSV (A:G, desde la fila 8) ----
+let comprasExcelPendientes = [];
+let comprasExcelErrores = [];
+let comprasExcelNombreArchivo = '';
+
+function normalizarTextoCompraExcel(valor) {
+  return String(valor ?? '').trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\s+/g,' ');
+}
+
+function numeroCompraExcel(valor) {
+  if (typeof valor === 'number') return Number.isFinite(valor) ? valor : NaN;
+  let texto = String(valor ?? '').trim().replace(/[$£€\s]|MXN/gi,'');
+  if (!texto) return NaN;
+  if (texto.includes(',') && !texto.includes('.')) {
+    texto = /,\d{1,2}$/.test(texto) ? texto.replace(',','.') : texto.replace(/,/g,'');
+  } else texto = texto.replace(/,/g,'');
+  const n = Number(texto);
+  return Number.isFinite(n) ? n : NaN;
+}
+
+function fechaCompraExcel(valor,date1904=false) {
+  if (valor instanceof Date && !Number.isNaN(valor.getTime())) return _fechaLocal(valor);
+  if (typeof valor === 'number' && Number.isFinite(valor) && window.XLSX?.SSF?.parse_date_code) {
+    const d = XLSX.SSF.parse_date_code(valor,{date1904});
+    if (d) return String(d.y).padStart(4,'0')+'-'+String(d.m).padStart(2,'0')+'-'+String(d.d).padStart(2,'0');
+  }
+  const s = String(valor ?? '').trim();
+  let m = s.match(/^(\d{4})[-/.](\d{1,2})[-/.](\d{1,2})/);
+  if (m) return m[1]+'-'+m[2].padStart(2,'0')+'-'+m[3].padStart(2,'0');
+  m = s.match(/^(\d{1,2})[-/.](\d{1,2})[-/.](\d{2,4})$/);
+  if (m) { const y=m[3].length===2?'20'+m[3]:m[3]; return y+'-'+m[2].padStart(2,'0')+'-'+m[1].padStart(2,'0'); }
+  return '';
+}
+
+function unidadCompraExcel(valor) {
+  const u=normalizarTextoCompraExcel(valor).replace(/[.\s]/g,'');
+  const tabla={kg:['peso',1],kilo:['peso',1],kilos:['peso',1],g:['peso',.001],gr:['peso',.001],gramo:['peso',.001],gramos:['peso',.001],mg:['peso',.000001],l:['volumen',1],lt:['volumen',1],litro:['volumen',1],litros:['volumen',1],ml:['volumen',.001],pza:['pieza',1],pzas:['pieza',1],pieza:['pieza',1],piezas:['pieza',1],unidad:['pieza',1],unidades:['pieza',1],u:['pieza',1]};
+  return tabla[u] ? {clave:u,tipo:tabla[u][0],factor:tabla[u][1]} : {clave:u,tipo:u,factor:1};
+}
+
+function claveImportacionCompraExcel(fila) {
+  const origen=[fila.filaExcel,fila.fecha,normalizarTextoCompraExcel(fila.nombre),fila.cantidad,unidadCompraExcel(fila.unidad).clave,fila.precio,normalizarTextoCompraExcel(fila.lugar),normalizarTextoCompraExcel(fila.pagador)].join('|');
+  let hash=2166136261;
+  for(let i=0;i<origen.length;i++) hash=Math.imul(hash ^ origen.charCodeAt(i),16777619);
+  return 'excel-'+(hash>>>0).toString(36);
+}
+
+function esPagoFitGoCompraExcel(pagador) {
+  const p=normalizarTextoCompraExcel(pagador).replace(/[^a-z0-9]/g,'');
+  return p==='fitgo' || p==='fitandgo';
+}
+
+async function previsualizarComprasExcel(input) {
+  const file=input.files?.[0];
+  if(!file)return;
+  comprasExcelPendientes=[];
+  comprasExcelErrores=[];
+  comprasExcelNombreArchivo=file.name;
+  const extens=String(file.name).split('.').pop().toLowerCase();
+  if(!['xlsx','xls','csv'].includes(extens)) { toast('Usa un archivo .xlsx, .xls o .csv','error'); input.value=''; return; }
+  try {
+    await cargarSheetJS();
+    const wb=XLSX.read(await file.arrayBuffer(),{type:'array',cellDates:false});
+    const date1904=!!wb.Workbook?.WBProps?.date1904;
+    const hoja=wb.Sheets[wb.SheetNames[0]];
+    const rows=XLSX.utils.sheet_to_json(hoja,{header:1,range:7,defval:'',raw:true,blankrows:true});
+    rows.forEach((r,index)=>{
+      const filaExcel=index+8;
+      if(!Array.isArray(r) || !r.slice(0,7).some(v=>String(v??'').trim()!==''))return;
+      const item={filaExcel,fecha:fechaCompraExcel(r[0],date1904),nombre:String(r[1]??'').trim(),cantidad:numeroCompraExcel(r[2]),unidad:String(r[3]??'').trim(),precio:numeroCompraExcel(r[4]),lugar:String(r[5]??'').trim(),pagador:String(r[6]??'').trim()};
+      const errores=[];
+      if(!item.fecha)errores.push('fecha inválida');
+      if(!item.nombre)errores.push('falta producto');
+      if(!(item.cantidad>0))errores.push('cantidad inválida');
+      if(!item.unidad)errores.push('falta unidad');
+      if(!(item.precio>=0))errores.push('precio inválido');
+      if(errores.length){comprasExcelErrores.push({filaExcel,errores:errores.join(', ')});return;}
+      item.importKey=claveImportacionCompraExcel(item);
+      if(compras.some(c=>c.importKey===item.importKey)){comprasExcelErrores.push({filaExcel,errores:'ya se importó anteriormente; se omitirá'});return;}
+      comprasExcelPendientes.push(item);
+    });
+    if(!comprasExcelPendientes.length){toast('No hay filas nuevas válidas para importar','error');input.value='';return;}
+    document.getElementById('compras-excel-nombre').textContent=file.name;
+    document.getElementById('compras-excel-modo-precio').value='total';
+    renderPrevisualizacionComprasExcel();
+    openModal('modal-importar-compras');
+  } catch(error) {
+    toast('No se pudo leer el archivo: '+error.message,'error');
+  } finally { input.value=''; }
+}
+
+function renderPrevisualizacionComprasExcel() {
+  const tbody=document.getElementById('compras-excel-preview');
+  if(!tbody)return;
+  const modo=document.getElementById('compras-excel-modo-precio').value;
+  const e=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const cxpCount=comprasExcelPendientes.filter(x=>!esPagoFitGoCompraExcel(x.pagador)).length;
+  const total=comprasExcelPendientes.reduce((sum,x)=>sum+(modo==='total'?x.precio:x.cantidad*x.precio),0);
+  document.getElementById('compras-excel-resumen').innerHTML='<b>'+comprasExcelPendientes.length+'</b> compras · <b>'+cxpCount+'</b> cuentas por pagar · <b>'+fmt(total)+'</b> en total · Estado: <b>recibida</b>.';
+  tbody.innerHTML=comprasExcelPendientes.slice(0,30).map(x=>`<tr><td>${x.filaExcel}</td><td>${e(fmtFecha(x.fecha))}</td><td>${e(x.nombre)}</td><td>${x.cantidad}</td><td>${e(x.unidad)}</td><td>${fmt(x.precio)}</td><td>${e(x.lugar||'—')}</td><td>${e(x.pagador||'Sin nombre')} · ${esPagoFitGoCompraExcel(x.pagador)?'No, ya se pagó':'Sí, crear CxP'}</td></tr>`).join('');
+  if(comprasExcelPendientes.length>30)tbody.innerHTML+='<tr><td colspan="8">… y '+(comprasExcelPendientes.length-30)+' filas más</td></tr>';
+  const errores=document.getElementById('compras-excel-errores');
+  errores.textContent=comprasExcelErrores.length?'Filas omitidas o duplicadas: '+comprasExcelErrores.slice(0,12).map(x=>'fila '+x.filaExcel+' ('+x.errores+')').join(' · ')+(comprasExcelErrores.length>12?' · …':''):'';
+  document.getElementById('compras-excel-confirmar').textContent='Importar '+comprasExcelPendientes.length+' compras';
+}
+
+function cancelarImportacionComprasExcel() {
+  closeModal('modal-importar-compras');
+  comprasExcelPendientes=[];
+  comprasExcelErrores=[];
+}
+
+function confirmarImportacionComprasExcel() {
+  if(!comprasExcelPendientes.length)return;
+  const modo=document.getElementById('compras-excel-modo-precio').value;
+  const totalRows=comprasExcelPendientes.length;
+  let creados=0,cuentas=0;
+  comprasExcelPendientes.forEach(row=>{
+    const nombreKey=normalizarTextoCompraExcel(row.nombre);
+    const unidadOrigen=unidadCompraExcel(row.unidad);
+    let ing=inventario.find(i=>normalizarTextoCompraExcel(i.nombre)===nombreKey && unidadCompraExcel(i.unidad||'').tipo===unidadOrigen.tipo);
+    if(!ing){
+      const suffix=inventario.some(i=>normalizarTextoCompraExcel(i.nombre)===nombreKey)?' ['+row.unidad+']':'';
+      ing={id:uid(),nombre:row.nombre+suffix,categoria:'Otros',stock:0,minimo:0,unidad:row.unidad,costo:0,proveedor:''};
+      inventario.push(ing);creados++;
+    }
+    const unidadDestino=unidadCompraExcel(ing.unidad||row.unidad);
+    const compatible=unidadDestino.tipo===unidadOrigen.tipo;
+    const cantidad=compatible?row.cantidad*unidadOrigen.factor/unidadDestino.factor:row.cantidad;
+    const totalLinea=modo==='total'?row.precio:row.cantidad*row.precio;
+    const costoUnit=totalLinea/cantidad;
+    ing.stock=Math.round((Number(ing.stock||0)+cantidad)*1000)/1000;
+    if(costoUnit>0)ing.costo=costoUnit;
+    const linea={ingId:ing.id,nombre:row.nombre,cantidad,costoUnit,unidad:ing.unidad||row.unidad};
+    const compra={id:uid(),fecha:row.fecha,proveedor:row.lugar||'Sin proveedor / mercado',pagadoPor:row.pagador||'Sin nombre',lineas:[linea],total:totalLinea,estado:'recibida',notas:'Importada desde '+comprasExcelNombreArchivo,importKey:row.importKey};
+    compras.push(compra);
+    if(!esPagoFitGoCompraExcel(row.pagador)){
+      cxp.push({id:uid(),tipo:'proveedor',acreedor:row.lugar||'Proveedor de compra',proveedor:row.lugar||'Sin proveedor',compraId:compra.id,concepto:'Compra de insumos — '+row.nombre+' ('+fmtFecha(row.fecha)+')',monto:totalLinea,vencimiento:row.fecha,fecha:row.fecha,estado:row.fecha<hoy()?'vencida':'pendiente',notas:'Compra ID '+compra.id.slice(-4).toUpperCase()+' · Pagó: '+(row.pagador||'Sin nombre')});
+      cuentas++;
+    }
+  });
+  save();
+  comprasExcelPendientes=[];
+  comprasExcelErrores=[];
+  closeModal('modal-importar-compras');
+  renderCompras();
+  renderInventario();
+  toast(totalRows+' compras importadas · '+cuentas+' cuentas por pagar · '+creados+' insumos nuevos');
+}
+
+function actualizarFechaCxpCompra(fecha) {
+  const cxpFecha=document.getElementById('compra-cxp-vencimiento');
+  if(cxpFecha)cxpFecha.value=fecha||'';
 }
 
 // ---- Líneas de compra ----
@@ -4629,6 +4785,7 @@ function openNuevaCompra() {
   lineasCompraActual = [];
   document.getElementById('compra-modal-title').textContent = 'Nueva Compra de Insumos';
   document.getElementById('compra-fecha').value = hoy();
+  actualizarFechaCxpCompra(hoy());
   document.getElementById('compra-notas').value = '';
   document.getElementById('compra-estado').value = 'recibida';
   document.getElementById('compra-genera-cxp').value = 'no';
@@ -4704,7 +4861,9 @@ function recalcularTotalCompra() {
 
 function toggleCompraCredito(val) {
   document.getElementById('panel-compra-cxp').style.display = val==='si' ? 'block' : 'none';
+  if(val==='si' && !document.getElementById('compra-cxp-vencimiento').value) actualizarFechaCxpCompra(document.getElementById('compra-fecha').value);
 }
+
 
 function guardarCompra_orig() {}
 function guardarCompra() {
@@ -4778,7 +4937,7 @@ function guardarCompra() {
 
   // Generar CxP si se indica
   if (document.getElementById('compra-genera-cxp').value === 'si') {
-    const venc = document.getElementById('compra-cxp-vencimiento').value;
+    const venc = document.getElementById('compra-cxp-vencimiento').value || fechaCompra;
     cxp.push({
       id: uid(), tipo: 'proveedor', acreedor: proveedor||'Proveedor de compra',
       concepto: `Compra de insumos ${fmtFecha(fechaCompra)}`,
@@ -4830,6 +4989,7 @@ function verDetalleCompra(id) {
     <div class="grid grid-2 mb-16" style="font-size:13px">
       <div><span class="text-dim">Fecha:</span> <strong>${fmtFecha(c.fecha)}</strong></div>
       <div><span class="text-dim">Proveedor:</span> ${c.proveedor||'—'}</div>
+      <div><span class="text-dim">Pagó:</span> ${c.pagadoPor||'—'}</div>
       <div><span class="text-dim">Estado:</span> <span class="badge ${c.estado==='recibida'?'badge-green':'badge-amber'}">${c.estado==='recibida'?'Recibida':'Pendiente'}</span></div>
       <div><span class="text-dim">Total:</span> <strong class="highlight-green">${fmt(c.total)}</strong></div>
     </div>
